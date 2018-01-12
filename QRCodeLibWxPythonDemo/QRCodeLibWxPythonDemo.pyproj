@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>QRCodeLibWxPythonDemo</Name>
     <RootNamespace>QRCodeLibWxPythonDemo</RootNamespace>
-    <IsWindowsApplication>False</IsWindowsApplication>
+    <IsWindowsApplication>True</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

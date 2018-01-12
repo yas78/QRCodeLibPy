@@ -12,7 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>QRCodeLibTkinterDemo</Name>
     <RootNamespace>QRCodeLibDemo</RootNamespace>
-    <IsWindowsApplication>False</IsWindowsApplication>
+    <IsWindowsApplication>True</IsWindowsApplication>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
