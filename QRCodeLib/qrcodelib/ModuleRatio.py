@@ -18,9 +18,8 @@ class ModuleRatio(object):
                 == self.fol_light1
                 == self.fol_dark1
                 == (self.center_dark3 / 3)):
-            return (
-                self.pre_light4 >= self.pre_dark1 * 4 or
-                self.fol_light4 >= self.pre_dark1 * 4
-            )
+
+            return (self.pre_light4 >= self.pre_dark1 * 4 or
+                    self.fol_light4 >= self.pre_dark1 * 4)
         else:
             return False
