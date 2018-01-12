@@ -82,12 +82,10 @@ class KanjiEncoder(QRCodeEncoder):
         code = (char_bytes[0] << 8) | char_bytes[1]
 
         if (0x8140 <= code <= 0x9FFC or
-                0xE040 <= code <= 0xEBBF):
+            0xE040 <= code <= 0xEBBF):
 
-            return (
-                0x40 <= char_bytes[1] <= 0xFC and
-                0x7F != char_bytes[1]
-            )
+            return (0x40 <= char_bytes[1] <= 0xFC and
+                    0x7F != char_bytes[1])
         else:
             return False
 
