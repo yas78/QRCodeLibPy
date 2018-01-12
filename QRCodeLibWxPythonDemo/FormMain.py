@@ -48,7 +48,7 @@ class FormMain(wx.Frame):
         # txt_data
         self._txt_data = wx.TextCtrl(
             panel, 
-            style=wx.TE_MULTILINE
+            style=wx.TE_MULTILINE | wx.TE_PROCESS_TAB
         )
         self._txt_data.SetFocus()
         self._txt_data.Bind(wx.EVT_TEXT, self.update_image)
