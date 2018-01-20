@@ -19,12 +19,11 @@ qrcodelibパッケージへのビルドパスを設定してください。
 from Symbols import Symbols
 from Symbol import Symbol
 
-def Example():
-    symbols = Symbols()
-    symbols.append_string("012345abcdefg")
-    
-    symbol = symbols.item(0)
-    symbol.save_24bpp_dib("D:\\qrcode.bmp")
+symbols = Symbols()
+symbols.append_string("012345abcdefg")
+
+symbol = symbols.item(0)
+symbol.save_24bpp_dib("D:\\qrcode.bmp")
 ```
 
 ### 例２．誤り訂正レベルを指定する
