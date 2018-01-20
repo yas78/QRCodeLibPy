@@ -61,7 +61,7 @@ class QRCodeEncoder(object):
         pass
 
     @abstractmethod
-    def get_bytes(self) -> bytearray:
+    def get_bytes(self) -> bytes:
         """
             エンコードされたデータのバイト配列を返します。
         """

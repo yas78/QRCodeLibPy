@@ -57,7 +57,7 @@ class AlphanumericEncoder(QRCodeEncoder):
         else:
             return 5
 
-    def get_bytes(self) -> bytearray:
+    def get_bytes(self) -> bytes:
         """
             エンコードされたデータのバイト配列を返します。
         """

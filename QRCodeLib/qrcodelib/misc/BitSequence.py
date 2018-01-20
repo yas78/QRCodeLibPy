@@ -42,8 +42,8 @@ class BitSequence(object):
             
             self._buffer[-1] = temp
 
-    def get_bytes(self) -> bytearray:
+    def get_bytes(self) -> bytes:
         """
             データのバイト配列を返します。
         """
-        return self._buffer
+        return bytes(self._buffer)

@@ -167,8 +167,8 @@ class FormMain(wx.Frame):
         self._enc_mode = self._cmb_byte_enc.GetValue()
         self._module_size = int(self._spn_module_size.GetValue())
 
-        symbols = Symbols(self._max_ver, 
-                          self._ec_level, 
+        symbols = Symbols(self._ec_level, 
+                          self._max_ver, 
                           self._structured_apend, 
                           self._enc_mode)
         try:

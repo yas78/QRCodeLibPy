@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from io import BytesIO
-from tkinter import BitmapImage
+#from tkinter import BitmapImage
 
 from AlignmentPattern import AlignmentPattern
 from EncodingMode import EncodingMode
@@ -272,7 +272,7 @@ class Symbol(object):
                 
         return ret
 
-    def _get_message_bytes(self) -> bytearray:
+    def _get_message_bytes(self) -> bytes:
         """
             コード語に変換するメッセージビット列を返します。
         """
@@ -529,7 +529,7 @@ class Symbol(object):
         if h_byte_len % 4 > 0:
             pack_4byte = 4 - (h_byte_len % 4)
 
-        data_block = bytearray((h_byte_len + pack_4byte) * (height * 3))
+        data_block = bytearray((h_byte_len + pack_4byte) * height)
 
         idx = 0
         
@@ -583,7 +583,7 @@ class Symbol(object):
     def get_ppm_binary(self, 
                        module_size: int = 5,
                        fore_rgb: str = ColorCode.BLACK,
-                       back_rgb: str = ColorCode.WHITE) -> bytearray:
+                       back_rgb: str = ColorCode.WHITE) -> bytes:
         """
             シンボル画像をPPMバイナリ形式で返します。
         """
@@ -616,7 +616,7 @@ class Symbol(object):
                             ppm.append(back_r)
                             ppm.append(back_g)
                             ppm.append(back_b)
-        return ppm
+        return bytes(ppm)
 
     def get_xbm(self, module_size: int = 5) -> str:
         """
@@ -668,7 +668,7 @@ class Symbol(object):
     def get_rgb_bytes(self, 
                       module_size: int = 5,
                       fore_rgb: str = ColorCode.BLACK,
-                      back_rgb: str = ColorCode.WHITE) -> Tuple[bytearray, int, int]:
+                      back_rgb: str = ColorCode.WHITE) -> Tuple[bytes, int, int]:
         """
             シンボル画像のRGB値を返します。
         """
@@ -697,21 +697,7 @@ class Symbol(object):
                             rgb_bytes.append(back_g)
                             rgb_bytes.append(back_b)
 
-        return rgb_bytes, width, height
-
-    def get_tkinter_image(self, 
-                          module_size: int = 5,
-                          fore_rgb: str = ColorCode.BLACK,
-                          back_rgb: str = ColorCode.WHITE) -> BitmapImage:
-        """
-            シンボル画像をTkinter BitmapImageオブジェクトで返します。
-        """
-        if module_size < 1:
-            raise ValueError("module_size")
-
-        xbm = self.get_xbm(module_size)
-        image = BitmapImage(data=xbm, foreground=fore_rgb, background=back_rgb)
-        return image
+        return bytes(rgb_bytes), width, height
 
     def save_1bpp_dib(self, 
                       file_name: str,

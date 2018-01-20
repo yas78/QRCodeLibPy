@@ -127,8 +127,8 @@ class FormMain(tk.Frame):
         self._enc_mode = self._cmb_byte_enc.get()
         self._module_size = int(self._spn_module_size.get())
 
-        symbols = Symbols(self._max_ver, 
-                          self._ec_level, 
+        symbols = Symbols(self._ec_level, 
+                          self._max_ver, 
                           self._structured_append, 
                           self._enc_mode)
         try:
@@ -149,8 +149,9 @@ class FormMain(tk.Frame):
 
         self._images.clear()
 
-        for symbol in symbols:      
-            image = symbol.get_tkinter_image(self._module_size)
+        for symbol in symbols:
+            xbm = symbol.get_xbm(self._module_size)
+            image = tk.BitmapImage(data=xbm, foreground="#000000", background="#FFFFFF")
             self._images.append(image)
 
         for image in self._images:

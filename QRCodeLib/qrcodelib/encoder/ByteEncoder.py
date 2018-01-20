@@ -53,7 +53,7 @@ class ByteEncoder(QRCodeEncoder):
 
         return 8 * len(char_bytes)
 
-    def get_bytes(self) -> bytearray:
+    def get_bytes(self) -> bytes:
         """
             エンコードされたデータのバイト配列を返します。
         """
@@ -62,7 +62,7 @@ class ByteEncoder(QRCodeEncoder):
         for i, code_word in enumerate(self._code_words):
             ret[i] = code_word
 
-        return ret
+        return bytes(ret)
 
     @classmethod
     def is_in_subset(cls, c: str) -> bool:
