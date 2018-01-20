@@ -6,14 +6,11 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 - 数字・英数字・8ビットバイト・漢字モードに対応しています
 - 分割QRコードを作成可能です
 - 1bppまたは24bpp BMPファイル(DIB)、PPM、XBMファイルへ保存可能です
-- 1bppまたは24bpp tkinter.BitmapImageオブジェクトとして取得可能です  
 - 画像の配色(前景色・背景色)を指定可能です
 - 8ビットバイトモードでの文字コードを指定可能です
 
-
 ## クイックスタート
-QRCodeLibプロジェクト、またはビルドした QRCodeLib.dll を参照設定してください。
-
+qrcodelibモジュールへのビルドパスを設定してください。
 
 ## 使用方法
 ### 例１．単一シンボルで構成される(分割QRコードではない)QRコードの、最小限のコードを示します。
@@ -30,7 +27,7 @@ def Example():
 ```
 
 ### 例２．誤り訂正レベルを指定する
-Symbolsクラスのコンストラクタ引数に、ErrorCorrectionLevel列挙型の値を設定します。
+Symbolsクラスのコンストラクタ引数に、ErrorCorrectionLevelクラスの定数を設定します。
 
 ```python
 from ErrorCorrectionLevel import ErrorCorrectionLevel
@@ -100,23 +97,56 @@ symbol = symbols.item(0)
 symbol.save_xbm("D:\\qrcode.xbm")
 ```
 
+### 例９．tkinter.BitmapImageオブジェクトを取得する
+```python
+import tkinter as tk
+from Symbols import Symbols
+from Symbol import Symbol
 
+tkRoot = tk.Tk()
 
-その他の画像形式で保存するには、Imageオブジェクト使用します。
+symbols = Symbols()
+symbols.append_string("012345abcdefg")
+symbol = symbols.item(0)
 
-```csharp
-using System.Drawing;
-using System.Drawing.Imaging;
+xbm = symbol.get_xbm()
+image = tk.BitmapImage(data=xbm, foreground="#000000", background="#FFFFFF")
+```
 
-Symbols symbols = new Symbols();
-symbols.AppendString("012345");
+### 例１０．wxPython.Bitmapオブジェクトを取得する
+```python
+import wx
+from Symbols import Symbols
+from Symbol import Symbol
 
-Image image = symbols[0].Get24bppImage();
-// PNG
-image.Save(@"D:\qrcode.png", ImageFormat.Png);
-// GIF
-image.Save(@"D:\qrcode.gif", ImageFormat.Gif);
-// JPEG
-image.Save(@"D:\qrcode.jpg", ImageFormat.Jpeg);
+symbols = Symbols()
+symbols.append_string("012345abcdefg")
+symbol = symbols.item(0)
+
+(rgb_bytes, width, height) = symbol.get_rgb_bytes()
+bitmap = wx.Bitmap.FromBuffer(width, height, rgb_bytes)
+```
+
+### 例１１．Pillow (PIL) を使用して、その他の画像形式で保存する
+```python
+import PIL.Image
+from Symbols import Symbols
+from Symbol import Symbol
+
+symbols = Symbols()
+symbols.append_string("012345abcdefg")
+symbol = symbols.item(0)
+
+(data, width, height) = symbol.get_rgb_bytes()
+#(data, width, height) = symbol.get_rgb_bytes(module_size=10)
+#(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#00FFFF")
+image = PIL.Image.frombytes("RGB", (width, height), bytes(data))
+
+# PNG
+image.save("D:\\qrcode.png", "PNG")
+# GIF
+image.save("D:\\qrcode.gif", "GIF")
+# JPEG
+image.save("D:\\qrcode.jpg", "JPEG")
 ```
 
