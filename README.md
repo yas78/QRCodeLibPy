@@ -17,6 +17,7 @@ qrcodelibモジュールへのビルドパスを設定してください。
 
 ```python
 from Symbols import Symbols
+from Symbol import Symbol
 
 def Example():
     symbols = Symbols()
