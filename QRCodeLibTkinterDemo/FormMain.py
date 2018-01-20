@@ -1,4 +1,5 @@
 from io import StringIO
+
 import os.path
 
 import tkinter as tk
@@ -150,8 +151,8 @@ class FormMain(tk.Frame):
         self._images.clear()
 
         for symbol in symbols:
-            xbm = symbol.get_xbm(self._module_size)
-            image = tk.BitmapImage(data=xbm, foreground="#000000", background="#FFFFFF")
+            ppm = symbol.get_ppm(self._module_size)
+            image = tk.PhotoImage(data=ppm)
             self._images.append(image)
 
         for image in self._images:
@@ -186,7 +187,7 @@ class FormMain(tk.Frame):
                 symbol.save_1bpp_dib(path, self._module_size)
 
             if ext == ".ppm":
-                symbol.save_ppm_binary(path, self._module_size)
+                symbol.save_ppm(path, self._module_size)
 
             if ext == ".xbm":
                 symbol.save_xbm(path, self._module_size)

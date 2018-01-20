@@ -239,7 +239,7 @@ class FormMain(wx.Frame):
 
             if dlg.FilterIndex == 2:
                 path += ".ppm"
-                symbol.save_ppm_binary(path, self._module_size)
+                symbol.save_ppm(path, self._module_size)
 
             if dlg.FilterIndex == 3:
                 path += ".xbm"

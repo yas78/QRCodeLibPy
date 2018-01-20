@@ -73,10 +73,13 @@ symbols = Symbols()
 symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
-symbol.save_1bpp_dib("D:\\qrcode1.bmp")
-symbol.save_1bpp_dib("D:\\qrcode2.bmp", 10)  # 10 pixels per module
-symbol.save_24bpp_dib("D:\\qrcode3.bmp")
-symbol.save_24bpp_dib("D:\\qrcode4.bmp", 10)  # 10 pixels per module
+symbol.save_1bpp_dib("D:\\qrcode.bmp")
+symbol.save_1bpp_dib("D:\\qrcode.bmp", module_size=10)
+symbol.save_1bpp_dib("D:\\qrcode.bmp", fore_rgb="#0000FF", back_rgb="#FFFFFF")
+
+symbol.save_24bpp_dib("D:\\qrcode.bmp")
+symbol.save_24bpp_dib("D:\\qrcode.bmp", module_size=10)
+symbol.save_24bpp_dib("D:\\qrcode.bmp", fore_rgb="#0000FF", back_rgb="#FFFFFF")
 ```
 
 ### 例７．PPMファイルへ保存する
@@ -85,7 +88,9 @@ symbols = Symbols()
 symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
-symbol.save_ppm_binary("D:\\qrcode.ppm")
+symbol.save_ppm("D:\\qrcode.ppm")
+symbol.save_ppm("D:\\qrcode.ppm", module_size=10)
+symbol.save_ppm("D:\\qrcode.ppm", fore_rgb="#0000FF", back_rgb="#FFFFFF")
 ```
 
 ### 例８．XBMファイルへ保存する
@@ -95,9 +100,21 @@ symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
 symbol.save_xbm("D:\\qrcode.xbm")
+symbol.save_xbm("D:\\qrcode.xbm", module_size=10)
 ```
 
-### 例９．tkinter.BitmapImageオブジェクトを取得する
+### 例１０．RGB RAW画像を取得する
+```python
+symbols = Symbols()
+symbols.append_string("012345abcdefg")
+symbol = symbols.item(0)
+
+(data, width, height) = symbol.get_rgb_bytes()
+(rgb_bytes, width, height) = symbol.get_rgb_bytes(module_size=10)
+(rgb_bytes, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#FFFFFF")
+```
+
+### 例１１．tkinter.BitmapImageオブジェクトを取得する
 ```python
 import tkinter as tk
 from Symbols import Symbols
@@ -110,10 +127,31 @@ symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
 xbm = symbol.get_xbm()
+#xbm = symbol.get_xbm(module_size=10)
+
 image = tk.BitmapImage(data=xbm, foreground="#000000", background="#FFFFFF")
 ```
 
-### 例１０．wxPython.Bitmapオブジェクトを取得する
+### 例１２．tkinter.PhotoImageオブジェクトを取得する
+```python
+import tkinter as tk
+from Symbols import Symbols
+from Symbol import Symbol
+
+tkRoot = tk.Tk()
+
+symbols = Symbols()
+symbols.append_string("012345abcdefg")
+symbol = symbols.item(0)
+
+ppm = symbol.get_ppm()
+#ppm = symbol.get_ppm(module_size=10)
+#ppm = symbol.get_ppm(fore_rgb="#0000FF", back_rgb="#FFFFFF")
+
+image = tk.PhotoImage(data=ppm)
+```
+
+### 例１３．wxPython.Bitmapオブジェクトを取得する
 ```python
 import wx
 from Symbols import Symbols
@@ -123,11 +161,11 @@ symbols = Symbols()
 symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
-(rgb_bytes, width, height) = symbol.get_rgb_bytes()
+(rgb_bytes, width, height) = symbol.get_rgb_bytes() 
 bitmap = wx.Bitmap.FromBuffer(width, height, rgb_bytes)
 ```
 
-### 例１１．Pillow (PIL) を使用して、その他の画像形式で保存する
+### 例１４．Pillow (PIL) を使用して、その他の画像形式で保存する
 ```python
 import PIL.Image
 from Symbols import Symbols
@@ -139,7 +177,8 @@ symbol = symbols.item(0)
 
 (data, width, height) = symbol.get_rgb_bytes()
 #(data, width, height) = symbol.get_rgb_bytes(module_size=10)
-#(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#00FFFF")
+#(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#FFFFFF")
+
 image = PIL.Image.frombytes("RGB", (width, height), data)
 
 # PNG

@@ -1,7 +1,6 @@
 from typing import List, Tuple
 
 from io import BytesIO
-#from tkinter import BitmapImage
 
 from AlignmentPattern import AlignmentPattern
 from EncodingMode import EncodingMode
@@ -492,8 +491,8 @@ class Symbol(object):
             0
         )
 
-        palette1 = RGBQUAD(fore_r, fore_g, fore_b)
-        palette2 = RGBQUAD(back_r, back_g, back_b)
+        palette1 = RGBQUAD(fore_b, fore_g, fore_r)
+        palette2 = RGBQUAD(back_b, back_g, back_r)
 
         with BytesIO() as buffer:
             buffer.write(bfh)
@@ -538,13 +537,13 @@ class Symbol(object):
                 for value in columns:
                     for j in range(module_size):
                         if value > 0:
-                            data_block[idx + 0] = fore_r
+                            data_block[idx + 0] = fore_b
                             data_block[idx + 1] = fore_g
-                            data_block[idx + 2] = fore_b
+                            data_block[idx + 2] = fore_r
                         else:
-                            data_block[idx + 0] = back_r
+                            data_block[idx + 0] = back_b
                             data_block[idx + 1] = back_g
-                            data_block[idx + 2] = back_b
+                            data_block[idx + 2] = back_r
 
                         idx += 3
 
@@ -580,10 +579,10 @@ class Symbol(object):
             
         return ret
 
-    def get_ppm_binary(self, 
-                       module_size: int = 5,
-                       fore_rgb: str = ColorCode.BLACK,
-                       back_rgb: str = ColorCode.WHITE) -> bytes:
+    def get_ppm(self, 
+                module_size: int = 5,
+                fore_rgb: str = ColorCode.BLACK,
+                back_rgb: str = ColorCode.WHITE) -> bytes:
         """
             シンボル画像をPPMバイナリ形式で返します。
         """
@@ -594,7 +593,7 @@ class Symbol(object):
         (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
-        
+
         width = module_size * len(module_matrix)
         height = width
         ppm = bytearray()
@@ -737,11 +736,11 @@ class Symbol(object):
         with open(file_name, "wb") as fout:
             fout.write(dib)
 
-    def save_ppm_binary(self,
-                        file_name: str,
-                        module_size: int = 5,
-                        fore_rgb: str = ColorCode.BLACK,
-                        back_rgb: str = ColorCode.WHITE):
+    def save_ppm(self,
+                 file_name: str,
+                 module_size: int = 5,
+                 fore_rgb: str = ColorCode.BLACK,
+                 back_rgb: str = ColorCode.WHITE):
         """
             シンボル画像をPPM形式でファイルに保存します。
         """
@@ -751,7 +750,7 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        ppm = self.get_ppm_binary(module_size, fore_rgb, back_rgb)
+        ppm = self.get_ppm(module_size, fore_rgb, back_rgb)
 
         with open(file_name, "wb") as fout:
             fout.write(ppm)
