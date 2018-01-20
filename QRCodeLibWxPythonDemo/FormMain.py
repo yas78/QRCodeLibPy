@@ -193,8 +193,8 @@ class FormMain(wx.Frame):
         self._pnl_top.Freeze()
         
         for symbol in symbols:
-            (rgb_bytes, width, height) = symbol.get_rgb_bytes(self._module_size)
-            bitmap = wx.Bitmap.FromBuffer(width, height, rgb_bytes)
+            (data, width, height) = symbol.get_rgb_bytes(self._module_size)
+            bitmap = wx.Bitmap.FromBuffer(width, height, data)
             self._images.append(bitmap)
 
         for image in self._images:

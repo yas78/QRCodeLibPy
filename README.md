@@ -162,8 +162,8 @@ symbols = Symbols()
 symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
-(rgb_bytes, width, height) = symbol.get_rgb_bytes() 
-bitmap = wx.Bitmap.FromBuffer(width, height, rgb_bytes)
+(data, width, height) = symbol.get_rgb_bytes() 
+bitmap = wx.Bitmap.FromBuffer(width, height, data)
 ```
 
 ### 例１４．Pillow (PIL) を使用して、その他の画像形式で保存する
