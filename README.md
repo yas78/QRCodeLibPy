@@ -140,7 +140,7 @@ symbol = symbols.item(0)
 (data, width, height) = symbol.get_rgb_bytes()
 #(data, width, height) = symbol.get_rgb_bytes(module_size=10)
 #(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#00FFFF")
-image = PIL.Image.frombytes("RGB", (width, height), bytes(data))
+image = PIL.Image.frombytes("RGB", (width, height), data)
 
 # PNG
 image.save("D:\\qrcode.png", "PNG")
