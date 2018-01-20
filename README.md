@@ -111,8 +111,8 @@ symbols.append_string("012345abcdefg")
 symbol = symbols.item(0)
 
 (data, width, height) = symbol.get_rgb_bytes()
-(rgb_bytes, width, height) = symbol.get_rgb_bytes(module_size=10)
-(rgb_bytes, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#FFFFFF")
+(data, width, height) = symbol.get_rgb_bytes(module_size=10)
+(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#FFFFFF")
 ```
 
 ### 例１１．tkinter.BitmapImageオブジェクトを取得する
