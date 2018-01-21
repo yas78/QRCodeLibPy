@@ -162,8 +162,8 @@ class MaskingPenaltyScore(object):
                 if value > 0:
                     dark_count += 1
 
-        num_modules = len(module_matrix) ** 2
-        temp = math.ceil(dark_count // num_modules * 100)
+        num_modules = float(len(module_matrix) ** 2)
+        temp = math.ceil(dark_count / num_modules * 100)
         temp = abs(temp - 50)
         temp = (temp + 4) // 5
         return temp * 10

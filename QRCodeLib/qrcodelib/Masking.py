@@ -37,7 +37,7 @@ class Masking(object):
         min_penalty = sys.maxsize
         ret = 0
 
-        for mask_pattern_reference in range(7):
+        for mask_pattern_reference in range(8):
             temp = copy.deepcopy(module_matrix)
             cls._mask(temp, mask_pattern_reference) 
             
