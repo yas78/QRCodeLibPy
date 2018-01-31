@@ -165,7 +165,7 @@ symbol = symbols.item(0)
 bitmap = wx.Bitmap.FromBuffer(width, height, data)
 ```
 
-### 例１４．Pillow (PIL) を使用して、その他の画像形式で保存する
+### 例１４．Pillow (PIL) を使用して、様々な画像形式で保存する
 ```python
 import PIL.Image
 from Symbols import Symbols
