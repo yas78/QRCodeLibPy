@@ -26,7 +26,6 @@ class Symbols(object):
             raise ValueError("max_version")
         
         self._items = []  # type: List[Symbol]
-        self._i = 0
 
         self._min_version = 1
         self._max_version = max_version
