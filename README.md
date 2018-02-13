@@ -61,7 +61,7 @@ symbols = Symbols(allow_structured_append=True)
 symbols = Symbols(max_version=1, allow_structured_append=True)
 symbols.append_string("abcdefghijklmnopqrstuvwxyz")
 
-for i in range(0, symbols.count):
+for i in range(symbols.count):
     symbols.item(i).save_24bpp_dib("D:\\qrcode_" + str(i) + ".bmp")
 ```
 
