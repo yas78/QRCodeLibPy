@@ -66,7 +66,7 @@ for i in range(symbols.count):
 ```
 
 ### 例６．BMPファイルへ保存する
-SymbolクラスのSave1bppDIB、またはSave24bppDIBメソッドを使用します。
+Symbolクラスのsave_1bpp_dib、またはsave_24bpp_dibメソッドを使用します。
 
 ```python
 symbols = Symbols()
