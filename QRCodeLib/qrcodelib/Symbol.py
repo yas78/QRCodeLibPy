@@ -105,7 +105,6 @@ class Symbol(object):
             符号化モードを設定します。
             引数cはシンボルに追加されません。
             シンボル容量が不足している場合は false を返します。
-
         """
         encoder = QRCodeEncoderFactory.create_encoder(
             enc_mode, self._parent.byte_mode_encoding)
@@ -287,6 +286,9 @@ class Symbol(object):
         return bs.get_bytes()
 
     def _write_structured_append_header(self, bs: BitSequence):
+        """
+            構造的連接のヘッダーを追記します。
+        """
         bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE, 
                   ModeIndicator.LENGTH)
         bs.append(self._position, 
@@ -297,6 +299,9 @@ class Symbol(object):
                   StructuredAppend.PARITY_DATA_LENGTH)
 
     def _write_segments(self, bs: BitSequence):
+        """
+            セグメントのデータを追記します。
+        """
         for segment in self._segments:
             bs.append(segment.mode_indicator, ModeIndicator.LENGTH)
             bs.append(segment.char_count, 
@@ -318,6 +323,9 @@ class Symbol(object):
             )
         
     def _write_terminator(self, bs: BitSequence):
+        """
+            終端パターンを追記します。
+        """
         terminator_length = self._data_bit_capacity - self._data_bit_counter
 
         if terminator_length > ModeIndicator.LENGTH:
@@ -326,10 +334,16 @@ class Symbol(object):
         bs.append(ModeIndicator.TERMINATOR_VALUE, terminator_length)
 
     def _write_padding_bits(self, bs: BitSequence):
+        """
+            埋め草ビットを追記します。
+        """
         if bs.length % 8 > 0:
             bs.append(0x0, 8 - (bs.length % 8))
 
     def _write_pad_codewords(self, bs: BitSequence):
+        """
+            埋め草コード語を追記します。
+        """
         num_data_codewords = DataCodeword.get_total_number(
             self._parent.error_correction_level, self._curr_version)
 
