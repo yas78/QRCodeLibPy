@@ -14,15 +14,14 @@ class QuietZone(object):
         """
             クワイエットゾーンを追加します。
         """
-        ret = [None] * (len(module_matrix) + cls._QUIET_ZONE_WIDTH * 2)  # type: List[List[int]]
-        
-        for i in range(len(ret)):
-            ret[i] = [0] * len(ret)
-        
-        for i in range(len(module_matrix)):   
-            ArrayUtil.copy(module_matrix[i], 
+        num_modules_one_side = len(module_matrix) + cls._QUIET_ZONE_WIDTH * 2
+        ret = [[0] * num_modules_one_side for row in range(num_modules_one_side)]
+
+        for i, row in enumerate(module_matrix):   
+            ArrayUtil.copy(row, 
                            0, 
                            ret[i + cls._QUIET_ZONE_WIDTH], 
                            cls._QUIET_ZONE_WIDTH, 
-                           len(module_matrix[i]))
+                           len(row))
+
         return ret

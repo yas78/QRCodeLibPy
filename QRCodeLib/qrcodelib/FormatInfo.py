@@ -65,10 +65,11 @@ class FormatInfo(object):
 
     @classmethod
     def place_temp_blank(cls, module_matrix: List[List[int]]):
-        num_modules_one_side = len(module_matrix)
         """
             形式情報の予約領域を配置します。
         """
+        num_modules_one_side = len(module_matrix)
+
         for i in range(9):
             # タイミグパターンの領域ではない場合
             if i != 6:
