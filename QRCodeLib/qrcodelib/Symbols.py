@@ -160,18 +160,18 @@ class Symbols(object):
         """
         version = self._curr_symbol.version
 
-        if KanjiEncoder.is_in_subset(s[start_index]):
+        if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
         
-        if ByteEncoder.is_in_exclusive_subset(s[start_index]):
+        if ByteEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.EIGHT_BIT_BYTE
         
-        if AlphanumericEncoder.is_in_exclusive_subset(s[start_index]):
+        if AlphanumericEncoder.in_exclusive_subset(s[start_index]):
             cnt = 0
             flg = False
 
             for i in range(start_index, len(s) - 1):
-                if AlphanumericEncoder.is_in_exclusive_subset(s[i]):
+                if AlphanumericEncoder.in_exclusive_subset(s[i]):
                     cnt += 1
                 else:
                     break
@@ -187,7 +187,7 @@ class Symbols(object):
 
             if flg:
                 if (start_index + cnt) < len(s):
-                    if ByteEncoder.is_in_exclusive_subset(
+                    if ByteEncoder.in_exclusive_subset(
                             s[start_index + cnt]):
                         return EncodingMode.EIGHT_BIT_BYTE
                     else:
@@ -197,13 +197,13 @@ class Symbols(object):
             else:
                 return EncodingMode.ALPHA_NUMERIC
 
-        if NumericEncoder.is_in_subset(s[start_index]):
+        if NumericEncoder.in_subset(s[start_index]):
             cnt = 0
             flg1 = False
             flg2 = False
 
             for i in range(start_index, len(s) - 1):
-                if NumericEncoder.is_in_subset(s[i]):
+                if NumericEncoder.in_subset(s[i]):
                     cnt += 1
                 else:
                     break
@@ -222,14 +222,14 @@ class Symbols(object):
 
             if flg1:
                 if (start_index + cnt) < len(s):
-                    flg1 = ByteEncoder.is_in_exclusive_subset(
+                    flg1 = ByteEncoder.in_exclusive_subset(
                         s[start_index + cnt])
                 else:
                     flg1 = False
             
             if flg2:
                 if (start_index + cnt) < len(s):
-                    flg2 = AlphanumericEncoder.is_in_exclusive_subset(
+                    flg2 = AlphanumericEncoder.in_exclusive_subset(
                         s[start_index + cnt])
                 else:
                     flg2 = False
@@ -248,13 +248,13 @@ class Symbols(object):
         """
             数字モードから切り替えるモードを決定します。
         """
-        if KanjiEncoder.is_in_subset(s[start_index]):
+        if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.is_in_exclusive_subset(s[start_index]):
+        if ByteEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.EIGHT_BIT_BYTE
 
-        if AlphanumericEncoder.is_in_exclusive_subset(s[start_index]):
+        if AlphanumericEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.ALPHA_NUMERIC
         
         return EncodingMode.NUMERIC
@@ -266,20 +266,20 @@ class Symbols(object):
         """
         version = self._curr_symbol.version
 
-        if KanjiEncoder.is_in_subset(s[start_index]):
+        if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
         
-        if ByteEncoder.is_in_exclusive_subset(s[start_index]):
+        if ByteEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.EIGHT_BIT_BYTE
 
         cnt = 0
         flg = False
 
         for i in range(start_index, len(s) - 1):
-            if not AlphanumericEncoder.is_in_subset(s[i]):
+            if not AlphanumericEncoder.in_subset(s[i]):
                 break
             
-            if NumericEncoder.is_in_subset(s[i]):
+            if NumericEncoder.in_subset(s[i]):
                 cnt += 1
             else:
                 flg = True
@@ -309,16 +309,16 @@ class Symbols(object):
         cnt = 0
         flg = False
             
-        if KanjiEncoder.is_in_subset(s[start_index]):
+        if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
         
         for i in range(start_index, len(s) - 1):
-            if not ByteEncoder.is_in_subset(s[i]):
+            if not ByteEncoder.in_subset(s[i]):
                 break
             
-            if NumericEncoder.is_in_subset(s[i]):
+            if NumericEncoder.in_subset(s[i]):
                 cnt += 1
-            elif ByteEncoder.is_in_exclusive_subset(s[i]):
+            elif ByteEncoder.in_exclusive_subset(s[i]):
                 flg = True
                 break
             else:
@@ -341,12 +341,12 @@ class Symbols(object):
         flg = False
 
         for i in range(start_index, len(s) - 1):
-            if not ByteEncoder.is_in_subset(s[i]):
+            if not ByteEncoder.in_subset(s[i]):
                 break
             
-            if AlphanumericEncoder.is_in_exclusive_subset(s[i]):
+            if AlphanumericEncoder.in_exclusive_subset(s[i]):
                 cnt += 1
-            elif ByteEncoder.is_in_exclusive_subset(s[i]):
+            elif ByteEncoder.in_exclusive_subset(s[i]):
                 flg = True
                 break
             else:

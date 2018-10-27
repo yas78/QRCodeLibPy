@@ -7,4 +7,4 @@ class Module(object):
         """
             １辺のモジュール数を返します。
         """
-        return 17 + version * 4
+        return 17 + 4 * version

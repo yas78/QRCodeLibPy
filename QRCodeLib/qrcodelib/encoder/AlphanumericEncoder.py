@@ -115,7 +115,7 @@ class AlphanumericEncoder(QRCodeEncoder):
         raise ValueError("c")
     
     @classmethod
-    def is_in_subset(cls, c: str) -> bool:
+    def in_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの文字集合に含まれる場合は true を返します。
         """
@@ -134,11 +134,11 @@ class AlphanumericEncoder(QRCodeEncoder):
         )
 
     @classmethod
-    def is_in_exclusive_subset(cls, c: str) -> bool:
+    def in_exclusive_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
         """
-        if NumericEncoder.is_in_subset(c):
+        if NumericEncoder.in_subset(c):
             return False
         
-        return AlphanumericEncoder.is_in_subset(c)
+        return AlphanumericEncoder.in_subset(c)

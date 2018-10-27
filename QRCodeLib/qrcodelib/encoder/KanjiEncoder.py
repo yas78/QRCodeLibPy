@@ -70,7 +70,7 @@ class KanjiEncoder(QRCodeEncoder):
         return bs.get_bytes()
 
     @classmethod
-    def is_in_subset(cls, c: str) -> bool:
+    def in_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの文字集合に含まれる場合は true を返します。
         """
@@ -90,8 +90,8 @@ class KanjiEncoder(QRCodeEncoder):
             return False
 
     @classmethod
-    def is_in_exclusive_subset(cls, c: str) -> bool:
+    def in_exclusive_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
         """
-        return cls.is_in_subset(c)
+        return cls.in_subset(c)

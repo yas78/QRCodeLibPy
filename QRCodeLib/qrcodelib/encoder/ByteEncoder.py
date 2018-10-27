@@ -65,21 +65,21 @@ class ByteEncoder(QRCodeEncoder):
         return bytes(ret)
 
     @classmethod
-    def is_in_subset(cls, c: str) -> bool:
+    def in_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの文字集合に含まれる場合は true を返します。
         """
         return bool(c)
 
     @classmethod
-    def is_in_exclusive_subset(cls, c: str) -> bool:
+    def in_exclusive_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
         """
-        if AlphanumericEncoder.is_in_subset(c):
+        if AlphanumericEncoder.in_subset(c):
             return False
         
-        if KanjiEncoder.is_in_subset(c):
+        if KanjiEncoder.in_subset(c):
             return False
         
-        return ByteEncoder.is_in_subset(c)
+        return ByteEncoder.in_subset(c)
