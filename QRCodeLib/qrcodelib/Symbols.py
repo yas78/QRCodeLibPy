@@ -111,48 +111,48 @@ class Symbols(object):
         self._items.append(self._curr_symbol)
         return self._curr_symbol
 
-    def append_string(self, s: str):
+    def append_string(self, data: str):
         """
             文字列を追加します。
         """
-        if not s:
-            raise ValueError("s")
+        if not data:
+            raise ValueError("data")
         
-        for i in range(len(s)):
+        for i, c in enumerate(data):
             old_mode = self._curr_symbol.current_encoding_mode
 
             if old_mode == EncodingMode.UNKNOWN:
-                new_mode = self._select_initial_mode(s, i)
+                new_mode = self._select_initial_mode(data, i)
             elif old_mode == EncodingMode.NUMERIC:
-                new_mode = self._select_mode_while_in_numeric(s, i)
+                new_mode = self._select_mode_while_in_numeric(data, i)
             elif old_mode == EncodingMode.ALPHA_NUMERIC:
-                new_mode = self._select_mode_while_in_alphanumeric(s, i)
+                new_mode = self._select_mode_while_in_alphanumeric(data, i)
             elif old_mode == EncodingMode.EIGHT_BIT_BYTE:
-                new_mode = self._select_mode_while_in_byte(s, i)
+                new_mode = self._select_mode_while_in_byte(data, i)
             elif old_mode == EncodingMode.KANJI:
-                new_mode = self._select_initial_mode(s, i)
+                new_mode = self._select_initial_mode(data, i)
             else:
                 raise RuntimeError()
 
             if new_mode != old_mode:
-                if not self._curr_symbol.try_set_encoding_mode(new_mode, s[i]):
+                if not self._curr_symbol.try_set_encoding_mode(new_mode, c):
                     if (not self._structured_append_allowed 
                             or len(self._items) == 16):
                         raise OverflowError("String too long")
                     
                     self._add()
-                    new_mode = self._select_initial_mode(s, i)
-                    self._curr_symbol.try_set_encoding_mode(new_mode, s[i])
+                    new_mode = self._select_initial_mode(data, i)
+                    self._curr_symbol.try_set_encoding_mode(new_mode, c)
             
-            if not self._curr_symbol.try_append(s[i]):
+            if not self._curr_symbol.try_append(c):
                 if (not self._structured_append_allowed 
                         or len(self._items) == 16):
                     raise OverflowError("String too long")
                 
                 self._add()
-                new_mode = self._select_initial_mode(s, i)
-                self._curr_symbol.try_set_encoding_mode(new_mode, s[i])
-                self._curr_symbol.try_append(s[i])
+                new_mode = self._select_initial_mode(data, i)
+                self._curr_symbol.try_set_encoding_mode(new_mode, c)
+                self._curr_symbol.try_append(c)
 
     def _select_initial_mode(self, s: str, start_index: int) -> int:
         """
