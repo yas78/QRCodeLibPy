@@ -2,8 +2,8 @@ from typing import List
 
 import math
 
-from ModuleRatio import ModuleRatio
-from QuietZone import QuietZone
+from .ModuleRatio import ModuleRatio
+from .QuietZone import QuietZone
 
 
 class MaskingPenaltyScore(object):

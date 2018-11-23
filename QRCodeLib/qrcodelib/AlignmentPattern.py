@@ -1,6 +1,6 @@
 from typing import List
 
-from misc.ArrayUtil import ArrayUtil
+from .misc.ArrayUtil import ArrayUtil
 
 
 class AlignmentPattern(object):

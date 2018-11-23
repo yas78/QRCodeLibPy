@@ -6,9 +6,9 @@
     <ProjectGuid>c9b50d89-74d7-4757-aedf-78d3964d5a81</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>
-    </StartupFile>
-    <SearchPath>qrcodelib\</SearchPath>
+    <StartupFile>TkInterDemo.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <InterpreterId>{9a7a9026-48c1-4688-9d5d-e5699d47d074}</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
@@ -16,7 +16,7 @@
     <OutputPath>.</OutputPath>
     <Name>QRCodeLib</Name>
     <RootNamespace>QRCodeLib</RootNamespace>
-    <IsWindowsApplication>False</IsWindowsApplication>
+    <IsWindowsApplication>True</IsWindowsApplication>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -167,6 +167,8 @@
     <Compile Include="qrcodelib\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="TkInterDemo.py" />
+    <Compile Include="WxPythonDemo.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

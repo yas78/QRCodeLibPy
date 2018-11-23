@@ -1,6 +1,6 @@
 from typing import List
 
-from ErrorCorrectionLevel import ErrorCorrectionLevel
+from .ErrorCorrectionLevel import ErrorCorrectionLevel
 
 
 class FormatInfo(object):

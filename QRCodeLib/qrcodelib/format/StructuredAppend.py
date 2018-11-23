@@ -1,5 +1,5 @@
-from format.ModeIndicator import ModeIndicator
-from format.SymbolSequenceIndicator import SymbolSequenceIndicator
+from .ModeIndicator import ModeIndicator
+from .SymbolSequenceIndicator import SymbolSequenceIndicator
 
 
 class StructuredAppend(object):

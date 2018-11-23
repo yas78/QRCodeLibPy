@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "QRCodeLibTkinterDemo", "QRCodeLibTkinterDemo\QRCodeLibTkinterDemo.pyproj", "{ACCC25BF-8484-42EB-9ECB-782E457751CA}"
-EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "QRCodeLibWxPythonDemo", "QRCodeLibWxPythonDemo\QRCodeLibWxPythonDemo.pyproj", "{65AFA1F5-50BA-4141-BF29-A2DDDED01087}"
-EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "QRCodeLib", "QRCodeLib\QRCodeLib.pyproj", "{C9B50D89-74D7-4757-AEDF-78D3964D5A81}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38C2D2F4-E088-4E62-A74E-AC16957FCAFF}"
@@ -20,10 +16,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{ACCC25BF-8484-42EB-9ECB-782E457751CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ACCC25BF-8484-42EB-9ECB-782E457751CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65AFA1F5-50BA-4141-BF29-A2DDDED01087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65AFA1F5-50BA-4141-BF29-A2DDDED01087}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9B50D89-74D7-4757-AEDF-78D3964D5A81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C9B50D89-74D7-4757-AEDF-78D3964D5A81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection

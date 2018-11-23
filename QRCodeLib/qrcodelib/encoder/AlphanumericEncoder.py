@@ -1,8 +1,8 @@
-from EncodingMode import EncodingMode
-from encoder.QRCodeEncoder import QRCodeEncoder
-from encoder.NumericEncoder import NumericEncoder
-from format.ModeIndicator import ModeIndicator
-from misc.BitSequence import BitSequence
+from ..EncodingMode import EncodingMode
+from .QRCodeEncoder import QRCodeEncoder
+from .NumericEncoder import NumericEncoder
+from ..format.ModeIndicator import ModeIndicator
+from ..misc.BitSequence import BitSequence
 
 
 class AlphanumericEncoder(QRCodeEncoder):

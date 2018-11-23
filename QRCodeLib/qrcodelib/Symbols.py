@@ -1,13 +1,13 @@
 from typing import List
 
-from Constants import Constants
-from EncodingMode import EncodingMode
-from ErrorCorrectionLevel import ErrorCorrectionLevel
-from Symbol import Symbol
-from encoder.AlphanumericEncoder import AlphanumericEncoder
-from encoder.ByteEncoder import ByteEncoder
-from encoder.KanjiEncoder import KanjiEncoder
-from encoder.NumericEncoder import NumericEncoder
+from .Constants import Constants
+from .EncodingMode import EncodingMode
+from .ErrorCorrectionLevel import ErrorCorrectionLevel
+from .Symbol import Symbol
+from .encoder.AlphanumericEncoder import AlphanumericEncoder
+from .encoder.ByteEncoder import ByteEncoder
+from .encoder.KanjiEncoder import KanjiEncoder
+from .encoder.NumericEncoder import NumericEncoder
 
 
 class Symbols(object):
@@ -111,7 +111,7 @@ class Symbols(object):
         self._items.append(self._curr_symbol)
         return self._curr_symbol
 
-    def append_string(self, data: str):
+    def append_text(self, data: str):
         """
             文字列を追加します。
         """

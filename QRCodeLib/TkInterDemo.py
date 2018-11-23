@@ -1,5 +1,4 @@
-from io import StringIO
-
+# TkInter Demo
 import os.path
 
 import tkinter as tk
@@ -8,21 +7,18 @@ import tkinter.messagebox as tkmsg
 import tkinter.filedialog as tkfdlg
 from tkinter.scrolledtext import ScrolledText
 
-from Symbols import Symbols
-from Symbol import Symbol
-from Constants import Constants
-from ErrorCorrectionLevel import ErrorCorrectionLevel
+import qrcodelib as qr
 
 
-class FormMain(tk.Frame):
-    
+class FormTk(tk.Frame):
+
     def __init__(self, master=None, cnf={}, **kw) -> None:
         super().__init__(master, cnf, **kw)
         self._master = master
         self._init_widgets()
-        
+
         self._images = []
-        
+
     def _init_widgets(self):
         # event handler
         self._update_image_handler = lambda event: self.update_image(event)
@@ -46,7 +42,7 @@ class FormMain(tk.Frame):
         self._master.propagate(True)
         self._master.update()
         self._master.minsize(self._master.winfo_width(), self._master.winfo_height())
-        
+
     def _create_top_frame(self) -> tk.Frame:
         frame = tk.Frame(self, bg="gray80", height=320)
         frame.propagate(False)
@@ -119,21 +115,21 @@ class FormMain(tk.Frame):
 
     def create_symbols(self):
         data = self._txt_data.get("1.0", tk.END + "-1c")
-        if not data: 
+        if not data:
             return None
 
-        self._ec_level = ErrorCorrectionLevel.to_int(self._cmb_ec_level.get())
+        self._ec_level = qr.ErrorCorrectionLevel.to_int(self._cmb_ec_level.get())
         self._max_ver = int(self._cmb_max_ver.get())
         self._structured_append = bool(self._var_chk_structured_append.get())
         self._enc_mode = self._cmb_byte_enc.get()
         self._module_size = int(self._spn_module_size.get())
 
-        symbols = Symbols(self._ec_level, 
-                          self._max_ver, 
-                          self._structured_append, 
+        symbols = qr.Symbols(self._ec_level,
+                          self._max_ver,
+                          self._structured_append,
                           self._enc_mode)
         try:
-            symbols.append_string(data)
+            symbols.append_text(data)
         except Exception as e:
             tkmsg.showwarning(message=e)
             return None
@@ -146,7 +142,8 @@ class FormMain(tk.Frame):
                 widget.destroy()
 
         symbols = self.create_symbols()
-        if not symbols: return
+        if not symbols:
+            return
 
         self._images.clear()
 
@@ -158,18 +155,18 @@ class FormMain(tk.Frame):
         for image in self._images:
             qrcode = tk.Label(self._fra_top, image=image)
             qrcode.pack(expand=False, fill=tk.NONE, anchor=tk.NW, side=tk.LEFT)
-        
+
     def on_btn_save_clicked(self, event):
         symbols = self.create_symbols()
-        if not symbols: 
+        if not symbols:
             return
 
         filetypes = [
-            ("Monochrome Bitmap", "*.bmp"), 
+            ("Monochrome Bitmap", "*.bmp"),
             ("Portable Pixmap", "*.ppm"),
             ("X11 Bitmap", "*.xbm")
         ]
-        filename = tkfdlg.asksaveasfilename(filetypes=filetypes)
+        filename = tkfdlg.asksaveasfilename(defaultextension="bmp", filetypes=filetypes)
         (root, ext) = os.path.splitext(filename)
         ext = ext.lower()
 
@@ -191,3 +188,12 @@ class FormMain(tk.Frame):
 
             if ext == ".xbm":
                 symbol.save_xbm(path, self._module_size)
+
+
+def main():
+    app = tk.Tk()
+    form = FormTk(app)
+    app.mainloop()
+
+
+main()

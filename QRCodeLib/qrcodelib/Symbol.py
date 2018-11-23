@@ -2,33 +2,33 @@ from typing import List, Tuple
 
 from io import BytesIO
 
-from AlignmentPattern import AlignmentPattern
-from EncodingMode import EncodingMode
-from FinderPattern import FinderPattern
-from FormatInfo import FormatInfo
-from GaloisField256 import GaloisField256
-from GeneratorPolynomials import GeneratorPolynomials
-from Masking import Masking
-from QuietZone import QuietZone
-from RemainderBit import RemainderBit
-from Separator import Separator
-from TimingPattern import TimingPattern
-from VersionInfo import VersionInfo
-from encoder.QRCodeEncoderFactory import QRCodeEncoderFactory
-from format.CharCountIndicator import CharCountIndicator
-from format.Codeword import Codeword
-from format.DataCodeword import DataCodeword
-from format.ModeIndicator import ModeIndicator
-from format.Module import Module
-from format.RSBlock import RSBlock
-from format.StructuredAppend import StructuredAppend
-from format.SymbolSequenceIndicator import SymbolSequenceIndicator
-from image.BITMAPFILEHEADER import BITMAPFILEHEADER
-from image.BITMAPINFOHEADER import BITMAPINFOHEADER
-from image.RGBQUAD import RGBQUAD
-from misc.ArrayUtil import ArrayUtil
-from misc.BitSequence import BitSequence
-from misc.ColorCode import ColorCode
+from .AlignmentPattern import AlignmentPattern
+from .EncodingMode import EncodingMode
+from .FinderPattern import FinderPattern
+from .FormatInfo import FormatInfo
+from .GaloisField256 import GaloisField256
+from .GeneratorPolynomials import GeneratorPolynomials
+from .Masking import Masking
+from .QuietZone import QuietZone
+from .RemainderBit import RemainderBit
+from .Separator import Separator
+from .TimingPattern import TimingPattern
+from .VersionInfo import VersionInfo
+from .encoder.QRCodeEncoderFactory import QRCodeEncoderFactory
+from .format.CharCountIndicator import CharCountIndicator
+from .format.Codeword import Codeword
+from .format.DataCodeword import DataCodeword
+from .format.ModeIndicator import ModeIndicator
+from .format.Module import Module
+from .format.RSBlock import RSBlock
+from .format.StructuredAppend import StructuredAppend
+from .format.SymbolSequenceIndicator import SymbolSequenceIndicator
+from .image.BITMAPFILEHEADER import BITMAPFILEHEADER
+from .image.BITMAPINFOHEADER import BITMAPINFOHEADER
+from .image.RGBQUAD import RGBQUAD
+from .misc.ArrayUtil import ArrayUtil
+from .misc.BitSequence import BitSequence
+from .misc.ColorCode import ColorCode
 
 
 class Symbol(object):
