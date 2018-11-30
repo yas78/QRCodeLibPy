@@ -32,6 +32,7 @@ class Symbols(object):
         self._errorCorrectionLevel = ec_level
         self._structured_append_allowed = allow_structured_append
         self._byte_mode_encoding = byte_mode_encoding
+        self._shift_jis_encoding = "shift_jis"
 
         self._structured_append_parity = 0
 
@@ -371,7 +372,10 @@ class Symbols(object):
         """
             構造的連接のパリティを更新します。
         """
-        char_bytes = c.encode(self._byte_mode_encoding, "ignore")
+        if KanjiEncoder.in_subset(c):
+            char_bytes = c.encode(self._shift_jis_encoding, "ignore")
+        else:
+            char_bytes = c.encode(self._byte_mode_encoding, "ignore")
 
         for value in char_bytes:
             self._structured_append_parity ^= value
