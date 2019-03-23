@@ -108,7 +108,7 @@ class FormTk(tk.Frame):
         # btn_save
         self._btn_save = ttk.Button(frame, text="Save", width=19)
         self._btn_save.place(x=570, y=35)
-        self._btn_save.bind("<Button-1>", self._btn_save_handler)
+        self._btn_save.bind("<ButtonRelease-1>", self._btn_save_handler)
         self._btn_save.bind("<Key-Return>", self._btn_save_handler)
         self._btn_save.bind("<Key-space>", self._btn_save_handler)
         return frame
