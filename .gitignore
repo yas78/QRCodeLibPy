@@ -346,3 +346,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Visual Studio Code cache/options directory
+.vscode/
+
+/.idea
