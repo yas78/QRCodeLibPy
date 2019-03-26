@@ -135,37 +135,26 @@ symbol = symbols.item(0)
 
 ### 例１１．tkinter.BitmapImageオブジェクトを取得する
 ```python
-import tkinter as tk
 import qrcodelib as qr
-
-tkRoot = tk.Tk()
 
 symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
-xbm = symbol.get_xbm()
-#xbm = symbol.get_xbm(module_size=10)
-
-image = tk.BitmapImage(data=xbm, foreground="#000000", background="#FFFFFF")
+image = symbol.tk_bitmap_image(module_size=10)
+# image = symbol.tk_bitmap_image(fore_rgb="#0000FF", back_rgb="#FFFFFF")
 ```
 
 ### 例１２．tkinter.PhotoImageオブジェクトを取得する
 ```python
-import tkinter as tk
 import qrcodelib as qr
-
-tkRoot = tk.Tk()
 
 symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
-ppm = symbol.get_ppm()
-#ppm = symbol.get_ppm(module_size=10)
-#ppm = symbol.get_ppm(fore_rgb="#0000FF", back_rgb="#FFFFFF")
-
-image = tk.PhotoImage(data=ppm)
+image = symbol.tk_photo_image(module_size=10)
+# image = symbol.tk_photo_image(fore_rgb="#0000FF", back_rgb="#FFFFFF")
 ```
 
 ### 例１３．wxPython.Bitmapオブジェクトを取得する

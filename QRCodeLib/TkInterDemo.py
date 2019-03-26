@@ -19,6 +19,12 @@ class FormTk(tk.Frame):
 
         self._images = []
 
+        self._ec_level = int()
+        self._max_ver = int()
+        self._structured_append = bool()
+        self._enc_mode = str()
+        self._module_size = int()
+
     def _init_widgets(self):
         # event handler
         self._update_image_handler = lambda event: self.update_image(event)
@@ -124,10 +130,8 @@ class FormTk(tk.Frame):
         self._enc_mode = self._cmb_byte_enc.get()
         self._module_size = int(self._spn_module_size.get())
 
-        symbols = qr.Symbols(self._ec_level,
-                          self._max_ver,
-                          self._structured_append,
-                          self._enc_mode)
+        symbols = qr.Symbols(
+            self._ec_level, self._max_ver, self._structured_append, self._enc_mode)
         try:
             symbols.append_text(data)
         except Exception as e:
@@ -148,8 +152,7 @@ class FormTk(tk.Frame):
         self._images.clear()
 
         for symbol in symbols:
-            ppm = symbol.get_ppm(self._module_size)
-            image = tk.PhotoImage(data=ppm)
+            image = symbol.tk_photo_image(self._module_size)
             self._images.append(image)
 
         for image in self._images:

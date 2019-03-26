@@ -13,6 +13,12 @@ class FormMain(wx.Frame):
 
         self._images = []
 
+        self._ec_level = int()
+        self._max_ver = int()
+        self._structured_append = bool()
+        self._enc_mode = str()
+        self._module_size = int()
+
     def _init_widgets(self):
         # self
         self.Title = "QR Code"
@@ -162,13 +168,13 @@ class FormMain(wx.Frame):
 
         self._ec_level = qr.ErrorCorrectionLevel.to_int(self._cmb_ec_level.GetValue())
         self._max_ver = int(self._cmb_max_ver.GetValue())
-        self._structured_apend = self._chk_structured_append.GetValue()
+        self._structured_append = self._chk_structured_append.GetValue()
         self._enc_mode = self._cmb_byte_enc.GetValue()
         self._module_size = int(self._spn_module_size.GetValue())
 
         symbols = qr.Symbols(self._ec_level,
                              self._max_ver,
-                             self._structured_apend,
+                             self._structured_append,
                              self._enc_mode)
         try:
             symbols.append_text(self._txt_data.GetValue())

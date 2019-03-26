@@ -1,6 +1,7 @@
 from typing import List, Tuple
 
 from io import BytesIO
+import tkinter as tk
 
 from .AlignmentPattern import AlignmentPattern
 from .EncodingMode import EncodingMode
@@ -37,13 +38,13 @@ class Symbol(object):
     """
     def __init__(self, parent) -> None:
         self._parent = parent
-        
+
         self._position = parent.count
 
         self._curr_encoder = None
         self._curr_encoding_mode = EncodingMode.UNKNOWN
         self._curr_version = parent.min_version
-                
+
         self._data_bit_capacity = 8 * DataCodeword.get_total_number(
             parent.error_correction_level, parent.min_version)
 
@@ -60,7 +61,7 @@ class Symbol(object):
 
         if parent.structured_append_allowed:
             self._data_bit_capacity -= StructuredAppend.HEADER_LENGTH
-        
+
     @property
     def parent(self):
         """
@@ -89,7 +90,7 @@ class Symbol(object):
         """
         bit_length = self._curr_encoder.get_codeword_bit_length(c)
 
-        while self._data_bit_capacity < (self._data_bit_counter 
+        while self._data_bit_capacity < (self._data_bit_counter
                                          + bit_length):
             if self._curr_version >= self._parent.max_version:
                 return False
@@ -111,19 +112,20 @@ class Symbol(object):
         bit_length = encoder.get_codeword_bit_length(c)
 
         while self._data_bit_capacity < (
-                 self._data_bit_counter 
-                 + ModeIndicator.LENGTH 
-                 + CharCountIndicator.get_length(
-                        self._curr_version, enc_mode)
-                 + bit_length):
+                self._data_bit_counter
+                + ModeIndicator.LENGTH
+                + CharCountIndicator.get_length(
+                    self._curr_version, enc_mode)
+                + bit_length):
 
             if self._curr_version >= self._parent.max_version:
                 return False
+
             self._select_version()
-        
+
         self._data_bit_counter += (
-            ModeIndicator.LENGTH 
-            + CharCountIndicator.get_length(self._curr_version, enc_mode)
+                ModeIndicator.LENGTH
+                + CharCountIndicator.get_length(self._curr_version, enc_mode)
         )
 
         self._curr_encoder = encoder
@@ -139,9 +141,9 @@ class Symbol(object):
         for enc_mode in self._segment_counter.keys():
             num = self._segment_counter[enc_mode]
             self._data_bit_counter += (
-                num * CharCountIndicator.get_length(
+                    num * CharCountIndicator.get_length(
                         self._curr_version + 1, enc_mode)
-                - num * CharCountIndicator.get_length(
+                    - num * CharCountIndicator.get_length(
                         self._curr_version + 0, enc_mode)
             )
 
@@ -177,7 +179,7 @@ class Symbol(object):
             ArrayUtil.copy(data_bytes, index, data, 0, len(data))
             index += len(data)
             ret[i] = data
-                
+
         num_fol_block_data_codewords = RSBlock.get_number_data_codewords(
             self._parent.error_correction_level, self._curr_version, False)
 
@@ -186,7 +188,7 @@ class Symbol(object):
             ArrayUtil.copy(data_bytes, index, data, 0, len(data))
             index += len(data)
             ret[i] = data
-                
+
         return ret
 
     def _build_error_correction_block(self, data_block: List[bytearray]) -> List[bytearray]:
@@ -204,7 +206,7 @@ class Symbol(object):
 
         for i in range(len(ret)):
             ret[i] = bytearray(num_ec_codewords)
-        
+
         gp = GeneratorPolynomials.item(num_ec_codewords)
 
         for block_index in range(len(data_block)):
@@ -214,7 +216,7 @@ class Symbol(object):
             for block in data_block[block_index]:
                 data[ecc_index] = block
                 ecc_index -= 1
-            
+
             for i in range(len(data) - 1, num_ec_codewords - 1, -1):
                 if data[i] > 0:
                     exp = GaloisField256.to_exp(data[i])
@@ -223,13 +225,13 @@ class Symbol(object):
                     for value in reversed(gp):
                         data[ecc_index] ^= GaloisField256.to_int((value + exp) % 255)
                         ecc_index -= 1
-                    
+
             ecc_index = num_ec_codewords - 1
 
             for i in range(len(ret[block_index])):
                 ret[block_index][i] = data[ecc_index]
                 ecc_index -= 1
-            
+
         return ret
 
     def _get_encoding_region_bytes(self) -> bytearray:
@@ -242,7 +244,7 @@ class Symbol(object):
         num_codewords = Codeword.get_total_number(self._curr_version)
         num_data_codewords = DataCodeword.get_total_number(
             self._parent.error_correction_level, self._curr_version)
-                
+
         ret = bytearray(num_codewords)
         index = 0
 
@@ -256,7 +258,7 @@ class Symbol(object):
                 index += 1
 
             n += 1
-        
+
         n = 0
         while index < num_codewords:
             r = n % len(ec_block)
@@ -265,9 +267,9 @@ class Symbol(object):
             if c <= len(ec_block[r]) - 1:
                 ret[index] = ec_block[r][c]
                 index += 1
-            
+
             n += 1
-                
+
         return ret
 
     def _get_message_bytes(self) -> bytes:
@@ -278,7 +280,7 @@ class Symbol(object):
 
         if self._parent.count > 1:
             self._write_structured_append_header(bs)
-        
+
         self._write_segments(bs)
         self._write_terminator(bs)
         self._write_padding_bits(bs)
@@ -289,13 +291,13 @@ class Symbol(object):
         """
             構造的連接のヘッダーを追記します。
         """
-        bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE, 
+        bs.append(ModeIndicator.STRUCTURED_APPEND_VALUE,
                   ModeIndicator.LENGTH)
-        bs.append(self._position, 
+        bs.append(self._position,
                   SymbolSequenceIndicator.POSITION_LENGTH)
-        bs.append(self._parent.count - 1, 
+        bs.append(self._parent.count - 1,
                   SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH)
-        bs.append(self._parent.structured_append_parity, 
+        bs.append(self._parent.structured_append_parity,
                   StructuredAppend.PARITY_DATA_LENGTH)
 
     def _write_segments(self, bs: BitSequence):
@@ -304,7 +306,7 @@ class Symbol(object):
         """
         for segment in self._segments:
             bs.append(segment.mode_indicator, ModeIndicator.LENGTH)
-            bs.append(segment.char_count, 
+            bs.append(segment.char_count,
                       CharCountIndicator.get_length(
                           self._curr_version, segment.encoding_mode))
 
@@ -312,16 +314,16 @@ class Symbol(object):
 
             for i in range(len(data) - 1):
                 bs.append(data[i], 8)
-            
+
             codeword_bit_length = segment.bit_count % 8
 
             if codeword_bit_length == 0:
                 codeword_bit_length = 8
-            
+
             bs.append(data[-1] >> (
-                8 - codeword_bit_length), codeword_bit_length
-            )
-        
+                    8 - codeword_bit_length), codeword_bit_length
+                      )
+
     def _write_terminator(self, bs: BitSequence):
         """
             終端パターンを追記します。
@@ -330,7 +332,7 @@ class Symbol(object):
 
         if terminator_length > ModeIndicator.LENGTH:
             terminator_length = ModeIndicator.LENGTH
-        
+
         bs.append(ModeIndicator.TERMINATOR_VALUE, terminator_length)
 
     def _write_padding_bits(self, bs: BitSequence):
@@ -358,35 +360,35 @@ class Symbol(object):
         """
         num_modules_per_side = Module.get_num_modules_per_side(
             self._curr_version)
-        
+
         module_matrix = [None] * num_modules_per_side  # type: List[List[int]]
 
         for i in range(len(module_matrix)):
             module_matrix[i] = [0] * len(module_matrix)
-        
+
         FinderPattern.place(module_matrix)
         Separator.place(module_matrix)
         TimingPattern.place(module_matrix)
-        
+
         if self._curr_version >= 2:
             AlignmentPattern.place(module_matrix, self._curr_version)
-        
+
         FormatInfo.place_temp_blank(module_matrix)
-        
+
         if self._curr_version >= 7:
             VersionInfo.place_temp_blank(module_matrix)
 
         self._place_symbol_char(module_matrix)
         RemainderBit.place(module_matrix)
-        
+
         mask_pattern_reference = Masking.apply(
-            module_matrix, 
-            self._curr_version, 
+            module_matrix,
+            self._curr_version,
             self._parent.error_correction_level
         )
-        
-        FormatInfo.place(module_matrix, 
-                         self._parent.error_correction_level, 
+
+        FormatInfo.place(module_matrix,
+                         self._parent.error_correction_level,
                          mask_pattern_reference)
 
         if self._curr_version >= 7:
@@ -416,7 +418,7 @@ class Symbol(object):
                     columns[c] = 1 if (value & (1 << bit_pos)) > 0 else -1
 
                     bit_pos -= 1
-                
+
                 if to_left:
                     c -= 1
                 else:
@@ -440,9 +442,9 @@ class Symbol(object):
                         r += row_direction
                         c += 1
 
-                to_left = not to_left                
+                to_left = not to_left
 
-    def get_1bpp_dib(self, 
+    def get_1bpp_dib(self,
                      module_size: int = 5,
                      fore_rgb: str = ColorCode.BLACK,
                      back_rgb: str = ColorCode.WHITE) -> bytes:
@@ -451,7 +453,7 @@ class Symbol(object):
         """
         if module_size < 1:
             raise ValueError("module_size")
-        
+
         (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
         (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
 
@@ -466,7 +468,7 @@ class Symbol(object):
         if width % 8 > 0:
             pack_8bit = 8 - (width % 8)
 
-        pack_32bit = 0 
+        pack_32bit = 0
         if h_byte_len % 4 > 0:
             pack_32bit = 8 * (4 - (h_byte_len % 4))
 
@@ -477,7 +479,7 @@ class Symbol(object):
                 for value in columns:
                     for j in range(module_size):
                         bs.append(0 if value > 0 else 1, 1)
-                                    
+
                 bs.append(0, pack_8bit)
                 bs.append(0, pack_32bit)
 
@@ -490,7 +492,7 @@ class Symbol(object):
             0,
             62
         )
-        
+
         bih = BITMAPINFOHEADER(
             40,
             width,
@@ -515,10 +517,10 @@ class Symbol(object):
             buffer.write(palette2)
             buffer.write(data_block)
             ret = buffer.getvalue()
-        
+
         return ret
 
-    def get_24bpp_dib(self, 
+    def get_24bpp_dib(self,
                       module_size: int = 5,
                       fore_rgb: str = ColorCode.BLACK,
                       back_rgb: str = ColorCode.WHITE) -> bytes:
@@ -527,25 +529,25 @@ class Symbol(object):
         """
         if module_size < 1:
             raise ValueError("module_size")
-        
+
         (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
         (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
-        
+
         width = module_size * len(module_matrix)
         height = width
 
         h_byte_len = width * 3
 
-        pack_4byte = 0 
+        pack_4byte = 0
         if h_byte_len % 4 > 0:
             pack_4byte = 4 - (h_byte_len % 4)
 
         data_block = bytearray((h_byte_len + pack_4byte) * height)
 
         idx = 0
-        
+
         for columns in reversed(module_matrix):
             for i in range(module_size):
                 for value in columns:
@@ -562,7 +564,7 @@ class Symbol(object):
                         idx += 3
 
                 idx += pack_4byte
-                       
+
         bfh = BITMAPFILEHEADER(
             0x4D42,
             54 + len(data_block),
@@ -584,16 +586,16 @@ class Symbol(object):
             0,
             0
         )
-            
+
         with BytesIO() as buffer:
             buffer.write(bfh)
             buffer.write(bih)
             buffer.write(data_block)
             ret = buffer.getvalue()
-            
+
         return ret
 
-    def get_ppm(self, 
+    def get_ppm(self,
                 module_size: int = 5,
                 fore_rgb: str = ColorCode.BLACK,
                 back_rgb: str = ColorCode.WHITE) -> bytes:
@@ -611,7 +613,7 @@ class Symbol(object):
         width = module_size * len(module_matrix)
         height = width
         ppm = bytearray()
-        
+
         header = "P6\n" + str(width) + " " + str(height) + "\n255\n"
 
         for c in header:
@@ -637,7 +639,7 @@ class Symbol(object):
         """
         if module_size < 1:
             raise ValueError("module_size")
-            
+
         module_matrix = QuietZone.place(self._get_module_matrix())
 
         width = module_size * len(module_matrix)
@@ -656,16 +658,16 @@ class Symbol(object):
                         bs.append(1 if value > 0 else 0, 1)
 
                 bs.append(0, pack_8bit)
-                
+
         data_block = bs.get_bytes()
 
         reversed_bits_array = bytearray()
-        
+
         for data in data_block:
             reversed_bits_array.append(0)
             for i in range(8):
                 reversed_bits_array[-1] |= (1 if (data & 1 << i) > 0 else 0) << 7 - i
-        
+
         bits_chars = []
 
         for bits in reversed_bits_array:
@@ -678,7 +680,7 @@ class Symbol(object):
 
         return xbm
 
-    def get_rgb_bytes(self, 
+    def get_rgb_bytes(self,
                       module_size: int = 5,
                       fore_rgb: str = ColorCode.BLACK,
                       back_rgb: str = ColorCode.WHITE) -> Tuple[bytes, int, int]:
@@ -687,16 +689,16 @@ class Symbol(object):
         """
         if module_size < 1:
             raise ValueError("module_size")
-        
+
         (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
         (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
-        
+
         width = module_size * len(module_matrix)
         height = width
         rgb_bytes = bytearray()
-        
+
         for columns in module_matrix:
             for i in range(module_size):
                 for value in columns:
@@ -712,7 +714,29 @@ class Symbol(object):
 
         return bytes(rgb_bytes), width, height
 
-    def save_1bpp_dib(self, 
+    def tk_bitmap_image(self,
+                        module_size: int = 5,
+                        fore_rgb: str = ColorCode.BLACK,
+                        back_rgb: str = ColorCode.WHITE) -> tk.BitmapImage:
+        """
+            tkinter BitmapImageオブジェクトを取得します。
+        """
+        xbm = self.get_xbm(module_size)
+
+        return tk.BitmapImage(data=xbm, foreground=fore_rgb, background=back_rgb)
+
+    def tk_photo_image(self,
+                       module_size: int = 5,
+                       fore_rgb: str = ColorCode.BLACK,
+                       back_rgb: str = ColorCode.WHITE) -> tk.PhotoImage:
+        """
+            tkinter PhotoImageオブジェクトを取得します。
+        """
+        ppm = self.get_ppm(module_size=module_size, fore_rgb=fore_rgb, back_rgb=back_rgb)
+
+        return tk.PhotoImage(data=ppm)
+
+    def save_1bpp_dib(self,
                       file_name: str,
                       module_size: int = 5,
                       fore_rgb: str = ColorCode.BLACK,
@@ -722,16 +746,16 @@ class Symbol(object):
         """
         if not file_name:
             raise ValueError("file_name")
-            
+
         if module_size < 1:
             raise ValueError("module_size")
 
         dib = self.get_1bpp_dib(module_size, fore_rgb, back_rgb)
-            
+
         with open(file_name, "wb") as fout:
             fout.write(dib)
-            
-    def save_24bpp_dib(self, 
+
+    def save_24bpp_dib(self,
                        file_name: str,
                        module_size: int = 5,
                        fore_rgb: str = ColorCode.BLACK,
@@ -746,7 +770,7 @@ class Symbol(object):
             raise ValueError("module_size")
 
         dib = self.get_24bpp_dib(module_size, fore_rgb, back_rgb)
-        
+
         with open(file_name, "wb") as fout:
             fout.write(dib)
 
