@@ -6,11 +6,11 @@
     <ProjectGuid>c9b50d89-74d7-4757-aedf-78d3964d5a81</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>TkInterDemo.py</StartupFile>
+    <StartupFile>WxPythonDemo.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
-    <InterpreterId>Global|PythonCore|3.5</InterpreterId>
+    <InterpreterId>MSBuild|venv|$(MSBuildProjectFullPath)</InterpreterId>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
     <OutputPath>.</OutputPath>
     <Name>QRCodeLib</Name>
@@ -124,9 +124,6 @@
     <Compile Include="qrcodelib\MaskingPenaltyScore.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\ModuleRatio.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="qrcodelib\QuietZone.py">
       <SubType>Code</SubType>
     </Compile>
@@ -165,6 +162,20 @@
     </Compile>
     <Compile Include="TkInterDemo.py" />
     <Compile Include="WxPythonDemo.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="..\venv\">
+      <Id>venv</Id>
+      <Version>3.6</Version>
+      <Description>venv (Python 3.6 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="requirements.txt" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

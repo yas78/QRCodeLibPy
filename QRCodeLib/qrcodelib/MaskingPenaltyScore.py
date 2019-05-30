@@ -2,7 +2,6 @@ from typing import List
 
 import math
 
-from .ModuleRatio import ModuleRatio
 from .QuietZone import QuietZone
 
 
@@ -24,6 +23,7 @@ class MaskingPenaltyScore(object):
         total += penalty
         penalty = cls._calc_proportion_of_dark_modules(module_matrix)
         total += penalty
+
         return total
 
     @classmethod
@@ -37,6 +37,7 @@ class MaskingPenaltyScore(object):
             module_matrix)
         penalty += cls._calc_adjacent_modules_in_row_in_same_color(
             cls._matrix_rotate_90(module_matrix))
+
         return penalty
 
     @classmethod
@@ -60,7 +61,7 @@ class MaskingPenaltyScore(object):
 
             if cnt >= 5:
                 penalty += 3 + (cnt - 5)
-            
+
         return penalty
 
     @classmethod
@@ -90,10 +91,10 @@ class MaskingPenaltyScore(object):
         module_matrix_temp = QuietZone.place(module_matrix)
 
         penalty = 0
-        penalty += cls._calc_module_ratio_in_row(
-            module_matrix_temp)
-        penalty += cls._calc_module_ratio_in_row(
-            cls._matrix_rotate_90(module_matrix_temp))
+
+        penalty += cls._calc_module_ratio_in_row(module_matrix_temp)
+        penalty += cls._calc_module_ratio_in_row(cls._matrix_rotate_90(module_matrix_temp))
+
         return penalty
 
     @classmethod
@@ -104,50 +105,96 @@ class MaskingPenaltyScore(object):
         """
         penalty = 0
 
-        for columns in module_matrix:
-            start_indexes = [0]
+        for row in module_matrix:
+            ratio3_ranges = cls._get_ratio3_ranges(row)
 
-            for c in range(len(columns) - 1):
-                if columns[c] > 0 and columns[c + 1] <= 0:
-                    start_indexes.append(c + 1)
+            for rng in ratio3_ranges:
+                ratio3 = rng[1] + 1 - rng[0]
+                ratio1 = ratio3 // 3
+                ratio4 = ratio1 * 4
+                impose = False
 
-            max_index = len(columns) - 1
+                i = rng[0] - 1
 
-            for index in start_indexes:
-                module_ratio = ModuleRatio()
+                # light ratio 1
+                cnt = 0
+                while i >= 0 and row[i] <= 0:
+                    cnt += 1
+                    i -= 1
 
-                while index <= max_index and columns[index] <= 0:
-                    module_ratio.pre_light4 += 1
-                    index += 1
+                if cnt != ratio1:
+                    continue
 
-                while index <= max_index and columns[index] > 0:
-                    module_ratio.pre_dark1 += 1
-                    index += 1
+                # dark ratio 1
+                cnt = 0
+                while i >= 0 and row[i] > 0:
+                    cnt += 1
+                    i -= 1
 
-                while index <= max_index and columns[index] <= 0:
-                    module_ratio.pre_light1 += 1
-                    index += 1
-                
-                while index <= max_index and columns[index] > 0:
-                    module_ratio.center_dark3 += 1
-                    index += 1
+                if cnt != ratio1:
+                    continue
 
-                while index <= max_index and columns[index] <= 0:
-                    module_ratio.fol_light1 += 1
-                    index += 1
+                # light ratio 4
+                cnt = 0
+                while i >= 0 and row[i] <= 0:
+                    cnt += 1
+                    i -= 1
 
-                while index <= max_index and columns[index] > 0:
-                    module_ratio.fol_dark1 += 1
-                    index += 1
+                if cnt >= ratio4:
+                    impose = True
 
-                while index <= max_index and columns[index] <= 0:
-                    module_ratio.fol_light4 += 1
-                    index += 1
-                
-                if module_ratio.penalty_imposed():
+                i = rng[1] + 1
+
+                # light ratio 1
+                cnt = 0
+                while i < len(row) and row[i] <= 0:
+                    cnt += 1
+                    i += 1
+
+                if cnt != ratio1:
+                    continue
+
+                # dark ratio 1
+                cnt = 0
+                while i < len(row) and row[i] > 0:
+                    cnt += 1
+                    i += 1
+
+                if cnt != ratio1:
+                    continue
+
+                # light ratio 4
+                cnt = 0
+                while i < len(row) and row[i] <= 0:
+                    cnt += 1
+                    i += 1
+
+                if cnt >= ratio4:
+                    impose = True
+
+                if impose:
                     penalty += 40
-                
+
         return penalty
+
+    @classmethod
+    def _get_ratio3_ranges(cls, arg: List[int]):
+        ret = []
+
+        s = 0
+        e = 0
+
+        for i in range(4,len(arg) - 4):
+            if arg[i] > 0 and arg[i - 1] <= 0:
+                s = i
+
+            if arg[i] > 0 and arg[i + 1] <= 0:
+                e = i
+
+                if (e + 1 - s) % 3 == 0:
+                    ret.append([s, e])
+
+        return ret
 
     @classmethod
     def _calc_proportion_of_dark_modules(
@@ -171,12 +218,12 @@ class MaskingPenaltyScore(object):
     @classmethod
     def _matrix_rotate_90(cls, arg: List[List[int]]) -> List[List[int]]:
         ret = [None] * len(arg[0])  # type: List[List[int]]
-    
+
         for i in range(len(ret)):
             ret[i] = [0] * len(arg)
-    
+
         k = len(ret) - 1
-    
+
         for i in range(len(ret)):
             for j in range(len(ret[i])):
                 ret[i][j] = arg[j][k - i]
