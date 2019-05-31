@@ -1,5 +1,5 @@
 # QRCodeLibPy
-QRCodeLibPyは、Python3.5で書かれたQRコード生成ライブラリです。  
+QRCodeLibPyは、Python3で書かれたQRコード生成ライブラリです。  
 JIS X 0510に基づくモデル２コードシンボルを生成します。
 
 ## 特徴
