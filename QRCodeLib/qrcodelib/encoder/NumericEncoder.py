@@ -32,8 +32,6 @@ class NumericEncoder(QRCodeEncoder):
         """
             文字を追加します。
         """
-        assert type(c) == str and len(c) == 1
-
         wd = int(c)
 
         if self._char_counter % 3 == 0:

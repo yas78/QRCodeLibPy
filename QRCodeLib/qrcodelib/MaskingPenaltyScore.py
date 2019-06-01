@@ -48,11 +48,11 @@ class MaskingPenaltyScore(object):
         """
         penalty = 0
 
-        for columns in module_matrix:
+        for row in module_matrix:
             cnt = 1
 
-            for c in range(len(columns) - 1):
-                if (columns[c] > 0) == (columns[c + 1] > 0):
+            for c in range(len(row) - 1):
+                if (row[c] > 0) == (row[c + 1] > 0):
                     cnt += 1
                 else:
                     if cnt >= 5:
@@ -204,8 +204,8 @@ class MaskingPenaltyScore(object):
         """
         dark_count = 0
 
-        for columns in module_matrix:
-            for value in columns:
+        for row in module_matrix:
+            for value in row:
                 if value > 0:
                     dark_count += 1
 

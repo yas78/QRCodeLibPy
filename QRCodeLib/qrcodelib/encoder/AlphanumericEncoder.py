@@ -80,9 +80,7 @@ class AlphanumericEncoder(QRCodeEncoder):
     def _convert_char_code(cls, c: str) -> int:
         """
             指定した文字の、英数字モードにおけるコード値を返します。
-        """
-        assert len(c) == 1
-        
+        """       
         char_bytes = c.encode("ascii", "ignore")
 
         if len(char_bytes) != 1:

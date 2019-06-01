@@ -9,7 +9,7 @@ class ArrayUtil(object):
              src_index: int,
              dest_array: MutableSequence,
              dest_index: int,
-             length: int):
+             length: int) -> None:
         """
             一次元配列をコピーします。
         """

@@ -52,7 +52,7 @@ class AlignmentPattern(object):
     ]
 
     @classmethod
-    def place(cls, module_matrix: List[List[int]], version: int):
+    def place(cls, module_matrix: List[List[int]], version: int) -> None:
         """
             位置合わせパターンを配置します。
         """

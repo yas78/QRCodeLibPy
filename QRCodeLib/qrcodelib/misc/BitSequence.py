@@ -14,7 +14,7 @@ class BitSequence(object):
         """
         return self._bit_counter
 
-    def append(self, data: int, length: int):
+    def append(self, data: int, length: int) -> None:
         """
             指定のビット数でデータを追加します。
         """

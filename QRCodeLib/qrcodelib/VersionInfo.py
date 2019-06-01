@@ -15,7 +15,7 @@ class VersionInfo(object):
     ]
     
     @classmethod
-    def place(cls, module_matrix: List[List[int]], version: int):
+    def place(cls, module_matrix: List[List[int]], version: int) -> None:
         """
             型番情報を配置します。
         """
@@ -39,7 +39,7 @@ class VersionInfo(object):
                 p2 = num_modules_per_side - 11
         
     @classmethod
-    def place_temp_blank(cls, module_matrix: List[List[int]]):
+    def place_temp_blank(cls, module_matrix: List[List[int]]) -> None:
         """
             型番情報の予約領域を配置します。
         """

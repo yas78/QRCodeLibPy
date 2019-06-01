@@ -16,7 +16,7 @@ class FinderPattern(object):
     ]
 
     @classmethod
-    def place(cls, module_matrix: List[List[int]]):
+    def place(cls, module_matrix: List[List[int]]) -> None:
         """
             位置検出パターンを配置します。
         """

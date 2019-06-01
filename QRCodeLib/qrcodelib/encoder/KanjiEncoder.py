@@ -64,8 +64,8 @@ class KanjiEncoder(QRCodeEncoder):
         """
         bs = BitSequence()
 
-        for code_word in self._code_words:
-            bs.append(code_word, 13)
+        for wd in self._code_words:
+            bs.append(wd, 13)
 
         return bs.get_bytes()
 

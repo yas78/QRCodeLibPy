@@ -21,7 +21,7 @@ class FormatInfo(object):
     def place(cls,
               module_matrix: List[List[int]],
               ec_level: int,
-              mask_pattern_reference: int):
+              mask_pattern_reference: int) -> None:
         """
             形式情報を配置します。
         """
@@ -64,7 +64,7 @@ class FormatInfo(object):
                 c2 -= 1
 
     @classmethod
-    def place_temp_blank(cls, module_matrix: List[List[int]]):
+    def place_temp_blank(cls, module_matrix: List[List[int]]) -> None:
         """
             形式情報の予約領域を配置します。
         """
@@ -90,8 +90,6 @@ class FormatInfo(object):
         """
             形式情報の値を取得します。
         """
-        assert 0 <= mask_pattern_reference <= 7
-
         if ec_level == ErrorCorrectionLevel.L:
             indicator = 1
         elif ec_level == ErrorCorrectionLevel.M:

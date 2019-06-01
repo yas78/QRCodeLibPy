@@ -6,7 +6,7 @@ class Separator(object):
         分離パターン
     """    
     @classmethod
-    def place(cls, module_matrix: List[List[int]]):
+    def place(cls, module_matrix: List[List[int]]) -> None:
         """
             分離パターンを配置します。
         """

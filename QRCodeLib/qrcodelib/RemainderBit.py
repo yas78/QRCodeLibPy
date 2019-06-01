@@ -6,7 +6,7 @@ class RemainderBit(object):
         残余ビット
     """    
     @classmethod
-    def place(cls, module_matrix: List[List[int]]):
+    def place(cls, module_matrix: List[List[int]]) -> None:
         """
             残余ビットを配置します。
         """

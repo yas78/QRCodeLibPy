@@ -6,7 +6,7 @@ class TimingPattern(object):
         タイミングパターン
     """    
     @classmethod
-    def place(cls, module_matrix: List[List[int]]):
+    def place(cls, module_matrix: List[List[int]]) -> None:
         """
             タイミングパターンを配置します。
         """

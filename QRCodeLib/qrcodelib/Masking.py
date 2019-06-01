@@ -57,7 +57,7 @@ class Masking(object):
     @classmethod
     def _mask(cls, 
               module_matrix: List[List[int]], 
-              mask_pattern_reference: int):
+              mask_pattern_reference: int) -> None:
         """
             マスクパターンを適用したシンボルデータを返します。
         """

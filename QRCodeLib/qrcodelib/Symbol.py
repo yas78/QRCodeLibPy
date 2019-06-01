@@ -320,9 +320,7 @@ class Symbol(object):
             if codeword_bit_length == 0:
                 codeword_bit_length = 8
 
-            bs.append(data[-1] >> (
-                    8 - codeword_bit_length), codeword_bit_length
-                      )
+            bs.append(data[-1] >> (8 - codeword_bit_length), codeword_bit_length)
 
     def _write_terminator(self, bs: BitSequence):
         """
@@ -412,10 +410,10 @@ class Symbol(object):
             bit_pos = 7
 
             while bit_pos >= 0:
-                columns = module_matrix[r]
+                row = module_matrix[r]
 
-                if columns[c] == 0:
-                    columns[c] = 1 if (value & (1 << bit_pos)) > 0 else -1
+                if row[c] == 0:
+                    row[c] = 1 if (value & (1 << bit_pos)) > 0 else -1
 
                     bit_pos -= 1
 
@@ -474,9 +472,9 @@ class Symbol(object):
 
         bs = BitSequence()
 
-        for columns in reversed(module_matrix):
+        for row in reversed(module_matrix):
             for i in range(module_size):
-                for value in columns:
+                for value in row:
                     for j in range(module_size):
                         bs.append(0 if value > 0 else 1, 1)
 
@@ -548,9 +546,9 @@ class Symbol(object):
 
         idx = 0
 
-        for columns in reversed(module_matrix):
+        for row in reversed(module_matrix):
             for i in range(module_size):
-                for value in columns:
+                for value in row:
                     for j in range(module_size):
                         if value > 0:
                             data_block[idx + 0] = fore_b
@@ -619,9 +617,9 @@ class Symbol(object):
         for c in header:
             ppm.append(ord(c))
 
-        for columns in module_matrix:
+        for row in module_matrix:
             for i in range(module_size):
-                for value in columns:
+                for value in row:
                     for j in range(module_size):
                         if value > 0:
                             ppm.append(fore_r)
@@ -651,9 +649,9 @@ class Symbol(object):
 
         bs = BitSequence()
 
-        for columns in module_matrix:
+        for row in module_matrix:
             for i in range(module_size):
-                for value in columns:
+                for value in row:
                     for j in range(module_size):
                         bs.append(1 if value > 0 else 0, 1)
 
@@ -699,9 +697,9 @@ class Symbol(object):
         height = width
         rgb_bytes = bytearray()
 
-        for columns in module_matrix:
+        for row in module_matrix:
             for i in range(module_size):
-                for value in columns:
+                for value in row:
                     for j in range(module_size):
                         if value > 0:
                             rgb_bytes.append(fore_r)

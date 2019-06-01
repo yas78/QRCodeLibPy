@@ -63,7 +63,7 @@ class Symbols(object):
         return self._min_version
 
     @min_version.setter
-    def min_version(self, value: int):
+    def min_version(self, value: int) -> None:
         """
             型番の下限を設定します。
         """
@@ -112,7 +112,7 @@ class Symbols(object):
         self._items.append(self._curr_symbol)
         return self._curr_symbol
 
-    def append_text(self, data: str):
+    def append_text(self, data: str) -> None:
         """
             文字列を追加します。
         """
@@ -368,7 +368,7 @@ class Symbols(object):
             
         return EncodingMode.EIGHT_BIT_BYTE
 
-    def update_parity(self, c: str):
+    def update_parity(self, c: str) -> None:
         """
             構造的連接のパリティを更新します。
         """
