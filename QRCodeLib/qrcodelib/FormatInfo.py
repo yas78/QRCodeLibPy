@@ -19,9 +19,9 @@ class FormatInfo(object):
 
     @classmethod
     def place(cls,
-              module_matrix: List[List[int]],
               ec_level: int,
-              mask_pattern_reference: int) -> None:
+              mask_pattern_reference: int,
+              module_matrix: List[List[int]]) -> None:
         """
             形式情報を配置します。
         """

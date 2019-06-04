@@ -15,7 +15,7 @@ class VersionInfo(object):
     ]
     
     @classmethod
-    def place(cls, module_matrix: List[List[int]], version: int) -> None:
+    def place(cls, version: int, module_matrix: List[List[int]]) -> None:
         """
             型番情報を配置します。
         """

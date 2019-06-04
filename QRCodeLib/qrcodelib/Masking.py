@@ -14,50 +14,39 @@ class Masking(object):
     """    
     @classmethod
     def apply(cls, 
-              module_matrix: List[List[int]], 
               version: int, 
-              ec_level: int) -> int:
+              ec_level: int,
+              module_matrix: List[List[int]]) -> int:
         """
             マスクを適用します。
         """
-        mask_pattern_reference = cls._select_mask_pattern(
-            module_matrix, version, ec_level)
-        cls._mask(module_matrix, mask_pattern_reference)
-
-        return mask_pattern_reference
-
-    @classmethod
-    def _select_mask_pattern(cls, 
-                             module_matrix: List[List[int]], 
-                             version: int, 
-                             ec_level: int) -> int:
-        """
-            マスクパターンを決定します。
-        """
         min_penalty = sys.maxsize
-        ret = 0
+        mask_pattern_reference = 0
+        masked_matrix = []
 
-        for mask_pattern_reference in range(8):
+        for i in range(8):
             temp = copy.deepcopy(module_matrix)
-            cls._mask(temp, mask_pattern_reference) 
-            
-            FormatInfo.place(temp, ec_level, mask_pattern_reference)
+
+            cls._mask(i, temp) 
+            FormatInfo.place(ec_level, i, temp)
 
             if version >= 7:
-                VersionInfo.place(temp, version)
+                VersionInfo.place(version, temp)
             
             penalty = MaskingPenaltyScore.calc_total(temp)
             
             if penalty < min_penalty:
                 min_penalty = penalty
-                ret = mask_pattern_reference
-            
-        return ret
+                mask_pattern_reference = i
+                masked_matrix = temp
+
+        module_matrix[:] = masked_matrix
+        return mask_pattern_reference
 
     @classmethod
     def _mask(cls, 
-              module_matrix: List[List[int]], 
-              mask_pattern_reference: int) -> None:
+              mask_pattern_reference: int,
+              module_matrix: List[List[int]]) -> None:
         """
             マスクパターンを適用したシンボルデータを返します。
         """

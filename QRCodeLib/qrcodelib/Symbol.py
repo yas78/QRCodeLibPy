@@ -369,7 +369,7 @@ class Symbol(object):
         TimingPattern.place(module_matrix)
 
         if self._curr_version >= 2:
-            AlignmentPattern.place(module_matrix, self._curr_version)
+            AlignmentPattern.place(self._curr_version, module_matrix)
 
         FormatInfo.place_temp_blank(module_matrix)
 
@@ -379,18 +379,7 @@ class Symbol(object):
         self._place_symbol_char(module_matrix)
         RemainderBit.place(module_matrix)
 
-        mask_pattern_reference = Masking.apply(
-            module_matrix,
-            self._curr_version,
-            self._parent.error_correction_level
-        )
-
-        FormatInfo.place(module_matrix,
-                         self._parent.error_correction_level,
-                         mask_pattern_reference)
-
-        if self._curr_version >= 7:
-            VersionInfo.place(module_matrix, self._curr_version)
+        Masking.apply(self._curr_version, self._parent.error_correction_level, module_matrix)
 
         return module_matrix
 
