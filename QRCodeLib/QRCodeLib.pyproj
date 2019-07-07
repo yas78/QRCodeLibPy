@@ -6,7 +6,7 @@
     <ProjectGuid>c9b50d89-74d7-4757-aedf-78d3964d5a81</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>TkInterDemo.py</StartupFile>
+    <StartupFile>WxPythonDemo.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -112,6 +112,7 @@
     <Compile Include="qrcodelib\image\BITMAPINFOHEADER.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="qrcodelib\image\DIB.py" />
     <Compile Include="qrcodelib\image\RGBQUAD.py">
       <SubType>Code</SubType>
     </Compile>
@@ -148,7 +149,7 @@
     <Compile Include="qrcodelib\misc\BitSequence.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\misc\ColorCode.py">
+    <Compile Include="qrcodelib\image\Color.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="qrcodelib\misc\__init__.py">
@@ -158,6 +159,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="qrcodelib\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Test_qrcodelib.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TkInterDemo.py" />
@@ -175,7 +179,9 @@
     </Interpreter>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="requirements.txt" />
+    <Content Include="requirements.txt">
+      <Publish>True</Publish>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

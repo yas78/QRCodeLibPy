@@ -107,7 +107,7 @@ class FormTk(tk.Frame):
         # spn_module_size
         self._spn_module_size = tk.Spinbox(
             frame, from_=1, to_=100, width=4, state="readonly")
-        self._spn_module_size["textvariable"] = tk.StringVar(value="5")
+        self._spn_module_size["textvariable"] = tk.StringVar(value="4")
         self._spn_module_size.place(x=440, y=40)
         self._spn_module_size.bind("<KeyPress-Up>", self._update_image_handler)
         self._spn_module_size.bind("<KeyPress-Down>", self._update_image_handler)

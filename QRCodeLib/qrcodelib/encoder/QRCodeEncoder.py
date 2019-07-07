@@ -1,5 +1,5 @@
-from abc import ABCMeta, abstractmethod
 from typing import List
+from abc import ABCMeta, abstractmethod
 
 
 class QRCodeEncoder(object):
@@ -36,7 +36,7 @@ class QRCodeEncoder(object):
         """
             符号化モードを取得します。
         """
-        pass
+        raise NotImplementedError()
 
     @property
     @abstractmethod
@@ -44,25 +44,25 @@ class QRCodeEncoder(object):
         """
             モード指示子を取得します。
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def append(self, c: str) -> int:
         """
             文字を追加します。
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get_codeword_bit_length(self, c: str) -> int:
         """
             指定の文字をエンコードしたコード語のビット数を返します。
         """
-        pass
+        raise NotImplementedError()
 
     @abstractmethod
     def get_bytes(self) -> bytes:
         """
             エンコードされたデータのバイト配列を返します。
         """
-        pass
+        raise NotImplementedError()

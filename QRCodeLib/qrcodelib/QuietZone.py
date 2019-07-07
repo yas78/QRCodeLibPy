@@ -14,8 +14,8 @@ class QuietZone(object):
         """
             クワイエットゾーンを追加します。
         """
-        num_modules_one_side = len(module_matrix) + cls._WIDTH * 2
-        ret = [[0] * num_modules_one_side for row in range(num_modules_one_side)]
+        size = len(module_matrix) + cls._WIDTH * 2
+        ret = [[0] * size for _ in range(size)]
 
         for i, row in enumerate(module_matrix):
             ArrayUtil.copy(row, 0, ret[i + cls._WIDTH], cls._WIDTH, len(row))

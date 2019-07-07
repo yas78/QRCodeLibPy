@@ -3,6 +3,7 @@ from typing import List
 import math
 
 from .QuietZone import QuietZone
+from .misc.ArrayUtil import ArrayUtil
 
 
 class MaskingPenaltyScore(object):
@@ -36,7 +37,7 @@ class MaskingPenaltyScore(object):
         penalty += cls._calc_adjacent_modules_in_row_in_same_color(
             module_matrix)
         penalty += cls._calc_adjacent_modules_in_row_in_same_color(
-            cls._matrix_rotate_90(module_matrix))
+            ArrayUtil.rotate90(module_matrix))
 
         return penalty
 
@@ -93,7 +94,7 @@ class MaskingPenaltyScore(object):
         penalty = 0
 
         penalty += cls._calc_module_ratio_in_row(module_matrix_temp)
-        penalty += cls._calc_module_ratio_in_row(cls._matrix_rotate_90(module_matrix_temp))
+        penalty += cls._calc_module_ratio_in_row(ArrayUtil.rotate90(module_matrix_temp))
 
         return penalty
 
@@ -184,7 +185,7 @@ class MaskingPenaltyScore(object):
         s = 0
         e = 0
 
-        for i in range(4,len(arg) - 4):
+        for i in range(4, len(arg) - 4):
             if arg[i] > 0 and arg[i - 1] <= 0:
                 s = i
 
@@ -210,22 +211,8 @@ class MaskingPenaltyScore(object):
                     dark_count += 1
 
         num_modules = float(len(module_matrix) ** 2)
-        temp = math.ceil(dark_count / num_modules * 100)
+        temp = int(math.ceil(dark_count / num_modules * 100))
         temp = abs(temp - 50)
         temp = (temp + 4) // 5
         return temp * 10
 
-    @classmethod
-    def _matrix_rotate_90(cls, arg: List[List[int]]) -> List[List[int]]:
-        ret = [None] * len(arg[0])  # type: List[List[int]]
-
-        for i in range(len(ret)):
-            ret[i] = [0] * len(arg)
-
-        k = len(ret) - 1
-
-        for i in range(len(ret)):
-            for j in range(len(ret[i])):
-                ret[i][j] = arg[j][k - i]
-
-        return ret

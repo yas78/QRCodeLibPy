@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-from io import BytesIO
 import tkinter as tk
 
 from .AlignmentPattern import AlignmentPattern
@@ -24,18 +23,18 @@ from .format.Module import Module
 from .format.RSBlock import RSBlock
 from .format.StructuredAppend import StructuredAppend
 from .format.SymbolSequenceIndicator import SymbolSequenceIndicator
-from .image.BITMAPFILEHEADER import BITMAPFILEHEADER
-from .image.BITMAPINFOHEADER import BITMAPINFOHEADER
-from .image.RGBQUAD import RGBQUAD
 from .misc.ArrayUtil import ArrayUtil
 from .misc.BitSequence import BitSequence
-from .misc.ColorCode import ColorCode
+from .image.Color import Color
+from .image.DIB import DIB
 
 
 class Symbol(object):
     """
         シンボルを表します。
     """
+    DEFAULT_MODULE_SIZE = 4
+
     def __init__(self, parent) -> None:
         self._parent = parent
 
@@ -53,10 +52,10 @@ class Symbol(object):
         self._segments = []
 
         self._segment_counter = {
-            EncodingMode.NUMERIC:        0,
-            EncodingMode.ALPHA_NUMERIC:  0,
+            EncodingMode.NUMERIC: 0,
+            EncodingMode.ALPHA_NUMERIC: 0,
             EncodingMode.EIGHT_BIT_BYTE: 0,
-            EncodingMode.KANJI:          0
+            EncodingMode.KANJI: 0
         }
 
         if parent.structured_append_allowed:
@@ -115,7 +114,7 @@ class Symbol(object):
                 self._data_bit_counter
                 + ModeIndicator.LENGTH
                 + CharCountIndicator.get_length(
-                    self._curr_version, enc_mode)
+            self._curr_version, enc_mode)
                 + bit_length):
 
             if self._curr_version >= self._parent.max_version:
@@ -142,9 +141,9 @@ class Symbol(object):
             num = self._segment_counter[enc_mode]
             self._data_bit_counter += (
                     num * CharCountIndicator.get_length(
-                        self._curr_version + 1, enc_mode)
+                self._curr_version + 1, enc_mode)
                     - num * CharCountIndicator.get_length(
-                        self._curr_version + 0, enc_mode)
+                self._curr_version + 0, enc_mode)
             )
 
         self._curr_version += 1
@@ -175,8 +174,7 @@ class Symbol(object):
             self._parent.error_correction_level, self._curr_version, True)
 
         for i in range(num_pre_blocks):
-            data = bytearray(num_pre_block_data_codewords)
-            ArrayUtil.copy(data_bytes, index, data, 0, len(data))
+            data = data_bytes[index:index + num_pre_block_data_codewords]
             index += len(data)
             ret[i] = data
 
@@ -184,8 +182,7 @@ class Symbol(object):
             self._parent.error_correction_level, self._curr_version, False)
 
         for i in range(num_pre_blocks, num_pre_blocks + num_fol_blocks):
-            data = bytearray(num_fol_block_data_codewords)
-            ArrayUtil.copy(data_bytes, index, data, 0, len(data))
+            data = data_bytes[index:index + num_fol_block_data_codewords]
             index += len(data)
             ret[i] = data
 
@@ -432,173 +429,120 @@ class Symbol(object):
                 to_left = not to_left
 
     def get_1bpp_dib(self,
-                     module_size: int = 5,
-                     fore_rgb: str = ColorCode.BLACK,
-                     back_rgb: str = ColorCode.WHITE) -> bytes:
+                     module_size: int = DEFAULT_MODULE_SIZE,
+                     fore_rgb: str = Color.BLACK,
+                     back_rgb: str = Color.WHITE) -> bytes:
         """
             シンボル画像を1bpp DIB形式で返します。
         """
         if module_size < 1:
             raise ValueError("module_size")
 
-        (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
-        (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
+        fore_color = Color.decode(fore_rgb)
+        back_color = Color.decode(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
 
-        width = module_size * len(module_matrix)
-        height = width
-
-        h_byte_len = (width + 7) // 8
+        width = height = module_size * len(module_matrix)
+        row_bytes_len = (width + 7) // 8
 
         pack_8bit = 0
         if width % 8 > 0:
             pack_8bit = 8 - (width % 8)
 
         pack_32bit = 0
-        if h_byte_len % 4 > 0:
-            pack_32bit = 8 * (4 - (h_byte_len % 4))
+        if row_bytes_len % 4 > 0:
+            pack_32bit = 8 * (4 - (row_bytes_len % 4))
 
-        bs = BitSequence()
+        row_size = (width + pack_8bit + pack_32bit) // 8
+        bitmap_data = bytearray(row_size * height)
+        offset = 0
 
         for row in reversed(module_matrix):
+            bs = BitSequence()
+
+            for value in row:
+                color = 0 if value > 0 else 1
+
+                for i in range(module_size):
+                    bs.append(color, 1)
+
+            bs.append(0, pack_8bit)
+            bs.append(0, pack_32bit)
+
+            bitmap_row = bs.get_bytes()
+
             for i in range(module_size):
-                for value in row:
-                    for j in range(module_size):
-                        bs.append(0 if value > 0 else 1, 1)
+                ArrayUtil.copy(bitmap_row, 0, bitmap_data, offset, row_size)
+                offset += row_size;
 
-                bs.append(0, pack_8bit)
-                bs.append(0, pack_32bit)
-
-        data_block = bs.get_bytes()
-
-        bfh = BITMAPFILEHEADER(
-            0x4D42,
-            62 + len(data_block),
-            0,
-            0,
-            62
-        )
-
-        bih = BITMAPINFOHEADER(
-            40,
-            width,
-            height,
-            1,
-            1,
-            0,
-            0,
-            3780,
-            3780,
-            0,
-            0
-        )
-
-        palette1 = RGBQUAD(fore_b, fore_g, fore_r)
-        palette2 = RGBQUAD(back_b, back_g, back_r)
-
-        with BytesIO() as buffer:
-            buffer.write(bfh)
-            buffer.write(bih)
-            buffer.write(palette1)
-            buffer.write(palette2)
-            buffer.write(data_block)
-            ret = buffer.getvalue()
+        ret = DIB.build_1bpp_dib(bitmap_data, width, height, fore_color, back_color)
 
         return ret
 
     def get_24bpp_dib(self,
-                      module_size: int = 5,
-                      fore_rgb: str = ColorCode.BLACK,
-                      back_rgb: str = ColorCode.WHITE) -> bytes:
+                      module_size: int = DEFAULT_MODULE_SIZE,
+                      fore_rgb: str = Color.BLACK,
+                      back_rgb: str = Color.WHITE) -> bytes:
         """
             シンボル画像を24bpp DIB形式で返します。
         """
         if module_size < 1:
             raise ValueError("module_size")
 
-        (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
-        (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
+        fore_color = Color.decode(fore_rgb)
+        back_color = Color.decode(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
 
-        width = module_size * len(module_matrix)
-        height = width
-
-        h_byte_len = width * 3
+        width = height = module_size * len(module_matrix)
+        row_bytes_len = width * 3
 
         pack_4byte = 0
-        if h_byte_len % 4 > 0:
-            pack_4byte = 4 - (h_byte_len % 4)
+        if row_bytes_len % 4 > 0:
+            pack_4byte = 4 - (row_bytes_len % 4)
 
-        data_block = bytearray((h_byte_len + pack_4byte) * height)
-
-        idx = 0
+        row_size = row_bytes_len + pack_4byte;
+        bitmap_data = bytearray(row_size * height);
+        offset = 0;
 
         for row in reversed(module_matrix):
+            bitmap_row = bytearray(row_size)
+            index = 0
+
+            for value in row:
+                color = fore_color if value > 0 else back_color
+
+                for i in range(module_size):
+                    bitmap_row[index + 0] = color.b
+                    bitmap_row[index + 1] = color.g
+                    bitmap_row[index + 2] = color.r
+                    index += 3
+
             for i in range(module_size):
-                for value in row:
-                    for j in range(module_size):
-                        if value > 0:
-                            data_block[idx + 0] = fore_b
-                            data_block[idx + 1] = fore_g
-                            data_block[idx + 2] = fore_r
-                        else:
-                            data_block[idx + 0] = back_b
-                            data_block[idx + 1] = back_g
-                            data_block[idx + 2] = back_r
+                ArrayUtil.copy(bitmap_row, 0, bitmap_data, offset, row_size)
+                offset += row_size
 
-                        idx += 3
-
-                idx += pack_4byte
-
-        bfh = BITMAPFILEHEADER(
-            0x4D42,
-            54 + len(data_block),
-            0,
-            0,
-            54
-        )
-
-        bih = BITMAPINFOHEADER(
-            40,
-            width,
-            height,
-            1,
-            24,
-            0,
-            0,
-            3780,
-            3780,
-            0,
-            0
-        )
-
-        with BytesIO() as buffer:
-            buffer.write(bfh)
-            buffer.write(bih)
-            buffer.write(data_block)
-            ret = buffer.getvalue()
+        ret = DIB.build_24bpp_dib(bitmap_data, width, height)
 
         return ret
 
     def get_ppm(self,
-                module_size: int = 5,
-                fore_rgb: str = ColorCode.BLACK,
-                back_rgb: str = ColorCode.WHITE) -> bytes:
+                module_size: int = DEFAULT_MODULE_SIZE,
+                fore_rgb: str = Color.BLACK,
+                back_rgb: str = Color.WHITE) -> bytes:
         """
             シンボル画像をPPMバイナリ形式で返します。
         """
         if module_size < 1:
             raise ValueError("module_size")
 
-        (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
-        (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
+        fore_color = Color.decode(fore_rgb)
+        back_color = Color.decode(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
 
-        width = module_size * len(module_matrix)
-        height = width
+        width = height = module_size * len(module_matrix)
         ppm = bytearray()
 
         header = "P6\n" + str(width) + " " + str(height) + "\n255\n"
@@ -611,16 +555,16 @@ class Symbol(object):
                 for value in row:
                     for j in range(module_size):
                         if value > 0:
-                            ppm.append(fore_r)
-                            ppm.append(fore_g)
-                            ppm.append(fore_b)
+                            ppm.append(fore_color.r)
+                            ppm.append(fore_color.g)
+                            ppm.append(fore_color.b)
                         else:
-                            ppm.append(back_r)
-                            ppm.append(back_g)
-                            ppm.append(back_b)
+                            ppm.append(back_color.r)
+                            ppm.append(back_color.g)
+                            ppm.append(back_color.b)
         return bytes(ppm)
 
-    def get_xbm(self, module_size: int = 5) -> str:
+    def get_xbm(self, module_size: int = DEFAULT_MODULE_SIZE) -> str:
         """
             シンボル画像をXBM形式で返します。
         """
@@ -629,8 +573,7 @@ class Symbol(object):
 
         module_matrix = QuietZone.place(self._get_module_matrix())
 
-        width = module_size * len(module_matrix)
-        height = width
+        width = height = module_size * len(module_matrix)
 
         pack_8bit = 0
         if width % 8 > 0:
@@ -668,22 +611,21 @@ class Symbol(object):
         return xbm
 
     def get_rgb_bytes(self,
-                      module_size: int = 5,
-                      fore_rgb: str = ColorCode.BLACK,
-                      back_rgb: str = ColorCode.WHITE) -> Tuple[bytes, int, int]:
+                      module_size: int = DEFAULT_MODULE_SIZE,
+                      fore_rgb: str = Color.BLACK,
+                      back_rgb: str = Color.WHITE) -> Tuple[bytes, int, int]:
         """
             シンボル画像のRGB値を返します。
         """
         if module_size < 1:
             raise ValueError("module_size")
 
-        (fore_r, fore_g, fore_b) = ColorCode.to_rgb(fore_rgb)
-        (back_r, back_g, back_b) = ColorCode.to_rgb(back_rgb)
+        fore_color = Color.decode(fore_rgb)
+        back_color = Color.decode(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
 
-        width = module_size * len(module_matrix)
-        height = width
+        width = height = module_size * len(module_matrix)
         rgb_bytes = bytearray()
 
         for row in module_matrix:
@@ -691,20 +633,20 @@ class Symbol(object):
                 for value in row:
                     for j in range(module_size):
                         if value > 0:
-                            rgb_bytes.append(fore_r)
-                            rgb_bytes.append(fore_g)
-                            rgb_bytes.append(fore_b)
+                            rgb_bytes.append(fore_color.r)
+                            rgb_bytes.append(fore_color.g)
+                            rgb_bytes.append(fore_color.b)
                         else:
-                            rgb_bytes.append(back_r)
-                            rgb_bytes.append(back_g)
-                            rgb_bytes.append(back_b)
+                            rgb_bytes.append(back_color.r)
+                            rgb_bytes.append(back_color.g)
+                            rgb_bytes.append(back_color.b)
 
         return bytes(rgb_bytes), width, height
 
     def tk_bitmap_image(self,
-                        module_size: int = 5,
-                        fore_rgb: str = ColorCode.BLACK,
-                        back_rgb: str = ColorCode.WHITE) -> tk.BitmapImage:
+                        module_size: int = DEFAULT_MODULE_SIZE,
+                        fore_rgb: str = Color.BLACK,
+                        back_rgb: str = Color.WHITE) -> tk.BitmapImage:
         """
             tkinter BitmapImageオブジェクトを取得します。
         """
@@ -713,9 +655,9 @@ class Symbol(object):
         return tk.BitmapImage(data=xbm, foreground=fore_rgb, background=back_rgb)
 
     def tk_photo_image(self,
-                       module_size: int = 5,
-                       fore_rgb: str = ColorCode.BLACK,
-                       back_rgb: str = ColorCode.WHITE) -> tk.PhotoImage:
+                       module_size: int = DEFAULT_MODULE_SIZE,
+                       fore_rgb: str = Color.BLACK,
+                       back_rgb: str = Color.WHITE) -> tk.PhotoImage:
         """
             tkinter PhotoImageオブジェクトを取得します。
         """
@@ -725,9 +667,9 @@ class Symbol(object):
 
     def save_1bpp_dib(self,
                       file_name: str,
-                      module_size: int = 5,
-                      fore_rgb: str = ColorCode.BLACK,
-                      back_rgb: str = ColorCode.WHITE):
+                      module_size: int = DEFAULT_MODULE_SIZE,
+                      fore_rgb: str = Color.BLACK,
+                      back_rgb: str = Color.WHITE):
         """
             シンボル画像を1bpp DIB形式でファイルに保存します。
         """
@@ -744,9 +686,9 @@ class Symbol(object):
 
     def save_24bpp_dib(self,
                        file_name: str,
-                       module_size: int = 5,
-                       fore_rgb: str = ColorCode.BLACK,
-                       back_rgb: str = ColorCode.WHITE):
+                       module_size: int = DEFAULT_MODULE_SIZE,
+                       fore_rgb: str = Color.BLACK,
+                       back_rgb: str = Color.WHITE):
         """
             シンボル画像を24bpp DIB形式でファイルに保存します。
         """
@@ -763,9 +705,9 @@ class Symbol(object):
 
     def save_ppm(self,
                  file_name: str,
-                 module_size: int = 5,
-                 fore_rgb: str = ColorCode.BLACK,
-                 back_rgb: str = ColorCode.WHITE):
+                 module_size: int = DEFAULT_MODULE_SIZE,
+                 fore_rgb: str = Color.BLACK,
+                 back_rgb: str = Color.WHITE):
         """
             シンボル画像をPPM形式でファイルに保存します。
         """
@@ -780,7 +722,7 @@ class Symbol(object):
         with open(file_name, "wb") as fout:
             fout.write(ppm)
 
-    def save_xbm(self, file_name: str, module_size: int = 5):
+    def save_xbm(self, file_name: str, module_size: int = DEFAULT_MODULE_SIZE):
         """
             シンボル画像をXBM形式でファイルに保存します。
         """

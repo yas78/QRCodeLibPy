@@ -148,7 +148,7 @@ class FormMain(wx.Frame):
             size=(48, 21),
             min=1,
             max=100,
-            initial=5
+            initial=4
         )
         self._spn_module_size.Bind(wx.EVT_SPINCTRLDOUBLE, self.update_image)
         # btn_save
