@@ -192,3 +192,14 @@ image.save("D:\\qrcode.gif", "GIF")
 # JPEG
 image.save("D:\\qrcode.jpg", "JPEG")
 ```
+
+### 例１５．base64エンコードされたビットマップデータを取得する
+```python
+import qrcodelib as qr
+
+symbols = qr.Symbols()
+symbols.append_text("012345abcdefg")
+symbol = symbols.item(0)
+
+base64 = symbol.get_base64_dib()
+```

@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+import base64
 import tkinter as tk
 
 from .AlignmentPattern import AlignmentPattern
@@ -113,8 +114,7 @@ class Symbol(object):
         while self._data_bit_capacity < (
                 self._data_bit_counter
                 + ModeIndicator.LENGTH
-                + CharCountIndicator.get_length(
-            self._curr_version, enc_mode)
+                + CharCountIndicator.get_length(self._curr_version, enc_mode)
                 + bit_length):
 
             if self._curr_version >= self._parent.max_version:
@@ -140,11 +140,8 @@ class Symbol(object):
         for enc_mode in self._segment_counter.keys():
             num = self._segment_counter[enc_mode]
             self._data_bit_counter += (
-                    num * CharCountIndicator.get_length(
-                self._curr_version + 1, enc_mode)
-                    - num * CharCountIndicator.get_length(
-                self._curr_version + 0, enc_mode)
-            )
+                    num * CharCountIndicator.get_length(self._curr_version + 1, enc_mode)
+                    - num * CharCountIndicator.get_length(self._curr_version + 0, enc_mode))
 
         self._curr_version += 1
         self._data_bit_capacity = 8 * DataCodeword.get_total_number(
@@ -474,10 +471,9 @@ class Symbol(object):
 
             for i in range(module_size):
                 ArrayUtil.copy(bitmap_row, 0, bitmap_data, offset, row_size)
-                offset += row_size;
+                offset += row_size
 
         ret = DIB.build_1bpp_dib(bitmap_data, width, height, fore_color, back_color)
-
         return ret
 
     def get_24bpp_dib(self,
@@ -502,9 +498,9 @@ class Symbol(object):
         if row_bytes_len % 4 > 0:
             pack_4byte = 4 - (row_bytes_len % 4)
 
-        row_size = row_bytes_len + pack_4byte;
-        bitmap_data = bytearray(row_size * height);
-        offset = 0;
+        row_size = row_bytes_len + pack_4byte
+        bitmap_data = bytearray(row_size * height)
+        offset = 0
 
         for row in reversed(module_matrix):
             bitmap_row = bytearray(row_size)
@@ -524,8 +520,27 @@ class Symbol(object):
                 offset += row_size
 
         ret = DIB.build_24bpp_dib(bitmap_data, width, height)
-
         return ret
+
+    def get_base64_dib(self,
+                       module_size: int = DEFAULT_MODULE_SIZE,
+                       color_depth: int = 24,
+                       fore_rgb: str = Color.BLACK,
+                       back_rgb: str = Color.WHITE):
+        """
+            Base64エンコードされたビットマップデータを返します。
+        """
+        if module_size < 1:
+            raise ValueError("module_size")
+
+        if color_depth == 1:
+            dib = self.get_1bpp_dib(module_size, fore_rgb, back_rgb)
+        elif color_depth == 24:
+            dib = self.get_24bpp_dib(module_size, fore_rgb, back_rgb)
+        else:
+            raise ValueError("color_depth")
+
+        return base64.b64encode(dib)
 
     def get_ppm(self,
                 module_size: int = DEFAULT_MODULE_SIZE,
@@ -607,7 +622,6 @@ class Symbol(object):
                   "# define img_height " + str(height) + "\n" +
                   "static char bits[] = {" + "\n")
         xbm = header + ", ".join(bits_chars) + "};"
-
         return xbm
 
     def get_rgb_bytes(self,
@@ -662,7 +676,6 @@ class Symbol(object):
             tkinter PhotoImageオブジェクトを取得します。
         """
         ppm = self.get_ppm(module_size=module_size, fore_rgb=fore_rgb, back_rgb=back_rgb)
-
         return tk.PhotoImage(data=ppm)
 
     def save_1bpp_dib(self,

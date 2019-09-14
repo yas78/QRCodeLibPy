@@ -14,11 +14,11 @@ class Symbols(object):
     """
         シンボルのコレクションを表します。
     """    
-    def __init__(self, 
-                 ec_level: int=ErrorCorrectionLevel.M,
-                 max_version: int=Constants.MAX_VERSION,
-                 allow_structured_append: bool=False,
-                 byte_mode_encoding: str="shift_jis") -> None:
+    def __init__(self,
+                 ec_level: int = ErrorCorrectionLevel.M,
+                 max_version: int = Constants.MAX_VERSION,
+                 allow_structured_append: bool = False,
+                 byte_mode_encoding: str = "shift_jis") -> None:
         """
             インスタンスを初期化します。
         """
@@ -137,7 +137,7 @@ class Symbols(object):
 
             if new_mode != old_mode:
                 if not self._curr_symbol.try_set_encoding_mode(new_mode, c):
-                    if (not self._structured_append_allowed or len(self._items) == 16):
+                    if not self._structured_append_allowed or len(self._items) == 16:
                         raise OverflowError("String too long")
                     
                     self._add()
@@ -145,7 +145,7 @@ class Symbols(object):
                     self._curr_symbol.try_set_encoding_mode(new_mode, c)
             
             if not self._curr_symbol.try_append(c):
-                if (not self._structured_append_allowed or len(self._items) == 16):
+                if not self._structured_append_allowed or len(self._items) == 16:
                     raise OverflowError("String too long")
                 
                 self._add()

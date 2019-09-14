@@ -4,7 +4,6 @@ from .BITMAPFILEHEADER import BITMAPFILEHEADER
 from .BITMAPINFOHEADER import BITMAPINFOHEADER
 from .Color import Color
 from .RGBQUAD import RGBQUAD
-from ..misc.ArrayUtil import ArrayUtil
 
 
 class DIB(object):
