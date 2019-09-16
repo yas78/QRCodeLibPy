@@ -26,7 +26,7 @@ symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 
 symbol = symbols.item(0)
-symbol.save_24bpp_dib(r"D:\qrcode.bmp")
+symbol.save_bitmap(r"D:\qrcode.bmp")
 ```
 
 ### 例２．誤り訂正レベルを指定する
@@ -73,11 +73,11 @@ symbols = qr.Symbols(max_version=1, allow_structured_append=True)
 symbols.append_text("abcdefghijklmnopqrstuvwxyz")
 
 for i in range(symbols.count):
-    symbols.item(i).save_24bpp_dib(r"D:\qrcode_" + str(i) + ".bmp")
+    symbols.item(i).save_bitmap(r"D:\qrcode_" + str(i) + ".bmp")
 ```
 
 ### 例６．BMPファイルへ保存する
-Symbolクラスのsave_1bpp_dib、またはsave_24bpp_dibメソッドを使用します。
+Symbolクラスのsave_bitmapメソッドを使用します。
 
 ```python
 import qrcodelib as qr
@@ -86,13 +86,7 @@ symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
-symbol.save_1bpp_dib(r"D:\qrcode.bmp")
-symbol.save_1bpp_dib(r"D:\qrcode.bmp", module_size=10)
-symbol.save_1bpp_dib(r"D:\qrcode.bmp", fore_rgb="#0000FF", back_rgb="#FFFFFF")
-
-symbol.save_24bpp_dib(r"D:\qrcode.bmp")
-symbol.save_24bpp_dib(r"D:\qrcode.bmp", module_size=10)
-symbol.save_24bpp_dib(r"D:\qrcode.bmp", fore_rgb="#0000FF", back_rgb="#FFFFFF")
+symbol.save_bitmap(r"D:\qrcode.bmp")
 ```
 
 ### 例７．PPMファイルへ保存する
@@ -201,5 +195,5 @@ symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
-base64 = symbol.get_base64_dib()
+base64 = symbol.get_bitmap_base64()
 ```

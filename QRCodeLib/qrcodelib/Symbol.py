@@ -425,16 +425,29 @@ class Symbol(object):
 
                 to_left = not to_left
 
-    def get_1bpp_dib(self,
-                     module_size: int = DEFAULT_MODULE_SIZE,
-                     fore_rgb: str = Color.BLACK,
-                     back_rgb: str = Color.WHITE) -> bytes:
+    def get_bitmap(self,
+                   module_size: int = DEFAULT_MODULE_SIZE,
+                   monochrome: bool = False,
+                   fore_rgb: str = Color.BLACK,
+                   back_rgb: str = Color.WHITE) -> bytes:
         """
-            シンボル画像を1bpp DIB形式で返します。
+            ビットマップファイルのバイトデータを返します。
         """
         if module_size < 1:
             raise ValueError("module_size")
 
+        if monochrome:
+            return _get_bitmap_1bpp(moduleSize, foreRgb, backRgb)
+        else:
+            return _get_bitmap_24bpp(moduleSize, foreRgb, backRgb)
+
+    def _get_bitmap_1bpp(self,
+                         module_size: int = DEFAULT_MODULE_SIZE,
+                         fore_rgb: str = Color.BLACK,
+                         back_rgb: str = Color.WHITE) -> bytes:
+        """
+            シンボル画像を1bpp DIB形式で返します。
+        """
         fore_color = Color.decode(fore_rgb)
         back_color = Color.decode(back_rgb)
 
@@ -476,16 +489,13 @@ class Symbol(object):
         ret = DIB.build_1bpp_dib(bitmap_data, width, height, fore_color, back_color)
         return ret
 
-    def get_24bpp_dib(self,
-                      module_size: int = DEFAULT_MODULE_SIZE,
-                      fore_rgb: str = Color.BLACK,
-                      back_rgb: str = Color.WHITE) -> bytes:
+    def _get_bitmap_24bpp(self,
+                          module_size: int = DEFAULT_MODULE_SIZE,
+                          fore_rgb: str = Color.BLACK,
+                          back_rgb: str = Color.WHITE) -> bytes:
         """
             シンボル画像を24bpp DIB形式で返します。
         """
-        if module_size < 1:
-            raise ValueError("module_size")
-
         fore_color = Color.decode(fore_rgb)
         back_color = Color.decode(back_rgb)
 
@@ -522,23 +532,21 @@ class Symbol(object):
         ret = DIB.build_24bpp_dib(bitmap_data, width, height)
         return ret
 
-    def get_base64_dib(self,
-                       module_size: int = DEFAULT_MODULE_SIZE,
-                       color_depth: int = 24,
-                       fore_rgb: str = Color.BLACK,
-                       back_rgb: str = Color.WHITE):
+    def get_bitmap_base64(self,
+                          module_size: int = DEFAULT_MODULE_SIZE,
+                          monochrome: bool = False,
+                          fore_rgb: str = Color.BLACK,
+                          back_rgb: str = Color.WHITE):
         """
             Base64エンコードされたビットマップデータを返します。
         """
         if module_size < 1:
             raise ValueError("module_size")
 
-        if color_depth == 1:
-            dib = self.get_1bpp_dib(module_size, fore_rgb, back_rgb)
-        elif color_depth == 24:
-            dib = self.get_24bpp_dib(module_size, fore_rgb, back_rgb)
+        if monochrome:
+            dib = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
         else:
-            raise ValueError("color_depth")
+            dib = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
 
         return base64.b64encode(dib)
 
@@ -678,11 +686,12 @@ class Symbol(object):
         ppm = self.get_ppm(module_size=module_size, fore_rgb=fore_rgb, back_rgb=back_rgb)
         return tk.PhotoImage(data=ppm)
 
-    def save_1bpp_dib(self,
-                      file_name: str,
-                      module_size: int = DEFAULT_MODULE_SIZE,
-                      fore_rgb: str = Color.BLACK,
-                      back_rgb: str = Color.WHITE):
+    def save_bitmap(self,
+                    file_name: str,
+                    module_size: int = DEFAULT_MODULE_SIZE,
+                    monochrome: bool = False,
+                    fore_rgb: str = Color.BLACK,
+                    back_rgb: str = Color.WHITE):
         """
             シンボル画像を1bpp DIB形式でファイルに保存します。
         """
@@ -692,26 +701,10 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        dib = self.get_1bpp_dib(module_size, fore_rgb, back_rgb)
-
-        with open(file_name, "wb") as fout:
-            fout.write(dib)
-
-    def save_24bpp_dib(self,
-                       file_name: str,
-                       module_size: int = DEFAULT_MODULE_SIZE,
-                       fore_rgb: str = Color.BLACK,
-                       back_rgb: str = Color.WHITE):
-        """
-            シンボル画像を24bpp DIB形式でファイルに保存します。
-        """
-        if not file_name:
-            raise ValueError("file_name")
-
-        if module_size < 1:
-            raise ValueError("module_size")
-
-        dib = self.get_24bpp_dib(module_size, fore_rgb, back_rgb)
+        if monochrome:
+            dib = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
+        else:
+            dib = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
 
         with open(file_name, "wb") as fout:
             fout.write(dib)

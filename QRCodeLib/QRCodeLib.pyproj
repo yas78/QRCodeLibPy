@@ -6,7 +6,7 @@
     <ProjectGuid>c9b50d89-74d7-4757-aedf-78d3964d5a81</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>WxPythonDemo.py</StartupFile>
+    <StartupFile>TkInterDemo.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
