@@ -1,11 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38C2D2F4-E088-4E62-A74E-AC16957FCAFF}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+		requirements.txt = requirements.txt
 	EndProjectSection
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "QRCodeLib", "QRCodeLib\QRCodeLib.pyproj", "{C9B50D89-74D7-4757-AEDF-78D3964D5A81}"
