@@ -162,9 +162,6 @@
     <Compile Include="qrcodelib\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Test_qrcodelib.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TkInterDemo.py" />
     <Compile Include="WxPythonDemo.py" />
   </ItemGroup>
