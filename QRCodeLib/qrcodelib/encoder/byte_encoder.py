@@ -1,8 +1,8 @@
-from ..EncodingMode import EncodingMode
-from .AlphanumericEncoder import AlphanumericEncoder
-from .KanjiEncoder import KanjiEncoder
-from .QRCodeEncoder import QRCodeEncoder
-from ..format.ModeIndicator import ModeIndicator
+from ..encoding_mode import EncodingMode
+from .alphanumeric_encoder import AlphanumericEncoder
+from .kanji_encoder import KanjiEncoder
+from .qrcode_encoder import QRCodeEncoder
+from ..format.mode_indicator import ModeIndicator
 
 
 class ByteEncoder(QRCodeEncoder):

@@ -1,4 +1,4 @@
-from ..EncodingMode import EncodingMode
+from ..encoding_mode import EncodingMode
 
 
 class CharCountIndicator(object):

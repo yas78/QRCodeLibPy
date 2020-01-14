@@ -1,3 +1,3 @@
-from .ErrorCorrectionLevel import ErrorCorrectionLevel
-from .Symbol import Symbol
-from .Symbols import Symbols
+from .error_correction_level import ErrorCorrectionLevel
+from .symbol import Symbol
+from .symbols import Symbols

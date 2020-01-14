@@ -1,9 +1,9 @@
-from ..EncodingMode import EncodingMode
-from .AlphanumericEncoder import AlphanumericEncoder
-from .ByteEncoder import ByteEncoder
-from .KanjiEncoder import KanjiEncoder
-from .NumericEncoder import NumericEncoder
-from .QRCodeEncoder import QRCodeEncoder
+from ..encoding_mode import EncodingMode
+from .alphanumeric_encoder import AlphanumericEncoder
+from .byte_encoder import ByteEncoder
+from .kanji_encoder import KanjiEncoder
+from .numeric_encoder import NumericEncoder
+from .qrcode_encoder import QRCodeEncoder
 
 
 class QRCodeEncoderFactory(object):

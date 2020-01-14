@@ -1,13 +1,15 @@
-from ..EncodingMode import EncodingMode
-from .QRCodeEncoder import QRCodeEncoder
-from ..format.ModeIndicator import ModeIndicator
-from ..misc.BitSequence import BitSequence
+from ..encoding_mode import EncodingMode
+from .qrcode_encoder import QRCodeEncoder
+from ..format.mode_indicator import ModeIndicator
+from ..misc.bit_sequence import BitSequence
 
 
-class NumericEncoder(QRCodeEncoder):
+class KanjiEncoder(QRCodeEncoder):
     """
-        数字モードエンコーダー
+        漢字モードエンコーダー
     """
+    _textEncoding = "shift_jis"
+
     def __init__(self) -> None:
         """
             インスタンスを初期化します。
@@ -19,61 +21,51 @@ class NumericEncoder(QRCodeEncoder):
         """
             符号化モードを取得します。
         """
-        return EncodingMode.NUMERIC
+        return EncodingMode.KANJI
 
     @property
     def mode_indicator(self) -> int:
         """
             モード指示子を取得します。
         """
-        return ModeIndicator.NUMERIC_VALUE
+        return ModeIndicator.KANJI_VALUE
 
     def append(self, c: str) -> int:
         """
             文字を追加します。
         """
-        wd = int(c)
+        char_bytes = c.encode(self._textEncoding, "ignore")
+        wd = (char_bytes[0] << 8) | char_bytes[1]
 
-        if self._char_counter % 3 == 0:
-            self._code_words.append(wd)
-            ret = 4
+        if 0x8140 <= wd <= 0x9FFC:
+            wd -= 0x8140
+        elif 0xE040 <= wd <= 0xEBBF:
+            wd -= 0xC140
         else:
-            self._code_words[-1] *= 10
-            self._code_words[-1] += wd
-            ret = 3
-        
-        self._char_counter += 1
-        self._bit_counter += ret
+            raise ValueError("c")
 
-        return ret
+        wd = ((wd >> 8) * 0xC0) + (wd & 0xFF)
+
+        self._code_words.append(wd)
+        self._char_counter += 1
+        self._bit_counter += 13
+
+        return 13
 
     def get_codeword_bit_length(self, c: str) -> int:
         """
             指定の文字をエンコードしたコード語のビット数を返します。
         """
-        if self._char_counter % 3 == 0:
-            return 4
-        else:
-            return 3
+        return 13
 
     def get_bytes(self) -> bytes:
         """
             エンコードされたデータのバイト配列を返します。
         """
         bs = BitSequence()
-        bit_length = 10
 
-        for i in range(len(self._code_words) - 1):
-            bs.append(self._code_words[i], bit_length)
-
-        if self._char_counter % 3 == 1:
-            bit_length = 4
-        elif self._char_counter % 3 == 2:
-            bit_length = 7
-        else:
-            bit_length = 10
-
-        bs.append(self._code_words[-1], bit_length)
+        for wd in self._code_words:
+            bs.append(wd, 13)
 
         return bs.get_bytes()
 
@@ -82,11 +74,24 @@ class NumericEncoder(QRCodeEncoder):
         """
             指定した文字が、このモードの文字集合に含まれる場合は true を返します。
         """
-        return "0" <= c <= "9"
+        char_bytes = c.encode(cls._textEncoding, "ignore")
+
+        if len(char_bytes) != 2:
+            return False
+
+        code = (char_bytes[0] << 8) | char_bytes[1]
+
+        if (0x8140 <= code <= 0x9FFC or
+            0xE040 <= code <= 0xEBBF):
+
+            return (0x40 <= char_bytes[1] <= 0xFC and
+                    0x7F != char_bytes[1])
+        else:
+            return False
 
     @classmethod
     def in_exclusive_subset(cls, c: str) -> bool:
         """
             指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
         """
-        return NumericEncoder.in_subset(c)
+        return cls.in_subset(c)

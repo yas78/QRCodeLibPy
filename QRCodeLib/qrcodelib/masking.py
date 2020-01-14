@@ -3,9 +3,9 @@ from typing import Callable, List
 import copy
 import sys
 
-from .FormatInfo import FormatInfo
-from .MaskingPenaltyScore import MaskingPenaltyScore
-from .VersionInfo import VersionInfo
+from .format_info import FormatInfo
+from .masking_penalty_score import MaskingPenaltyScore
+from .version_info import VersionInfo
 
 
 class Masking(object):

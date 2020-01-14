@@ -1,13 +1,13 @@
 from typing import List
 
-from .Constants import Constants
-from .EncodingMode import EncodingMode
-from .ErrorCorrectionLevel import ErrorCorrectionLevel
-from .Symbol import Symbol
-from .encoder.AlphanumericEncoder import AlphanumericEncoder
-from .encoder.ByteEncoder import ByteEncoder
-from .encoder.KanjiEncoder import KanjiEncoder
-from .encoder.NumericEncoder import NumericEncoder
+from .constants import Constants
+from .encoding_mode import EncodingMode
+from .error_correction_level import ErrorCorrectionLevel
+from .symbol import Symbol
+from .encoder.alphanumeric_encoder import AlphanumericEncoder
+from .encoder.byte_encoder import ByteEncoder
+from .encoder.kanji_encoder import KanjiEncoder
+from .encoder.numeric_encoder import NumericEncoder
 
 
 class Symbols(object):

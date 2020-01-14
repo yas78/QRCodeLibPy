@@ -6,7 +6,7 @@
     <ProjectGuid>c9b50d89-74d7-4757-aedf-78d3964d5a81</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>TkInterDemo.py</StartupFile>
+    <StartupFile>wxpython_demo.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -17,7 +17,9 @@
     <RootNamespace>QRCodeLib</RootNamespace>
     <IsWindowsApplication>True</IsWindowsApplication>
     <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
-    <TestFramework>Pytest</TestFramework>
+    <TestFramework>none</TestFramework>
+    <UnitTestPattern>test*.py</UnitTestPattern>
+    <UnitTestRootDirectory>.</UnitTestRootDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,135 +37,85 @@
     <Folder Include="qrcodelib\misc\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="qrcodelib\AlignmentPattern.py">
+    <Compile Include="qrcodelib\alignment_pattern.py" />
+    <Compile Include="qrcodelib\constants.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\Constants.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\encoder\AlphanumericEncoder.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\encoder\ByteEncoder.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\encoder\QRCodeEncoderFactory.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="qrcodelib\encoder\alphanumeric_encoder.py" />
+    <Compile Include="qrcodelib\encoder\byte_encoder.py" />
+    <Compile Include="qrcodelib\encoder\kanji_encoder.py" />
+    <Compile Include="qrcodelib\encoder\numeric_encoder.py" />
+    <Compile Include="qrcodelib\encoder\qrcode_encoder.py" />
+    <Compile Include="qrcodelib\encoder\qrcode_encoder_factory.py" />
     <Compile Include="qrcodelib\encoder\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\EncodingMode.py">
+    <Compile Include="qrcodelib\encoding_mode.py" />
+    <Compile Include="qrcodelib\error_correction_level.py" />
+    <Compile Include="qrcodelib\finder_pattern.py" />
+    <Compile Include="qrcodelib\format\char_count_indicator.py" />
+    <Compile Include="qrcodelib\format\codeword.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\encoder\KanjiEncoder.py">
+    <Compile Include="qrcodelib\format\data_codeword.py" />
+    <Compile Include="qrcodelib\format\mode_indicator.py" />
+    <Compile Include="qrcodelib\format\module.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\encoder\NumericEncoder.py">
+    <Compile Include="qrcodelib\format\rsblock.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\encoder\QRCodeEncoder.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\ErrorCorrectionLevel.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\FinderPattern.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\FormatInfo.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\CharCountIndicator.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\Codeword.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\DataCodeword.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\ModeIndicator.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\Module.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\RSBlock.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\StructuredAppend.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\format\SymbolSequenceIndicator.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="qrcodelib\format\structured_append.py" />
+    <Compile Include="qrcodelib\format\symbol_sequence_indicator.py" />
     <Compile Include="qrcodelib\format\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\GaloisField256.py">
+    <Compile Include="qrcodelib\format_info.py" />
+    <Compile Include="qrcodelib\galois_field_256.py" />
+    <Compile Include="qrcodelib\generator_polynomials.py" />
+    <Compile Include="qrcodelib\image\bitmapfileheader.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\GeneratorPolynomials.py">
+    <Compile Include="qrcodelib\image\bitmapinfoheader.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\image\BITMAPFILEHEADER.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\image\BITMAPINFOHEADER.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\image\DIB.py" />
-    <Compile Include="qrcodelib\image\RGBQUAD.py">
+    <Compile Include="qrcodelib\image\dib.py" />
+    <Compile Include="qrcodelib\image\rgbquad.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="qrcodelib\image\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\Masking.py">
+    <Compile Include="qrcodelib\masking.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\MaskingPenaltyScore.py">
+    <Compile Include="qrcodelib\masking_penalty_score.py" />
+    <Compile Include="qrcodelib\misc\array_util.py" />
+    <Compile Include="qrcodelib\misc\bit_sequence.py" />
+    <Compile Include="qrcodelib\quiet_zone.py" />
+    <Compile Include="qrcodelib\remainder_bit.py" />
+    <Compile Include="qrcodelib\separator.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\QuietZone.py">
+    <Compile Include="qrcodelib\symbol.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\RemainderBit.py">
+    <Compile Include="qrcodelib\symbols.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\Separator.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\Symbol.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\Symbols.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\TimingPattern.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\misc\ArrayUtil.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\misc\BitSequence.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="qrcodelib\image\Color.py">
+    <Compile Include="qrcodelib\image\color.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="qrcodelib\misc\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="qrcodelib\VersionInfo.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="qrcodelib\timing_pattern.py" />
+    <Compile Include="qrcodelib\version_info.py" />
     <Compile Include="qrcodelib\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TkInterDemo.py" />
-    <Compile Include="WxPythonDemo.py" />
+    <Compile Include="tkInter_demo.py" />
+    <Compile Include="wxpython_demo.py" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">

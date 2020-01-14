@@ -3,31 +3,32 @@ from typing import List, Tuple
 import base64
 import tkinter as tk
 
-from .AlignmentPattern import AlignmentPattern
-from .EncodingMode import EncodingMode
-from .FinderPattern import FinderPattern
-from .FormatInfo import FormatInfo
-from .GaloisField256 import GaloisField256
-from .GeneratorPolynomials import GeneratorPolynomials
-from .Masking import Masking
-from .QuietZone import QuietZone
-from .RemainderBit import RemainderBit
-from .Separator import Separator
-from .TimingPattern import TimingPattern
-from .VersionInfo import VersionInfo
-from .encoder.QRCodeEncoderFactory import QRCodeEncoderFactory
-from .format.CharCountIndicator import CharCountIndicator
-from .format.Codeword import Codeword
-from .format.DataCodeword import DataCodeword
-from .format.ModeIndicator import ModeIndicator
-from .format.Module import Module
-from .format.RSBlock import RSBlock
-from .format.StructuredAppend import StructuredAppend
-from .format.SymbolSequenceIndicator import SymbolSequenceIndicator
-from .misc.ArrayUtil import ArrayUtil
-from .misc.BitSequence import BitSequence
-from .image.Color import Color
-from .image.DIB import DIB
+
+from .alignment_pattern import AlignmentPattern
+from .encoding_mode import EncodingMode
+from .finder_pattern import FinderPattern
+from .format_info import FormatInfo
+from .galois_field_256 import GaloisField256
+from .generator_polynomials import GeneratorPolynomials
+from .masking import Masking
+from .quiet_zone import QuietZone
+from .remainder_bit import RemainderBit
+from .separator import Separator
+from .timing_pattern import TimingPattern
+from .version_info import VersionInfo
+from .encoder.qrcode_encoder_factory import QRCodeEncoderFactory
+from .format.char_count_indicator import CharCountIndicator
+from .format.codeword import Codeword
+from .format.data_codeword import DataCodeword
+from .format.mode_indicator import ModeIndicator
+from .format.module import Module
+from .format.rsblock import RSBlock
+from .format.structured_append import StructuredAppend
+from .format.symbol_sequence_indicator import SymbolSequenceIndicator
+from .misc.array_util import ArrayUtil
+from .misc.bit_sequence import BitSequence
+from .image.color import Color
+from .image.dib import DIB
 
 
 class Symbol(object):
@@ -437,9 +438,9 @@ class Symbol(object):
             raise ValueError("module_size")
 
         if monochrome:
-            return _get_bitmap_1bpp(moduleSize, foreRgb, backRgb)
+            return self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
         else:
-            return _get_bitmap_24bpp(moduleSize, foreRgb, backRgb)
+            return self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
 
     def _get_bitmap_1bpp(self,
                          module_size: int = DEFAULT_MODULE_SIZE,

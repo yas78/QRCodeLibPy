@@ -1,9 +1,9 @@
 from io import BytesIO
 
-from .BITMAPFILEHEADER import BITMAPFILEHEADER
-from .BITMAPINFOHEADER import BITMAPINFOHEADER
-from .Color import Color
-from .RGBQUAD import RGBQUAD
+from .bitmapfileheader import BITMAPFILEHEADER
+from .bitmapinfoheader import BITMAPINFOHEADER
+from .color import Color
+from .rgbquad import RGBQUAD
 
 
 class DIB(object):

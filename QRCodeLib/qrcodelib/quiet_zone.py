@@ -1,6 +1,6 @@
 from typing import List
 
-from .misc.ArrayUtil import ArrayUtil
+from .misc.array_util import ArrayUtil
 
 
 class QuietZone(object):

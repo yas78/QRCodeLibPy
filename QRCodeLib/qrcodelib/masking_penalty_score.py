@@ -2,8 +2,8 @@ from typing import List
 
 import math
 
-from .QuietZone import QuietZone
-from .misc.ArrayUtil import ArrayUtil
+from .quiet_zone import QuietZone
+from .misc.array_util import ArrayUtil
 
 
 class MaskingPenaltyScore(object):
@@ -181,19 +181,15 @@ class MaskingPenaltyScore(object):
     @classmethod
     def _get_ratio3_ranges(cls, arg: List[int]):
         ret = []
-
         s = 0
-        e = 0
 
         for i in range(4, len(arg) - 4):
             if arg[i] > 0 and arg[i - 1] <= 0:
                 s = i
 
             if arg[i] > 0 and arg[i + 1] <= 0:
-                e = i
-
-                if (e + 1 - s) % 3 == 0:
-                    ret.append([s, e])
+                if (i + 1 - s) % 3 == 0:
+                    ret.append([s, i])
 
         return ret
 

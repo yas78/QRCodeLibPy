@@ -1,5 +1,5 @@
-from .Codeword import Codeword
-from .DataCodeword import DataCodeword
+from .codeword import Codeword
+from .data_codeword import DataCodeword
 
 
 class RSBlock(object):
