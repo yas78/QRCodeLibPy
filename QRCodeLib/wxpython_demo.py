@@ -1,6 +1,8 @@
 # WxPython Demo
 import os.path
 import wx
+import wx._adv
+import wx._xml
 
 import qrcodelib as qr
 
@@ -236,11 +238,11 @@ class FormMain(wx.Frame):
 
             if dlg.FilterIndex == 0:
                 path += ".bmp"
-                symbol.save_1bpp_dib(path, self._module_size)
+                symbol.save_bitmap(path, self._module_size, True)
 
             if dlg.FilterIndex == 1:
                 path += ".bmp"
-                symbol.save_24bpp_dib(path, self._module_size)
+                symbol.save_bitmap(path, self._module_size, False)
 
             if dlg.FilterIndex == 2:
                 path += ".ppm"
