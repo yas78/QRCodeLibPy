@@ -1,8 +1,6 @@
 from typing import Callable, List
-
 import copy
 import sys
-
 from .format_info import FormatInfo
 from .masking_penalty_score import MaskingPenaltyScore
 from .version_info import VersionInfo

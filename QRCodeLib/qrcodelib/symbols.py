@@ -1,19 +1,16 @@
 from typing import List
-
 from .constants import Constants
 from .encoding_mode import EncodingMode
 from .error_correction_level import ErrorCorrectionLevel
 from .symbol import Symbol
-from .encoder.alphanumeric_encoder import AlphanumericEncoder
-from .encoder.byte_encoder import ByteEncoder
-from .encoder.kanji_encoder import KanjiEncoder
-from .encoder.numeric_encoder import NumericEncoder
+from .encoder import NumericEncoder, AlphanumericEncoder, KanjiEncoder, ByteEncoder
 
 
 class Symbols(object):
     """
         シンボルのコレクションを表します。
-    """    
+    """
+
     def __init__(self,
                  ec_level: int = ErrorCorrectionLevel.M,
                  max_version: int = Constants.MAX_VERSION,
@@ -24,7 +21,7 @@ class Symbols(object):
         """
         if not (Constants.MIN_VERSION <= max_version <= Constants.MAX_VERSION):
             raise ValueError("max_version")
-        
+
         self._items = []  # type: List[Symbol]
 
         self._min_version = Constants.MIN_VERSION
@@ -118,7 +115,7 @@ class Symbols(object):
         """
         if not data:
             raise ValueError("data")
-        
+
         for i, c in enumerate(data):
             old_mode = self._curr_symbol.current_encoding_mode
 
@@ -139,15 +136,15 @@ class Symbols(object):
                 if not self._curr_symbol.try_set_encoding_mode(new_mode, c):
                     if not self._structured_append_allowed or len(self._items) == 16:
                         raise OverflowError("String too long")
-                    
+
                     self._add()
                     new_mode = self._select_initial_mode(data, i)
                     self._curr_symbol.try_set_encoding_mode(new_mode, c)
-            
+
             if not self._curr_symbol.try_append(c):
                 if not self._structured_append_allowed or len(self._items) == 16:
                     raise OverflowError("String too long")
-                
+
                 self._add()
                 new_mode = self._select_initial_mode(data, i)
                 self._curr_symbol.try_set_encoding_mode(new_mode, c)
@@ -161,10 +158,10 @@ class Symbols(object):
 
         if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
-        
+
         if ByteEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.EIGHT_BIT_BYTE
-        
+
         if AlphanumericEncoder.in_exclusive_subset(s[start_index]):
             cnt = 0
             flg = False
@@ -174,7 +171,7 @@ class Symbols(object):
                     cnt += 1
                 else:
                     break
-                
+
                 if 1 <= version <= 9:
                     flg = cnt < 6
                 elif 10 <= version <= 26:
@@ -223,7 +220,7 @@ class Symbols(object):
                     flg1 = ByteEncoder.in_exclusive_subset(s[start_index + cnt])
                 else:
                     flg1 = False
-            
+
             if flg2:
                 if (start_index + cnt) < len(s):
                     flg2 = AlphanumericEncoder.in_exclusive_subset(s[start_index + cnt])
@@ -236,10 +233,11 @@ class Symbols(object):
                 return EncodingMode.ALPHA_NUMERIC
             else:
                 return EncodingMode.NUMERIC
-       
+
         raise RuntimeError()
 
-    def _select_mode_while_in_numeric(self, s: str, start_index: int) -> int:
+    @classmethod
+    def _select_mode_while_in_numeric(cls, s: str, start_index: int) -> int:
         """
             数字モードから切り替えるモードを決定します。
         """
@@ -251,7 +249,7 @@ class Symbols(object):
 
         if AlphanumericEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.ALPHA_NUMERIC
-        
+
         return EncodingMode.NUMERIC
 
     def _select_mode_while_in_alphanumeric(self, s: str, start_index: int) -> int:
@@ -262,7 +260,7 @@ class Symbols(object):
 
         if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
-        
+
         if ByteEncoder.in_exclusive_subset(s[start_index]):
             return EncodingMode.EIGHT_BIT_BYTE
 
@@ -272,13 +270,13 @@ class Symbols(object):
         for i in range(start_index, len(s) - 1):
             if not AlphanumericEncoder.in_subset(s[i]):
                 break
-            
+
             if NumericEncoder.in_subset(s[i]):
                 cnt += 1
             else:
                 flg = True
                 break
-        
+
         if flg:
             if 1 <= version <= 9:
                 flg = cnt >= 13
@@ -291,7 +289,7 @@ class Symbols(object):
 
             if flg:
                 return EncodingMode.NUMERIC
-            
+
         return EncodingMode.ALPHA_NUMERIC
 
     def _select_mode_while_in_byte(self, s: str, start_index: int) -> int:
@@ -302,14 +300,14 @@ class Symbols(object):
 
         cnt = 0
         flg = False
-            
+
         if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
-        
+
         for i in range(start_index, len(s) - 1):
             if not ByteEncoder.in_subset(s[i]):
                 break
-            
+
             if NumericEncoder.in_subset(s[i]):
                 cnt += 1
             elif ByteEncoder.in_exclusive_subset(s[i]):
@@ -330,14 +328,14 @@ class Symbols(object):
 
             if flg:
                 return EncodingMode.NUMERIC
-            
+
         cnt = 0
         flg = False
 
         for i in range(start_index, len(s) - 1):
             if not ByteEncoder.in_subset(s[i]):
                 break
-            
+
             if AlphanumericEncoder.in_exclusive_subset(s[i]):
                 cnt += 1
             elif ByteEncoder.in_exclusive_subset(s[i]):
@@ -358,7 +356,7 @@ class Symbols(object):
 
             if flg:
                 return EncodingMode.ALPHA_NUMERIC
-            
+
         return EncodingMode.EIGHT_BIT_BYTE
 
     def update_parity(self, c: str) -> None:

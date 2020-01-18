@@ -1,5 +1,4 @@
 from typing import List
-
 from .misc.array_util import ArrayUtil
 
 

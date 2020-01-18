@@ -1,9 +1,10 @@
 from typing import List, Tuple
-
 import base64
 import tkinter as tk
-
-
+from .encoder import QRCodeEncoderFactory
+from .format import *
+from .image import Color, DIB
+from .misc import *
 from .alignment_pattern import AlignmentPattern
 from .encoding_mode import EncodingMode
 from .finder_pattern import FinderPattern
@@ -16,19 +17,6 @@ from .remainder_bit import RemainderBit
 from .separator import Separator
 from .timing_pattern import TimingPattern
 from .version_info import VersionInfo
-from .encoder.qrcode_encoder_factory import QRCodeEncoderFactory
-from .format.char_count_indicator import CharCountIndicator
-from .format.codeword import Codeword
-from .format.data_codeword import DataCodeword
-from .format.mode_indicator import ModeIndicator
-from .format.module import Module
-from .format.rsblock import RSBlock
-from .format.structured_append import StructuredAppend
-from .format.symbol_sequence_indicator import SymbolSequenceIndicator
-from .misc.array_util import ArrayUtil
-from .misc.bit_sequence import BitSequence
-from .image.color import Color
-from .image.dib import DIB
 
 
 class Symbol(object):
@@ -152,7 +140,7 @@ class Symbol(object):
         if self._parent.structured_append_allowed:
             self._data_bit_capacity -= StructuredAppend.HEADER_LENGTH
 
-    def _build_data_block(self) -> List[bytearray]:
+    def _build_data_block(self) -> List[bytes]:
         """
             データブロックを返します。
         """
@@ -164,29 +152,28 @@ class Symbol(object):
         num_fol_blocks = RSBlock.get_total_number(
             self._parent.error_correction_level, self._curr_version, False)
 
-        ret = [None] * (num_pre_blocks + num_fol_blocks)  # type: List[bytearray]
-
+        ret = []
         index = 0
 
         num_pre_block_data_codewords = RSBlock.get_number_data_codewords(
             self._parent.error_correction_level, self._curr_version, True)
 
-        for i in range(num_pre_blocks):
+        for _ in range(num_pre_blocks):
             data = data_bytes[index:index + num_pre_block_data_codewords]
             index += len(data)
-            ret[i] = data
+            ret.append(data)
 
         num_fol_block_data_codewords = RSBlock.get_number_data_codewords(
             self._parent.error_correction_level, self._curr_version, False)
 
-        for i in range(num_pre_blocks, num_pre_blocks + num_fol_blocks):
+        for _ in range(num_fol_blocks):
             data = data_bytes[index:index + num_fol_block_data_codewords]
             index += len(data)
-            ret[i] = data
+            ret.append(data)
 
         return ret
 
-    def _build_error_correction_block(self, data_block: List[bytearray]) -> List[bytearray]:
+    def _build_error_correction_block(self, data_block: List[bytes]) -> List[bytearray]:
         """
             誤り訂正データ領域のブロックを生成します。
         """
@@ -197,10 +184,7 @@ class Symbol(object):
         num_fol_blocks = RSBlock.get_total_number(
             self._parent.error_correction_level, self._curr_version, False)
 
-        ret = [None] * (num_pre_blocks + num_fol_blocks)  # type: List[bytearray]
-
-        for i in range(len(ret)):
-            ret[i] = bytearray(num_ec_codewords)
+        ret = [bytearray(num_ec_codewords) for _ in range(num_pre_blocks + num_fol_blocks)]
 
         gp = GeneratorPolynomials.item(num_ec_codewords)
 
@@ -229,7 +213,7 @@ class Symbol(object):
 
         return ret
 
-    def _get_encoding_region_bytes(self) -> bytearray:
+    def _get_encoding_region_bytes(self) -> bytes:
         """
             符号化領域のバイトデータを返します。
         """
@@ -328,7 +312,8 @@ class Symbol(object):
 
         bs.append(ModeIndicator.TERMINATOR_VALUE, terminator_length)
 
-    def _write_padding_bits(self, bs: BitSequence):
+    @classmethod
+    def _write_padding_bits(cls, bs: BitSequence):
         """
             埋め草ビットを追記します。
         """
@@ -353,11 +338,7 @@ class Symbol(object):
         """
         num_modules_per_side = Module.get_num_modules_per_side(
             self._curr_version)
-
-        module_matrix = [None] * num_modules_per_side  # type: List[List[int]]
-
-        for i in range(len(module_matrix)):
-            module_matrix[i] = [0] * len(module_matrix)
+        module_matrix = [[0] * num_modules_per_side for _ in range(num_modules_per_side)]
 
         FinderPattern.place(module_matrix)
         Separator.place(module_matrix)

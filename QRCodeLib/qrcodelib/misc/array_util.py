@@ -18,11 +18,7 @@ class ArrayUtil(object):
         
     @classmethod
     def rotate90(cls, arg: List[List[int]]) -> List[List[int]]:
-        ret = [None] * len(arg[0])  # type: List[List[int]]
-
-        for i in range(len(ret)):
-            ret[i] = [0] * len(arg)
-
+        ret = [[0] * len(arg[0]) for _ in range(len(arg[0]))]
         k = len(ret) - 1
 
         for i in range(len(ret)):
@@ -30,4 +26,3 @@ class ArrayUtil(object):
                 ret[i][j] = arg[j][k - i]
 
         return ret
-

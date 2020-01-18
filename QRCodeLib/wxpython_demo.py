@@ -3,7 +3,6 @@ import os.path
 import wx
 import wx._adv
 import wx._xml
-
 import qrcodelib as qr
 
 
@@ -14,11 +13,6 @@ class FormMain(wx.Frame):
         self._init_widgets()
 
         self._images = []
-
-        self._ec_level = int()
-        self._max_ver = int()
-        self._structured_append = bool()
-        self._enc_mode = str()
         self._module_size = int()
 
     def _init_widgets(self):
@@ -51,7 +45,7 @@ class FormMain(wx.Frame):
     def _create_middle_panel(self) -> wx.Panel:
         panel = wx.Panel(self, size=(self.GetSize().Width, 120))
         # lbl_data
-        self._lbl_data = wx.StaticText(panel, label='Data :')
+        lbl_data = wx.StaticText(panel, label='Data :')
         # txt_data
         self._txt_data = wx.TextCtrl(
             panel,
@@ -63,7 +57,7 @@ class FormMain(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         panel.SetSizer(sizer)
         sizer.Add(
-            self._lbl_data,
+            lbl_data,
             flag=wx.TOP | wx.LEFT,
             border=10
         )
@@ -81,12 +75,7 @@ class FormMain(wx.Frame):
             size=(self.GetSize().width, 70)
         )
         # lbl_ec_levell
-        self._lbl_eclevel = wx.StaticText(
-            panel,
-            label="Error Correction Level :",
-            pos=(10, 9),
-            size=(143, 21)
-        )
+        wx.StaticText(panel, label="Error Correction Level :", pos=(10, 9), size=(143, 21))
         # cmb_ec_level
         self._cmb_ec_level = wx.ComboBox(
             panel,
@@ -114,11 +103,7 @@ class FormMain(wx.Frame):
         self._cmb_byte_enc.SetValue("Shift_JIS")
         self._cmb_byte_enc.Bind(wx.EVT_COMBOBOX, self.update_image)
         # lbl_max_ver
-        self._lbl_max_ver = wx.StaticText(
-            panel,
-            label="Max Version :",
-            pos=(10, 39)
-        )
+        wx.StaticText(panel, label="Max Version :", pos=(10, 39))
         # cmb_max_ver
         self._cmb_max_ver = wx.ComboBox(
             panel,
@@ -138,11 +123,7 @@ class FormMain(wx.Frame):
         self._chk_structured_append.SetValue(False)
         self._chk_structured_append.Bind(wx.EVT_CHECKBOX, self.update_image)
         # lbl_module_size
-        self._lbl_module_size = wx.StaticText(
-            panel,
-            label="Module Size :",
-            pos=(380, 39)
-        )
+        wx.StaticText(panel, label="Module Size :", pos=(380, 39))
         # spn_module_size
         self._spn_module_size = wx.SpinCtrlDouble(
             panel,
@@ -168,16 +149,12 @@ class FormMain(wx.Frame):
         if not data:
             return None
 
-        self._ec_level = qr.ErrorCorrectionLevel.to_int(self._cmb_ec_level.GetValue())
-        self._max_ver = int(self._cmb_max_ver.GetValue())
-        self._structured_append = self._chk_structured_append.GetValue()
-        self._enc_mode = self._cmb_byte_enc.GetValue()
-        self._module_size = int(self._spn_module_size.GetValue())
+        ec_level = qr.ErrorCorrectionLevel.to_int(self._cmb_ec_level.GetValue())
+        max_ver = int(self._cmb_max_ver.GetValue())
+        structured_append = self._chk_structured_append.GetValue()
+        enc_mode = self._cmb_byte_enc.GetValue()
 
-        symbols = qr.Symbols(self._ec_level,
-                             self._max_ver,
-                             self._structured_append,
-                             self._enc_mode)
+        symbols = qr.Symbols(ec_level, max_ver, structured_append, enc_mode)
         try:
             symbols.append_text(self._txt_data.GetValue())
         except Exception as e:
@@ -199,8 +176,10 @@ class FormMain(wx.Frame):
         self._pnl_top.SetSizer(sizer)
         self._pnl_top.Freeze()
 
+        module_size = int(self._spn_module_size.GetValue())
+
         for symbol in symbols:
-            (data, width, height) = symbol.get_rgb_bytes(self._module_size)
+            (data, width, height) = symbol.get_rgb_bytes(module_size)
             bitmap = wx.Bitmap.FromBuffer(width, height, data)
             self._images.append(bitmap)
 
@@ -226,31 +205,29 @@ class FormMain(wx.Frame):
             return
 
         (root, ext) = os.path.splitext(dlg.GetPath())
-        num = 0
+        module_size = int(self._spn_module_size.GetValue())
 
-        for symbol in symbols:
-            num += 1
-
+        for i, symbol in enumerate(symbols):
             if symbols.count == 1:
                 path = root
             else:
-                path = root + "_" + str(num)
+                path = root + "_" + str(i)
 
             if dlg.FilterIndex == 0:
                 path += ".bmp"
-                symbol.save_bitmap(path, self._module_size, True)
+                symbol.save_bitmap(path, module_size, True)
 
             if dlg.FilterIndex == 1:
                 path += ".bmp"
-                symbol.save_bitmap(path, self._module_size, False)
+                symbol.save_bitmap(path, module_size, False)
 
             if dlg.FilterIndex == 2:
                 path += ".ppm"
-                symbol.save_ppm(path, self._module_size)
+                symbol.save_ppm(path, module_size)
 
             if dlg.FilterIndex == 3:
                 path += ".xbm"
-                symbol.save_xbm(path, self._module_size)
+                symbol.save_xbm(path, module_size)
 
         dlg.Destroy()
 
@@ -264,4 +241,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -1,5 +1,4 @@
 from io import BytesIO
-
 from .bitmapfileheader import BITMAPFILEHEADER
 from .bitmapinfoheader import BITMAPINFOHEADER
 from .color import Color
@@ -76,4 +75,3 @@ class DIB(object):
             ret = buffer.getvalue()
 
         return ret
-

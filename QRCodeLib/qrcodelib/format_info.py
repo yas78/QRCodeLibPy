@@ -1,5 +1,4 @@
 from typing import List
-
 from .error_correction_level import ErrorCorrectionLevel
 
 

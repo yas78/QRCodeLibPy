@@ -1,12 +1,10 @@
 # TkInter Demo
 import os.path
-
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkmsg
 import tkinter.filedialog as tkfdlg
 from tkinter.scrolledtext import ScrolledText
-
 import qrcodelib as qr
 
 
@@ -169,15 +167,12 @@ class FormTk(tk.Frame):
         ext = ext.lower()
 
         module_size = self._spn_module_size_var.get()
-        num = 0
 
-        for symbol in symbols:
-            num += 1
-
+        for i, symbol in enumerate(symbols):
             if symbols.count == 1:
                 path = root + ext
             else:
-                path = root + "_" + str(num) + ext
+                path = root + "_" + str(i) + ext
 
             if ext == ".bmp":
                 symbol.save_bitmap(path, module_size, True)

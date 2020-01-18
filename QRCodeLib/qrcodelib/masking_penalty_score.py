@@ -1,7 +1,5 @@
 from typing import List
-
 import math
-
 from .quiet_zone import QuietZone
 from .misc.array_util import ArrayUtil
 
@@ -75,11 +73,11 @@ class MaskingPenaltyScore(object):
 
         for r in range(len(module_matrix) - 1):
             for c in range(len(module_matrix[r]) - 1):
-                if ((module_matrix[r + 0][c + 0] > 0) ==
-                    (module_matrix[r + 0][c + 1] > 0) ==
-                    (module_matrix[r + 1][c + 0] > 0) ==
-                    (module_matrix[r + 1][c + 1] > 0)):
-                        penalty += 3
+                if (module_matrix[r + 0][c + 0] > 0) == \
+                   (module_matrix[r + 0][c + 1] > 0) == \
+                   (module_matrix[r + 1][c + 0] > 0) == \
+                   (module_matrix[r + 1][c + 1] > 0):
+                    penalty += 3
 
         return penalty
 
