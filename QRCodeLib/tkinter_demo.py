@@ -12,14 +12,14 @@ class FormTk(tk.Frame):
 
     def __init__(self, master=None, cnf={}, **kw) -> None:
         super().__init__(master, cnf, **kw)
+
+        self._init_widgets()
+        self._images = []
         # master
         master.title("QR Code")
         master.propagate(True)
         master.update()
         master.minsize(master.winfo_width(), master.winfo_height())
-
-        self._init_widgets()
-        self._images = []
 
     def _init_widgets(self):
         # event handler
@@ -185,9 +185,9 @@ class FormTk(tk.Frame):
 
 
 def main():
-    app = tk.Tk()
-    FormTk(app)
-    app.mainloop()
+    root = tk.Tk()
+    FormTk(root)
+    root.mainloop()
 
 
 if __name__ == "__main__":

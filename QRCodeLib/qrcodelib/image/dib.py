@@ -8,7 +8,12 @@ from .rgbquad import RGBQUAD
 class DIB(object):
 
     @classmethod
-    def build_1bpp_dib(cls, bitmap_data: bytes, width: int, height: int, fore_color: Color, back_color: Color) -> bytes:
+    def build_1bpp_dib(cls,
+                       bitmap_data: bytes,
+                       width: int,
+                       height: int,
+                       fore_color: Color,
+                       back_color: Color) -> bytes:
         bfh = BITMAPFILEHEADER(
             0x4D42,
             62 + len(bitmap_data),
