@@ -1,7 +1,7 @@
-from typing import List, Tuple
+from typing import cast, List, Optional, Tuple
 import base64
 import tkinter as tk
-from .encoder import QRCodeEncoderFactory
+from .encoder import QRCodeEncoder, QRCodeEncoderFactory
 from .format import *
 from .image import Color, DIB
 from .misc import *
@@ -30,7 +30,7 @@ class Symbol(object):
 
         self._position = parent.count
 
-        self._curr_encoder = None
+        self._curr_encoder: Optional[QRCodeEncoder] = None
         self._curr_encoding_mode = EncodingMode.UNKNOWN
         self._curr_version = parent.min_version
 
@@ -39,7 +39,7 @@ class Symbol(object):
 
         self._data_bit_counter = 0
 
-        self._segments = []
+        self._segments: List[QRCodeEncoder] = []
 
         self._segment_counter = {
             EncodingMode.NUMERIC: 0,
@@ -77,7 +77,7 @@ class Symbol(object):
             シンボルに文字を追加します。
             シンボル容量が不足している場合は false を返します。
         """
-        bit_length = self._curr_encoder.get_codeword_bit_length(c)
+        bit_length = cast(QRCodeEncoder, self._curr_encoder).get_codeword_bit_length(c)
 
         while self._data_bit_capacity < (self._data_bit_counter
                                          + bit_length):
@@ -85,7 +85,7 @@ class Symbol(object):
                 return False
             self._select_version()
 
-        self._curr_encoder.append(c)
+        cast(QRCodeEncoder, self._curr_encoder).append(c)
         self._data_bit_counter += bit_length
         self._parent.update_parity(c)
         return True
@@ -608,10 +608,11 @@ class Symbol(object):
         for bits in reversed_bits_array:
             bits_chars.append(hex(bits))
 
-        header = ("# define img_width " + str(width) + "\n" +
-                  "# define img_height " + str(height) + "\n" +
-                  "static char bits[] = {" + "\n")
-        xbm = header + ", ".join(bits_chars) + "};"
+        header = ("#define x11_width " + str(width) + "\n" +
+                  "#define x11_height " + str(height) + "\n" +
+                  "static char x11_bits[] = {" + "\n")
+        str_bytes = ", ".join(bits_chars)
+        xbm = header + str_bytes + "\n};"
         return xbm
 
     def get_rgb_bytes(self,

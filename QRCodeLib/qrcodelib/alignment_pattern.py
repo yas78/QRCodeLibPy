@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, cast
 from .misc.array_util import ArrayUtil
 
 
@@ -55,7 +55,7 @@ class AlignmentPattern(object):
         """
             位置合わせパターンを配置します。
         """
-        center_pos_array = cls._center_pos_arrays[version]
+        center_pos_array: List[int] = cast(List[int], cls._center_pos_arrays[version])
 
         length = len(center_pos_array)
         max_index = length - 1

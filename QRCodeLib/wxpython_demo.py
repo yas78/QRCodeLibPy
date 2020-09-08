@@ -1,9 +1,9 @@
 # WxPython Demo
+from typing import List, Optional
 import os.path
 import wx
-import wx._adv
-import wx._xml
 import qrcodelib as qr
+from qrcodelib import Symbols
 
 
 class FormMain(wx.Frame):
@@ -12,10 +12,10 @@ class FormMain(wx.Frame):
         super().__init__(**kw)
         self._init_widgets()
 
-        self._images = []
+        self._images: List[wx.Bitmap] = []
         self._module_size = int()
 
-    def _init_widgets(self):
+    def _init_widgets(self) -> None:
         # self
         self.Title = "QR Code"
         self.SetSize(700, 550)
@@ -114,7 +114,7 @@ class FormMain(wx.Frame):
         )
         self._cmb_max_ver.SetValue(str(40))
         self._cmb_max_ver.Bind(wx.EVT_COMBOBOX, self.update_image)
-        # chk_structured_appen
+        # chk_structured_append
         self._chk_structured_append = wx.CheckBox(
             panel,
             label="Structured Append",
@@ -144,7 +144,7 @@ class FormMain(wx.Frame):
         self._btn_save.Bind(wx.EVT_BUTTON, self.on_btn_save_clicked)
         return panel
 
-    def create_symbols(self):
+    def create_symbols(self) -> Optional[Symbols]:
         data = self._txt_data.GetValue()
         if not data:
             return None
@@ -163,7 +163,7 @@ class FormMain(wx.Frame):
 
         return symbols
 
-    def update_image(self, event):
+    def update_image(self, event) -> None:
         self._pnl_top.DestroyChildren()
 
         symbols = self.create_symbols()
@@ -190,7 +190,7 @@ class FormMain(wx.Frame):
         self._pnl_top.Layout()
         self._pnl_top.Thaw()
 
-    def on_btn_save_clicked(self, event):
+    def on_btn_save_clicked(self, event) -> None:
         symbols = self.create_symbols()
         if not symbols:
             return
@@ -232,7 +232,7 @@ class FormMain(wx.Frame):
         dlg.Destroy()
 
 
-def main():
+def main() -> None:
     app = wx.App()
     form = FormMain(parent=None)
     form.Show()

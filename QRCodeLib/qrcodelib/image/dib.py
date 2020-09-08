@@ -1,3 +1,5 @@
+from typing import cast
+
 from io import BytesIO
 from .bitmapfileheader import BITMAPFILEHEADER
 from .bitmapinfoheader import BITMAPINFOHEADER
@@ -40,10 +42,10 @@ class DIB(object):
         palette2 = RGBQUAD(back_color.r, back_color.g, back_color.b)
 
         with BytesIO() as buffer:
-            buffer.write(bfh)
-            buffer.write(bih)
-            buffer.write(palette1)
-            buffer.write(palette2)
+            buffer.write(cast(bytes, bfh))
+            buffer.write(cast(bytes, bih))
+            buffer.write(cast(bytes, palette1))
+            buffer.write(cast(bytes, palette2))
             buffer.write(bitmap_data)
             ret = buffer.getvalue()
 
@@ -74,8 +76,8 @@ class DIB(object):
         )
 
         with BytesIO() as buffer:
-            buffer.write(bfh)
-            buffer.write(bih)
+            buffer.write(cast(bytes, bfh))
+            buffer.write(cast(bytes, bih))
             buffer.write(bitmap_data)
             ret = buffer.getvalue()
 

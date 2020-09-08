@@ -1,20 +1,23 @@
 # TkInter Demo
+from typing import List, Optional
 import os.path
 import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkmsg
 import tkinter.filedialog as tkfdlg
 from tkinter.scrolledtext import ScrolledText
+from tkinter import PhotoImage
 import qrcodelib as qr
+from qrcodelib import Symbols
 
 
-class FormTk(tk.Frame):
+class FormMain(tk.Frame):
 
-    def __init__(self, master=None, cnf={}, **kw) -> None:
-        super().__init__(master, cnf, **kw)
+    def __init__(self, master=None) -> None:
+        super().__init__(master)
 
         self._init_widgets()
-        self._images = []
+        self._images: List[PhotoImage] = []
         # master
         master.title("QR Code")
         master.propagate(True)
@@ -35,10 +38,10 @@ class FormTk(tk.Frame):
         self._fra_top.pack(expand=True, fill=tk.BOTH, anchor=tk.S)
         # middle_frame
         self._fra_middle = self._create_middle_frame()
-        self._fra_middle.pack(expand=False, fill=tk.BOTH, anchor=tk.S)
+        self._fra_middle.pack(expand=False, fill=tk.BOTH, anchor=tk.S, padx=4, pady=4)
         # bottom_frame
         self._fra_bottom = self._create_bottom_frame()
-        self._fra_bottom.pack(expand=False, fill=tk.X, anchor=tk.NW)
+        self._fra_bottom.pack(expand=False, fill=tk.X, anchor=tk.NW, padx=4, pady=4)
 
     def _create_top_frame(self) -> tk.Frame:
         frame = tk.Frame(self, bg="gray80", height=320)
@@ -49,71 +52,76 @@ class FormTk(tk.Frame):
         frame = tk.Frame(self, bg="gray95", height=120)
         # lbl_data
         lbl_data = tk.Label(frame, text="Data :")
-        lbl_data.pack(anchor=tk.NW, padx=8)
+        lbl_data.pack(anchor=tk.W, padx=4)
         # txt_data
         self._txt_data = ScrolledText(frame, height=6)
-        self._txt_data.pack(anchor=tk.NW, expand=True, fill=tk.X, padx=8, pady=3)
+        self._txt_data.pack(anchor=tk.NW, expand=True, fill=tk.X, padx=4)
         self._txt_data.focus_set()
         self._txt_data.bind("<KeyRelease>", self._update_image_handler)
         return frame
 
     def _create_bottom_frame(self) -> tk.Frame:
+        pad = {"padx": 4, "pady": 4}
         frame = tk.Frame(self, bg="gray95", height=70)
         # lbl_ec_level
-        lbl_ec_level = tk.Label(frame, text="Error Correnction Level :")
-        lbl_ec_level.place(x=8, y=10)
+        lbl_ec_level = tk.Label(frame, text="Error Correction Level :")
+        lbl_ec_level.grid(row=0, column=0, sticky=tk.W, cnf=pad)
         # cmb_ec_level
         self._cmb_ec_level_var = tk.StringVar()
         cmb_ec_level = ttk.Combobox(frame, state="readonly", width=4, textvariable=self._cmb_ec_level_var)
         cmb_ec_level["values"] = ["L", "M", "Q", "H"]
         cmb_ec_level.current(1)
-        cmb_ec_level.place(x=150, y=10)
+        cmb_ec_level.grid(row=0, column=1, sticky=tk.W, cnf=pad)
         cmb_ec_level.bind("<<ComboboxSelected>>", self._update_image_handler)
         # lbl_max_ver
         lbl_max_ver = tk.Label(frame, text="Max Version :")
-        lbl_max_ver.place(x=8, y=40)
+        lbl_max_ver.grid(row=1, column=0, sticky=tk.W, cnf=pad)
         # cmb_max_ver
         self._cmb_max_ver_var = tk.StringVar()
         cmb_max_ver = ttk.Combobox(frame, state="readonly", width=4, height=20, textvariable=self._cmb_max_ver_var)
-        cmb_max_ver["values"] = [item + 1 for item in range(40)]
+        cmb_max_ver["values"] = [i + 1 for i in range(40)]
         cmb_max_ver.current(len(cmb_max_ver["values"]) - 1)
-        cmb_max_ver.place(x=150, y=40)
+        cmb_max_ver.grid(row=1, column=1, sticky=tk.W, cnf=pad)
         cmb_max_ver.bind("<<ComboboxSelected>>", self._update_image_handler)
         # lbl_byte_enc
         lbl_byte_enc = tk.Label(frame, text="Byte mode Encoding :")
-        lbl_byte_enc.place(x=210, y=10)
+        lbl_byte_enc.grid(row=0, column=2, sticky=tk.W, cnf=pad)
         # cmb_byte_enc
         self._cmb_byte_enc_var = tk.StringVar()
         cmb_byte_enc = ttk.Combobox(frame, state="readonly", width=56, textvariable=self._cmb_byte_enc_var)
         cmb_byte_enc["values"] = ["Shift_JIS", "UTF-8"]
         cmb_byte_enc.current(0)
-        cmb_byte_enc.place(x=335, y=10)
+        cmb_byte_enc.grid(row=0, column=3, columnspan=2, sticky=tk.W, cnf=pad)
         cmb_byte_enc.bind("<<ComboboxSelected>>", self._update_image_handler)
         # chk_structured_append
         self._chk_structured_append_var = tk.BooleanVar(value=False)
         chk_structured_append = ttk.Checkbutton(
             frame, text="Structured Append", variable=self._chk_structured_append_var)
-        chk_structured_append.place(x=210, y=40)
+        chk_structured_append.grid(row=1, column=2, sticky=tk.W, cnf=pad)
         chk_structured_append.bind("<Button-1>", self._update_image_handler)
+        # fra_module_size
+        fra_module_size = tk.Frame(frame)
+        fra_module_size.grid(row=1, column=3, sticky=tk.W)
         # lbl_module_size
-        lbl_module_size = tk.Label(frame, text="Module Size :")
-        lbl_module_size.place(x=360, y=40)
+        lbl_module_size = tk.Label(fra_module_size, text="Module Size :")
+        lbl_module_size.pack(anchor=tk.W, side=tk.LEFT, cnf=pad)
         # spn_module_size
         self._spn_module_size_var = tk.IntVar(value=4)
         spn_module_size = tk.Spinbox(
-            frame, from_=1, to_=100, width=4, state="readonly", textvariable=self._spn_module_size_var)
-        spn_module_size.place(x=440, y=40)
+            fra_module_size, from_=1, to_=100, width=4, state="readonly", textvariable=self._spn_module_size_var)
+        spn_module_size.pack(anchor=tk.W, side=tk.LEFT, cnf=pad)
         spn_module_size.bind("<KeyPress-Up>", self._update_image_handler)
         spn_module_size.bind("<KeyPress-Down>", self._update_image_handler)
         # btn_save
         btn_save = ttk.Button(frame, text="Save", width=19)
-        btn_save.place(x=570, y=35)
+        btn_save.grid(row=1, column=4, sticky=tk.E, cnf=pad)
         btn_save.bind("<ButtonRelease-1>", self._btn_save_handler)
         btn_save.bind("<Key-Return>", self._btn_save_handler)
         btn_save.bind("<Key-space>", self._btn_save_handler)
+
         return frame
 
-    def create_symbols(self):
+    def create_symbols(self) -> Optional[Symbols]:
         data = self._txt_data.get("1.0", tk.END + "-1c")
         if not data:
             return None
@@ -132,7 +140,7 @@ class FormTk(tk.Frame):
 
         return symbols
 
-    def update_image(self, event):
+    def update_image(self, event) -> None:
         if self._fra_top.winfo_children():
             for widget in self._fra_top.winfo_children():
                 widget.destroy()
@@ -186,8 +194,8 @@ class FormTk(tk.Frame):
 
 def main():
     root = tk.Tk()
-    FormTk(root)
-    root.mainloop()
+    form = FormMain(root)
+    form.mainloop()
 
 
 if __name__ == "__main__":

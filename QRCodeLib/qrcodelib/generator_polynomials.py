@@ -1,14 +1,14 @@
-from typing import List
+from typing import cast, List, Optional
 
 
 class GeneratorPolynomials(object):
     """
         リードソロモン誤り訂正コード語の生成多項式
     """    
-    _gp = []  # type: List[List[int]]
+    _gp: List[Optional[List[int]]] = []
 
     def __init__(self) -> None:
-        GeneratorPolynomials._gp = [None] * 69
+        GeneratorPolynomials._gp = [[]] * 69
         GeneratorPolynomials._gp[7]  = [ 21, 102, 238, 149, 146, 229,  87,   0]
         GeneratorPolynomials._gp[10] = [ 45,  32,  94,  64,  70, 118,  61,  46,  67, 251,   0]
         GeneratorPolynomials._gp[13] = [ 78, 140, 206, 218, 130, 104, 106, 100,  86, 100, 176, 152,  74,   0]
@@ -43,10 +43,10 @@ class GeneratorPolynomials(object):
 
     @classmethod
     def item(cls, num_ec_code_words: int) -> List[int]:
-        if not cls._gp:
+        if not len(cls._gp):
             GeneratorPolynomials()
 
         if 7 <= num_ec_code_words <= 68:
-            return cls._gp[num_ec_code_words]
+            return cast(List[int], cls._gp[num_ec_code_words])
         else:
             raise ValueError("num_ec_code_words")
