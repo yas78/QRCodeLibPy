@@ -88,9 +88,7 @@ class MaskingPenaltyScore(object):
             行／列における1 : 1 : 3 : 1 : 1 比率パターンの失点を計算します。
         """
         module_matrix_temp = QuietZone.place(module_matrix)
-
         penalty = 0
-
         penalty += cls._calc_module_ratio_in_row(module_matrix_temp)
         penalty += cls._calc_module_ratio_in_row(ArrayUtil.rotate90(module_matrix_temp))
 
@@ -117,7 +115,9 @@ class MaskingPenaltyScore(object):
 
                 # light ratio 1
                 cnt = 0
-                while i >= 0 and row[i] <= 0:
+                while i >= 0:
+                    if row[i] > 0:
+                        break
                     cnt += 1
                     i -= 1
 
@@ -126,7 +126,9 @@ class MaskingPenaltyScore(object):
 
                 # dark ratio 1
                 cnt = 0
-                while i >= 0 and row[i] > 0:
+                while i >= 0:
+                    if row[i] <= 0:
+                        break
                     cnt += 1
                     i -= 1
 
@@ -135,7 +137,9 @@ class MaskingPenaltyScore(object):
 
                 # light ratio 4
                 cnt = 0
-                while i >= 0 and row[i] <= 0:
+                while i >= 0:
+                    if row[i] > 0:
+                        break
                     cnt += 1
                     i -= 1
 
@@ -146,7 +150,9 @@ class MaskingPenaltyScore(object):
 
                 # light ratio 1
                 cnt = 0
-                while i < len(row) and row[i] <= 0:
+                while i < len(row):
+                    if row[i] > 0:
+                        break
                     cnt += 1
                     i += 1
 
@@ -155,7 +161,9 @@ class MaskingPenaltyScore(object):
 
                 # dark ratio 1
                 cnt = 0
-                while i < len(row) and row[i] > 0:
+                while i < len(row):
+                    if row[i] <= 0:
+                        break
                     cnt += 1
                     i += 1
 
@@ -164,7 +172,9 @@ class MaskingPenaltyScore(object):
 
                 # light ratio 4
                 cnt = 0
-                while i < len(row) and row[i] <= 0:
+                while i < len(row):
+                    if row[i] > 0:
+                        break
                     cnt += 1
                     i += 1
 

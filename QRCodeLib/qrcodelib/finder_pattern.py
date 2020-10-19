@@ -25,7 +25,6 @@ class FinderPattern(object):
         for i in range(len(cls._finder_pattern)):
             for j in range(len(cls._finder_pattern[i])):
                 v = cls._finder_pattern[i][j]
-
                 module_matrix[i][j] = v
                 module_matrix[i][j + offset] = v
                 module_matrix[i + offset][j] = v

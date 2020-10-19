@@ -50,7 +50,6 @@ class ByteEncoder(QRCodeEncoder):
             指定の文字をエンコードしたコード語のビット数を返します。
         """
         char_bytes = c.encode(self._text_encoding, "ignore")
-
         return 8 * len(char_bytes)
 
     def get_bytes(self) -> bytes:

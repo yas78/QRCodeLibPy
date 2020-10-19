@@ -112,8 +112,8 @@ class Symbol(object):
             self._select_version()
 
         self._data_bit_counter += (
-                ModeIndicator.LENGTH
-                + CharCountIndicator.get_length(self._curr_version, enc_mode)
+            ModeIndicator.LENGTH
+            + CharCountIndicator.get_length(self._curr_version, enc_mode)
         )
 
         self._curr_encoder = encoder
@@ -418,10 +418,8 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        if monochrome:
-            return self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
-        else:
-            return self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
+        func = self._get_bitmap_1bpp if monochrome else self._get_bitmap_24bpp
+        return func(module_size, fore_rgb, back_rgb)
 
     def _get_bitmap_1bpp(self,
                          module_size: int = DEFAULT_MODULE_SIZE,
@@ -452,10 +450,8 @@ class Symbol(object):
 
         for row in reversed(module_matrix):
             bs = BitSequence()
-
             for value in row:
                 color = 0 if value > 0 else 1
-
                 for i in range(module_size):
                     bs.append(color, 1)
 
@@ -500,7 +496,6 @@ class Symbol(object):
 
             for value in row:
                 color = fore_color if value > 0 else back_color
-
                 for i in range(module_size):
                     bitmap_row[index + 0] = color.b
                     bitmap_row[index + 1] = color.g
@@ -525,11 +520,8 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        if monochrome:
-            dib = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
-        else:
-            dib = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
-
+        func = self._get_bitmap_1bpp if monochrome else self._get_bitmap_24bpp
+        dib = func(module_size, fore_rgb, back_rgb)
         return base64.b64encode(dib)
 
     def get_ppm(self,
@@ -558,15 +550,12 @@ class Symbol(object):
         for row in module_matrix:
             for i in range(module_size):
                 for value in row:
+                    color = fore_color if value > 0 else back_color
                     for j in range(module_size):
-                        if value > 0:
-                            ppm.append(fore_color.r)
-                            ppm.append(fore_color.g)
-                            ppm.append(fore_color.b)
-                        else:
-                            ppm.append(back_color.r)
-                            ppm.append(back_color.g)
-                            ppm.append(back_color.b)
+                        ppm.append(color.r)
+                        ppm.append(color.g)
+                        ppm.append(color.b)
+
         return bytes(ppm)
 
     def get_xbm(self, module_size: int = DEFAULT_MODULE_SIZE) -> str:
@@ -589,8 +578,9 @@ class Symbol(object):
         for row in module_matrix:
             for i in range(module_size):
                 for value in row:
+                    color = 1 if value > 0 else 0
                     for j in range(module_size):
-                        bs.append(1 if value > 0 else 0, 1)
+                        bs.append(color, 1)
 
                 bs.append(0, pack_8bit)
 
@@ -636,15 +626,11 @@ class Symbol(object):
         for row in module_matrix:
             for i in range(module_size):
                 for value in row:
+                    color = fore_color if value > 0 else back_color
                     for j in range(module_size):
-                        if value > 0:
-                            rgb_bytes.append(fore_color.r)
-                            rgb_bytes.append(fore_color.g)
-                            rgb_bytes.append(fore_color.b)
-                        else:
-                            rgb_bytes.append(back_color.r)
-                            rgb_bytes.append(back_color.g)
-                            rgb_bytes.append(back_color.b)
+                        rgb_bytes.append(color.r)
+                        rgb_bytes.append(color.g)
+                        rgb_bytes.append(color.b)
 
         return bytes(rgb_bytes), width, height
 
@@ -656,7 +642,6 @@ class Symbol(object):
             tkinter BitmapImageオブジェクトを取得します。
         """
         xbm = self.get_xbm(module_size)
-
         return tk.BitmapImage(data=xbm, foreground=fore_rgb, background=back_rgb)
 
     def tk_photo_image(self,
@@ -684,10 +669,8 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        if monochrome:
-            dib = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
-        else:
-            dib = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
+        func = self._get_bitmap_1bpp if monochrome else self._get_bitmap_24bpp
+        dib = func(module_size, fore_rgb, back_rgb)
 
         with open(file_name, "wb") as fout:
             fout.write(dib)

@@ -8,7 +8,6 @@ import tkinter.filedialog as tkfdlg
 from tkinter.scrolledtext import ScrolledText
 from tkinter import PhotoImage
 import qrcodelib as qr
-from qrcodelib import Symbols
 
 
 class FormMain(tk.Frame):
@@ -121,7 +120,7 @@ class FormMain(tk.Frame):
 
         return frame
 
-    def create_symbols(self) -> Optional[Symbols]:
+    def create_symbols(self) -> Optional[qr.Symbols]:
         data = self._txt_data.get("1.0", tk.END + "-1c")
         if not data:
             return None
@@ -183,7 +182,7 @@ class FormMain(tk.Frame):
                 path = root + "_" + str(i) + ext
 
             if ext == ".bmp":
-                symbol.save_bitmap(path, module_size, True)
+                symbol.save_bitmap(path, module_size, True, )
 
             if ext == ".ppm":
                 symbol.save_ppm(path, module_size)

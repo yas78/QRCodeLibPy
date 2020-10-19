@@ -5,8 +5,9 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 ## 特徴
 - 数字・英数字・8ビットバイト・漢字モードに対応しています
 - 分割QRコードを作成可能です
-- 1bppまたは24bpp BMPファイル(DIB)、PPM、XBMファイルへ保存可能です
-- 画像の配色(前景色・背景色)を指定可能です
+- 1bppまたは24bpp BMP、PPM、XBM 形式でファイルに保存可能です
+- Base64エンコードされたBitmapデータを取得可能です
+- 画像の前景色、背景色を指定可能です
 - 8ビットバイトモードでの文字コードを指定可能です
 
 ## クイックスタート
@@ -26,17 +27,14 @@ symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 
 symbol = symbols.item(0)
-symbol.save_bitmap(r"D:\qrcode.bmp")
 ```
 
 ### 例２．誤り訂正レベルを指定する
 Symbolsクラスのコンストラクタ引数に、ErrorCorrectionLevelクラスの定数を設定します。
-
 ```python
 import qrcodelib as qr
 
 symbols = qr.Symbols(qr.ErrorCorrectionLevel.L)
-
 ```
 
 ### 例３．型番の上限を指定する
@@ -57,7 +55,6 @@ symbols = qr.Symbols(byte_mode_encoding="utf-8")
 
 ### 例５．分割QRコードを作成する
 Symbolsクラスのコンストラクタで設定します。型番の上限を指定しない場合は、型番40を上限として分割されます。
-
 ```python
 import qrcodelib as qr
 
@@ -65,7 +62,6 @@ symbols = qr.Symbols(allow_structured_append=True)
 ```
 
 型番1を超える場合に分割し、各QRコードをファイルへ保存する例を示します。
-
 ```python
 import qrcodelib as qr
 
@@ -73,12 +69,10 @@ symbols = qr.Symbols(max_version=1, allow_structured_append=True)
 symbols.append_text("abcdefghijklmnopqrstuvwxyz")
 
 for i in range(symbols.count):
-    symbols.item(i).save_bitmap(r"D:\qrcode_" + str(i) + ".bmp")
+    symbols.item(i).save_bitmap(f"qrcode_{str(i)}.bmp")
 ```
 
-### 例６．BMPファイルへ保存する
-Symbolクラスのsave_bitmapメソッドを使用します。
-
+### 例６．ファイルへ保存する
 ```python
 import qrcodelib as qr
 
@@ -86,35 +80,22 @@ symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
-symbol.save_bitmap(r"D:\qrcode.bmp")
+# 24bpp DIB
+symbol.save_bitmap("qrcode.bmp")
+# 1bpp DIB
+symbol.save_bitmap("qrcode.bmp", monochrome=True)
+# 10 pixels per module
+symbol.save_bitmap("qrcode.bmp", module_size=10)
+# Specify foreground and background colors
+symbol.save_bitmap("qrcode.bmp", fore_rgb="#0000FF", back_rgb="#FFFFFF")
+
+# PPM
+symbol.save_ppm("qrcode.ppm")
+# XBM
+symbol.save_xbm("qrcode.xbm")
 ```
 
-### 例７．PPMファイルへ保存する
-```python
-import qrcodelib as qr
-
-symbols = qr.Symbols()
-symbols.append_text("012345abcdefg")
-symbol = symbols.item(0)
-
-symbol.save_ppm(r"D:\qrcode.ppm")
-symbol.save_ppm(r"D:\qrcode.ppm", module_size=10)
-symbol.save_ppm(r"D:\qrcode.ppm", fore_rgb="#0000FF", back_rgb="#FFFFFF")
-```
-
-### 例８．XBMファイルへ保存する
-```python
-import qrcodelib as qr
-
-symbols = qr.Symbols()
-symbols.append_text("012345abcdefg")
-symbol = symbols.item(0)
-
-symbol.save_xbm(r"D:\qrcode.xbm")
-symbol.save_xbm(r"D:\qrcode.xbm", module_size=10)
-```
-
-### 例１０．RGB RAW画像を取得する
+### 例７．RGB RAW画像を取得する
 ```python
 import qrcodelib as qr
 
@@ -123,11 +104,9 @@ symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
 (data, width, height) = symbol.get_rgb_bytes()
-(data, width, height) = symbol.get_rgb_bytes(module_size=10)
-(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#FFFFFF")
 ```
 
-### 例１１．tkinter.BitmapImageオブジェクトを取得する
+### 例８．tkinter.BitmapImage, tkinter.PhotoImageオブジェクトを取得する
 ```python
 import qrcodelib as qr
 
@@ -135,23 +114,13 @@ symbols = qr.Symbols()
 symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
-image = symbol.tk_bitmap_image(module_size=10)
-# image = symbol.tk_bitmap_image(fore_rgb="#0000FF", back_rgb="#FFFFFF")
+# BitmapImage
+image = symbol.tk_bitmap_image()
+# PhotoImage
+image = symbol.tk_photo_image()
 ```
 
-### 例１２．tkinter.PhotoImageオブジェクトを取得する
-```python
-import qrcodelib as qr
-
-symbols = qr.Symbols()
-symbols.append_text("012345abcdefg")
-symbol = symbols.item(0)
-
-image = symbol.tk_photo_image(module_size=10)
-# image = symbol.tk_photo_image(fore_rgb="#0000FF", back_rgb="#FFFFFF")
-```
-
-### 例１３．wxPython.Bitmapオブジェクトを取得する
+### 例９．wxPython.Bitmapオブジェクトを取得する
 ```python
 import wx
 import qrcodelib as qr
@@ -164,7 +133,7 @@ symbol = symbols.item(0)
 bitmap = wx.Bitmap.FromBuffer(width, height, data)
 ```
 
-### 例１４．Pillow (PIL) を使用して、様々な画像形式で保存する
+### 例１０．Pillow (PIL) を使用して、様々な画像形式で保存する
 ```python
 import PIL.Image
 import qrcodelib as qr
@@ -174,20 +143,17 @@ symbols.append_text("012345abcdefg")
 symbol = symbols.item(0)
 
 (data, width, height) = symbol.get_rgb_bytes()
-#(data, width, height) = symbol.get_rgb_bytes(module_size=10)
-#(data, width, height) = symbol.get_rgb_bytes(fore_rgb="#0000FF", back_rgb="#FFFFFF")
-
 image = PIL.Image.frombytes("RGB", (width, height), data)
 
 # PNG
-image.save("D:\\qrcode.png", "PNG")
+image.save("qrcode.png", "PNG")
 # GIF
-image.save("D:\\qrcode.gif", "GIF")
+image.save("qrcode.gif", "GIF")
 # JPEG
-image.save("D:\\qrcode.jpg", "JPEG")
+image.save("qrcode.jpg", "JPEG")
 ```
 
-### 例１５．base64エンコードされたビットマップデータを取得する
+### 例１１．base64エンコードされたビットマップデータを取得する
 ```python
 import qrcodelib as qr
 

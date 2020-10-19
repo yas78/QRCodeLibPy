@@ -52,7 +52,6 @@ class FormatInfo(object):
                     ^ cls._format_info_mask_array[i])
 
             v = 3 if temp > 0 else -3
-
             module_matrix[r2][8] = v
             module_matrix[8][c2] = v
 

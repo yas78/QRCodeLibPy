@@ -1,4 +1,4 @@
-from typing import cast, List, Optional
+from typing import List, Optional
 
 
 class GeneratorPolynomials(object):
@@ -42,11 +42,11 @@ class GeneratorPolynomials(object):
         GeneratorPolynomials._gp[68] = [238, 163,   8,   5,   3, 127, 184, 101,  27, 235, 238,  43, 198, 175, 215,  82,  32,  54,   2, 118, 225, 166, 241, 137, 125,  41, 177,  52, 231,  95,  97, 199,  52, 227,  89, 160, 173, 253,  84,  15,  84,  93, 151, 203, 220, 165, 202,  60,  52, 133, 205, 190, 101,  84, 150,  43, 254,  32, 160,  90,  70,  77,  93, 224,  33, 223, 159, 247,   0]
 
     @classmethod
-    def item(cls, num_ec_code_words: int) -> List[int]:
+    def item(cls, num_ec_code_words: int) -> Optional[List[int]]:
         if not len(cls._gp):
             GeneratorPolynomials()
 
         if 7 <= num_ec_code_words <= 68:
-            return cast(List[int], cls._gp[num_ec_code_words])
+            return cls._gp[num_ec_code_words]
         else:
             raise ValueError("num_ec_code_words")
