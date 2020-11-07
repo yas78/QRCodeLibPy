@@ -1,9 +1,9 @@
 from typing import cast, List, Optional, Tuple
 import base64
 import tkinter as tk
-from .encoder import QRCodeEncoder, QRCodeEncoderFactory
+from .encoder import *
 from .format import *
-from .image import Color, DIB
+from .image import Color, DIB, find_contours
 from .misc import *
 from .alignment_pattern import AlignmentPattern
 from .encoding_mode import EncodingMode
@@ -19,7 +19,7 @@ from .timing_pattern import TimingPattern
 from .version_info import VersionInfo
 
 
-class Symbol(object):
+class Symbol:
     """
         シンボルを表します。
     """
@@ -112,8 +112,8 @@ class Symbol(object):
             self._select_version()
 
         self._data_bit_counter += (
-            ModeIndicator.LENGTH
-            + CharCountIndicator.get_length(self._curr_version, enc_mode)
+                ModeIndicator.LENGTH
+                + CharCountIndicator.get_length(self._curr_version, enc_mode)
         )
 
         self._curr_encoder = encoder
@@ -418,8 +418,12 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        func = self._get_bitmap_1bpp if monochrome else self._get_bitmap_24bpp
-        return func(module_size, fore_rgb, back_rgb)
+        if monochrome:
+            ret = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
+        else:
+            ret = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
+
+        return ret
 
     def _get_bitmap_1bpp(self,
                          module_size: int = DEFAULT_MODULE_SIZE,
@@ -520,9 +524,19 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        func = self._get_bitmap_1bpp if monochrome else self._get_bitmap_24bpp
-        dib = func(module_size, fore_rgb, back_rgb)
-        return base64.b64encode(dib)
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
+        if monochrome:
+            dib = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
+        else:
+            dib = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
+
+        ret = base64.b64encode(dib)
+        return ret
 
     def get_ppm(self,
                 module_size: int = DEFAULT_MODULE_SIZE,
@@ -534,15 +548,20 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
         fore_color = Color.decode(fore_rgb)
         back_color = Color.decode(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
-
         width = height = module_size * len(module_matrix)
         ppm = bytearray()
 
-        header = "P6\n" + str(width) + " " + str(height) + "\n255\n"
+        header = f"P6\n{str(width)} {str(height)}\n255\n"
 
         for c in header:
             ppm.append(ord(c))
@@ -566,7 +585,6 @@ class Symbol(object):
             raise ValueError("module_size")
 
         module_matrix = QuietZone.place(self._get_module_matrix())
-
         width = height = module_size * len(module_matrix)
 
         pack_8bit = 0
@@ -585,7 +603,6 @@ class Symbol(object):
                 bs.append(0, pack_8bit)
 
         data_block = bs.get_bytes()
-
         reversed_bits_array = bytearray()
 
         for data in data_block:
@@ -598,9 +615,11 @@ class Symbol(object):
         for bits in reversed_bits_array:
             bits_chars.append(hex(bits))
 
-        header = ("#define x11_width " + str(width) + "\n" +
-                  "#define x11_height " + str(height) + "\n" +
-                  "static char x11_bits[] = {" + "\n")
+        header = (
+            f"#define x11_width {str(width)}\n"
+            f"#define x11_height {str(height)}\n"
+            "static char x11_bits[] = {\n"
+        )
         str_bytes = ", ".join(bits_chars)
         xbm = header + str_bytes + "\n};"
         return xbm
@@ -615,11 +634,16 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
         fore_color = Color.decode(fore_rgb)
         back_color = Color.decode(back_rgb)
 
         module_matrix = QuietZone.place(self._get_module_matrix())
-
         width = height = module_size * len(module_matrix)
         rgb_bytes = bytearray()
 
@@ -641,6 +665,15 @@ class Symbol(object):
         """
             tkinter BitmapImageオブジェクトを取得します。
         """
+        if module_size < 1:
+            raise ValueError("module_size")
+
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
         xbm = self.get_xbm(module_size)
         return tk.BitmapImage(data=xbm, foreground=fore_rgb, background=back_rgb)
 
@@ -651,6 +684,15 @@ class Symbol(object):
         """
             tkinter PhotoImageオブジェクトを取得します。
         """
+        if module_size < 1:
+            raise ValueError("module_size")
+
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
         ppm = self.get_ppm(module_size=module_size, fore_rgb=fore_rgb, back_rgb=back_rgb)
         return tk.PhotoImage(data=ppm)
 
@@ -669,8 +711,16 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
-        func = self._get_bitmap_1bpp if monochrome else self._get_bitmap_24bpp
-        dib = func(module_size, fore_rgb, back_rgb)
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
+        if monochrome:
+            dib = self._get_bitmap_1bpp(module_size, fore_rgb, back_rgb)
+        else:
+            dib = self._get_bitmap_24bpp(module_size, fore_rgb, back_rgb)
 
         with open(file_name, "wb") as fout:
             fout.write(dib)
@@ -689,12 +739,19 @@ class Symbol(object):
         if module_size < 1:
             raise ValueError("module_size")
 
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        if not Color.is_html_color(back_rgb):
+            raise ValueError("back_rgb")
+
         ppm = self.get_ppm(module_size, fore_rgb, back_rgb)
 
         with open(file_name, "wb") as fout:
             fout.write(ppm)
 
-    def save_xbm(self, file_name: str, module_size: int = DEFAULT_MODULE_SIZE):
+    def save_xbm(self, file_name: str,
+                 module_size: int = DEFAULT_MODULE_SIZE):
         """
             シンボル画像をXBM形式でファイルに保存します。
         """
@@ -708,3 +765,74 @@ class Symbol(object):
 
         with open(file_name, "wt") as fout:
             fout.write(xbm)
+
+    def save_svg(self, file_name: str,
+                 module_size: int = DEFAULT_MODULE_SIZE,
+                 fore_rgb: str = Color.BLACK):
+        """
+            シンボル画像をSVG形式でファイルに保存します。
+        """
+        if not file_name:
+            raise ValueError("file_name")
+
+        if module_size < 2:
+            raise ValueError("module_size")
+
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        svg = self.get_svg(module_size, fore_rgb)
+        svg_file = (
+            "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n"
+            "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'\n"
+            "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>\n"
+            + svg + "\n"
+        )
+
+        with open(file_name, "wt") as fout:
+            fout.write(svg_file)
+
+    def get_svg(self,
+                module_size: int = DEFAULT_MODULE_SIZE,
+                fore_rgb: str = Color.BLACK) -> str:
+        if module_size < 2:
+            raise ValueError("module_size")
+
+        if not Color.is_html_color(fore_rgb):
+            raise ValueError("fore_rgb")
+
+        module_matrix = QuietZone.place(self._get_module_matrix())
+        width = height = module_size * len(module_matrix)
+
+        image = [[0] * width for _ in range(height)]
+
+        r = 0
+        for row in module_matrix:
+            for i in range(module_size):
+                c = 0
+                for value in row:
+                    for j in range(module_size):
+                        image[r][c] = value
+                        c += 1
+                r += 1
+
+        paths = find_contours(image)
+        buf = []
+        indent = " " * 11
+
+        for path in paths:
+            buf.append(f"{indent}M ")
+            for p in path:
+                buf.append(f"{p.X},{p.Y} ")
+            buf.append("Z\n")
+
+        data = "".join(buf).strip()
+        svg = (
+            f"<svg xmlns='http://www.w3.org/2000/svg'\n"
+            f"    width='{width}' height='{height}' viewBox='0 0 {width} {height}'>\n"
+            f"    <path fill='{fore_rgb}' stroke='{fore_rgb}' stroke-width='1'\n"
+            f"        d='{data}'\n"
+            f"    />\n"
+            f"</svg>"
+        )
+        return svg

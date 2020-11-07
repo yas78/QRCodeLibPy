@@ -1,4 +1,4 @@
-class GaloisField256(object):
+class GaloisField256:
     """
         ガロア体 GF2^8
     """    

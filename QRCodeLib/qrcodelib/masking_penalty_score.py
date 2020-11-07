@@ -4,7 +4,7 @@ from .quiet_zone import QuietZone
 from .misc.array_util import ArrayUtil
 
 
-class MaskingPenaltyScore(object):
+class MaskingPenaltyScore:
     """
         マスクされたシンボルの失点評価
     """    
@@ -191,13 +191,14 @@ class MaskingPenaltyScore(object):
         ret = []
         s = 0
 
-        for i in range(4, len(arg) - 4):
-            if arg[i] > 0 and arg[i - 1] <= 0:
-                s = i
+        for i in range(1, len(arg) - 1):
+            if arg[i] > 0:
+                if arg[i - 1] <= 0:
+                    s = i
 
-            if arg[i] > 0 and arg[i + 1] <= 0:
-                if (i + 1 - s) % 3 == 0:
-                    ret.append([s, i])
+                if arg[i + 1] <= 0:
+                    if (i + 1 - s) % 3 == 0:
+                        ret.append([s, i])
 
         return ret
 

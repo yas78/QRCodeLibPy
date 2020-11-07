@@ -167,7 +167,8 @@ class FormMain(tk.Frame):
         filetypes = [
             ("Monochrome Bitmap", "*.bmp"),
             ("Portable Pixmap", "*.ppm"),
-            ("X11 Bitmap", "*.xbm")
+            ("X11 Bitmap", "*.xbm"),
+            ("SVG", "*.svg")
         ]
         filename = tkfdlg.asksaveasfilename(defaultextension="bmp", filetypes=filetypes)
         (root, ext) = os.path.splitext(filename)
@@ -189,6 +190,9 @@ class FormMain(tk.Frame):
 
             if ext == ".xbm":
                 symbol.save_xbm(path, module_size)
+
+            if ext == ".svg":
+                symbol.save_svg(path, module_size)
 
 
 def main():

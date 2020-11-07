@@ -1,4 +1,4 @@
-class EncodingMode(object):
+class EncodingMode:
     """
         符号化モード
     """

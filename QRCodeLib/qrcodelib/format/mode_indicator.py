@@ -1,4 +1,4 @@
-class ModeIndicator(object):
+class ModeIndicator:
     """
         モード指示子
     """    

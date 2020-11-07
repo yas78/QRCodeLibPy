@@ -2,7 +2,7 @@ from typing import List
 from .error_correction_level import ErrorCorrectionLevel
 
 
-class FormatInfo(object):
+class FormatInfo:
     """
         形式情報
     """

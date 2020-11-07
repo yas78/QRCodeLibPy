@@ -1,4 +1,4 @@
-class Codeword(object):
+class Codeword:
     """
         コード語
     """

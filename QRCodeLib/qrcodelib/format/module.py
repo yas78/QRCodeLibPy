@@ -1,4 +1,4 @@
-class Module(object):
+class Module:
     """
         モジュール
     """

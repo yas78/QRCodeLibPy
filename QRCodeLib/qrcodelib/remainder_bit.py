@@ -1,7 +1,7 @@
 from typing import List
 
 
-class RemainderBit(object):
+class RemainderBit:
     """
         残余ビット
     """    

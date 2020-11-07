@@ -2,7 +2,7 @@ from .mode_indicator import ModeIndicator
 from .symbol_sequence_indicator import SymbolSequenceIndicator
 
 
-class StructuredAppend(object):
+class StructuredAppend:
     """
         構造的連接
     """

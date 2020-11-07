@@ -1,4 +1,4 @@
-class SymbolSequenceIndicator(object):
+class SymbolSequenceIndicator:
     """
         シンボル列指示子
     """

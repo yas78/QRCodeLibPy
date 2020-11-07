@@ -1,7 +1,7 @@
 from typing import List
 
 
-class TimingPattern(object):
+class TimingPattern:
     """
         タイミングパターン
     """    

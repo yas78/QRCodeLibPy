@@ -1,7 +1,7 @@
 from typing import List
 
 
-class FinderPattern(object):
+class FinderPattern:
     """
         位置検出パターン
     """

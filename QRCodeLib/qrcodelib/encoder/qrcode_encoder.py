@@ -2,7 +2,7 @@ from typing import List
 from abc import ABCMeta, abstractmethod
 
 
-class QRCodeEncoder(object):
+class QRCodeEncoder:
     """
         エンコーダーの基本抽象クラス
     """

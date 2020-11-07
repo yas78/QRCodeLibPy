@@ -1,4 +1,4 @@
-class DataCodeword(object):
+class DataCodeword:
     """
         データコード語
     """

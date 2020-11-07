@@ -2,7 +2,7 @@ from typing import List
 from .misc.array_util import ArrayUtil
 
 
-class AlignmentPattern(object):
+class AlignmentPattern:
     """
         位置合わせパターン
     """

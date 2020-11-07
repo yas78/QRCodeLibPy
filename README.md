@@ -11,7 +11,7 @@ JIS X 0510に基づくモデル２コードシンボルを生成します。
 - 8ビットバイトモードでの文字コードを指定可能です
 
 ## クイックスタート
-qrcodelibパッケージをImportしてください。
+qrcodelibパッケージをインポートしてください。
 
 ## デモ
 TkInter版は TkInterDemo.py 。WxPython版は WxPythonDemo.py モジュールを実行してください。  
@@ -93,6 +93,8 @@ symbol.save_bitmap("qrcode.bmp", fore_rgb="#0000FF", back_rgb="#FFFFFF")
 symbol.save_ppm("qrcode.ppm")
 # XBM
 symbol.save_xbm("qrcode.xbm")
+# SVG
+symbol.save_svg("qrcode.svg")
 ```
 
 ### 例７．RGB RAW画像を取得する
@@ -106,7 +108,18 @@ symbol = symbols.item(0)
 (data, width, height) = symbol.get_rgb_bytes()
 ```
 
-### 例８．tkinter.BitmapImage, tkinter.PhotoImageオブジェクトを取得する
+### 例８．SVG画像を取得する
+```python
+import qrcodelib as qr
+
+symbols = qr.Symbols()
+symbols.append_text("012345abcdefg")
+symbol = symbols.item(0)
+
+svg = symbol.get_svg()
+```
+
+### 例９．tkinter.BitmapImage, tkinter.PhotoImageオブジェクトを取得する
 ```python
 import qrcodelib as qr
 
@@ -120,7 +133,7 @@ image = symbol.tk_bitmap_image()
 image = symbol.tk_photo_image()
 ```
 
-### 例９．wxPython.Bitmapオブジェクトを取得する
+### 例１０．wxPython.Bitmapオブジェクトを取得する
 ```python
 import wx
 import qrcodelib as qr
@@ -133,7 +146,7 @@ symbol = symbols.item(0)
 bitmap = wx.Bitmap.FromBuffer(width, height, data)
 ```
 
-### 例１０．Pillow (PIL) を使用して、様々な画像形式で保存する
+### 例１１．Pillow (PIL) を使用して、様々な画像形式で保存する
 ```python
 import PIL.Image
 import qrcodelib as qr
@@ -153,7 +166,7 @@ image.save("qrcode.gif", "GIF")
 image.save("qrcode.jpg", "JPEG")
 ```
 
-### 例１１．base64エンコードされたビットマップデータを取得する
+### 例１２．base64エンコードされたビットマップデータを取得する
 ```python
 import qrcodelib as qr
 

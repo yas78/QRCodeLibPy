@@ -2,9 +2,9 @@ import math
 import re
 
 
-class Color(object):
-    WHITE = "#FFFFFF"
+class Color:
     BLACK = "#000000"
+    WHITE = "#FFFFFF"
 
     def __init__(self, r: int, g: int, b: int) -> None:
         if (not (0 <= r <= 255)) or (not (0 <= g <= 255)) or (not (0 <= b <= 255)):
@@ -46,8 +46,12 @@ class Color(object):
 
     @classmethod
     def decode(cls, html_color: str):
-        if not bool(re.match("^#[0-9A-Fa-f]{6}$", html_color, re.MULTILINE)):
+        if not cls.is_html_color(html_color):
             raise ValueError('html_color')
 
         ret = Color(int(html_color[1:3], 16), int(html_color[3:5], 16), int(html_color[5:7], 16))
         return ret
+
+    @classmethod
+    def is_html_color(cls, html_color: str) -> bool:
+        return bool(re.match("^#[0-9A-Fa-f]{6}$", html_color, re.MULTILINE))

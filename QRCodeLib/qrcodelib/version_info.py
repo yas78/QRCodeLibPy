@@ -1,7 +1,7 @@
 from typing import List
 
 
-class VersionInfo(object):
+class VersionInfo:
     """
         型番情報
     """

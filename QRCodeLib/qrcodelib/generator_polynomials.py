@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 
-class GeneratorPolynomials(object):
+class GeneratorPolynomials:
     """
         リードソロモン誤り訂正コード語の生成多項式
     """    

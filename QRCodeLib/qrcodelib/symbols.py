@@ -6,7 +6,7 @@ from .symbol import Symbol
 from .encoder import NumericEncoder, AlphanumericEncoder, KanjiEncoder, ByteEncoder
 
 
-class Symbols(object):
+class Symbols:
     """
         シンボルのコレクションを表します。
     """

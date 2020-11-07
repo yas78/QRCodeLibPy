@@ -7,7 +7,7 @@ from .color import Color
 from .rgbquad import RGBQUAD
 
 
-class DIB(object):
+class DIB:
 
     @classmethod
     def build_1bpp_dib(cls,

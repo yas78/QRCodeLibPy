@@ -195,10 +195,13 @@ class FormMain(wx.Frame):
         if not symbols:
             return
 
-        wildcard = "Monochrome Bitmap (*.bmp)|*.bmp|" \
-                   "24-bit Bitmap (*.bmp)|*.bmp|" \
-                   "Portable Pixmap (*.ppm)|*.ppm|" \
-                   "X11 Bitmap (*.xbm)|*.xbm"
+        wildcard = (
+            "Monochrome Bitmap (*.bmp)|*.bmp|"
+            "24-bit Bitmap (*.bmp)|*.bmp|"
+            "Portable Pixmap (*.ppm)|*.ppm|"
+            "X11 Bitmap (*.xbm)|*.xbm|"
+            "SVG (*.svg)|*.svg"
+        )
         dlg = wx.FileDialog(self, wildcard=wildcard,
                             style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() == wx.ID_CANCEL:
@@ -228,6 +231,10 @@ class FormMain(wx.Frame):
             if dlg.FilterIndex == 3:
                 path += ".xbm"
                 symbol.save_xbm(path, module_size)
+
+            if dlg.FilterIndex == 4:
+                path += ".svg"
+                symbol.save_svg(path, module_size)
 
         dlg.Destroy()
 

@@ -1,4 +1,4 @@
-class ErrorCorrectionLevel(object):
+class ErrorCorrectionLevel:
     """
         誤り訂正レベル
     """    

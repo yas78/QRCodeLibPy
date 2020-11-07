@@ -6,7 +6,7 @@ from .numeric_encoder import NumericEncoder
 from .qrcode_encoder import QRCodeEncoder
 
 
-class QRCodeEncoderFactory(object):
+class QRCodeEncoderFactory:
 
     @classmethod
     def create_encoder(cls,  enc_mode: int, byte_mode_encoding: str) -> QRCodeEncoder:

@@ -1,7 +1,7 @@
 from ..encoding_mode import EncodingMode
 
 
-class CharCountIndicator(object):
+class CharCountIndicator:
     """
         文字数指示子
     """    

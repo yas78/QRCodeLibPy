@@ -6,7 +6,7 @@ from .masking_penalty_score import MaskingPenaltyScore
 from .version_info import VersionInfo
 
 
-class Masking(object):
+class Masking:
     """
         シンボルマスク
     """    

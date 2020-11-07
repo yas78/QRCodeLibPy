@@ -3,3 +3,4 @@ from .bitmapinfoheader import BITMAPINFOHEADER
 from .color import Color
 from .dib import DIB
 from .rgbquad import RGBQUAD
+from .graphics import find_contours
