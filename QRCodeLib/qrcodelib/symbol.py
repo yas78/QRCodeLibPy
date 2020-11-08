@@ -804,25 +804,22 @@ class Symbol:
         module_matrix = QuietZone.place(self._get_module_matrix())
         width = height = module_size * len(module_matrix)
 
-        image = [[0] * width for _ in range(height)]
-
-        r = 0
+        image = []
         for row in module_matrix:
-            for i in range(module_size):
-                c = 0
-                for value in row:
-                    for j in range(module_size):
-                        image[r][c] = value
-                        c += 1
-                r += 1
+            row_data = []
+            for value in row:
+                for _ in range(module_size):
+                    row_data.append(value)
+            for _ in range(module_size):
+                image.append(row_data)
 
-        paths = find_contours(image)
+        gps = find_contours(image)
         buf = []
         indent = " " * 11
 
-        for path in paths:
+        for gp in gps:
             buf.append(f"{indent}M ")
-            for p in path:
+            for p in gp:
                 buf.append(f"{p.X},{p.Y} ")
             buf.append("Z\n")
 
