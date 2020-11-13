@@ -23,7 +23,8 @@ class Symbol:
     """
         シンボルを表します。
     """
-    DEFAULT_MODULE_SIZE = 4
+    DEFAULT_MODULE_SIZE = 5
+    MIN_MODULE_SIZE = 2
 
     def __init__(self, parent) -> None:
         self._parent = parent
@@ -415,7 +416,7 @@ class Symbol:
         """
             ビットマップファイルのバイトデータを返します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if monochrome:
@@ -521,7 +522,7 @@ class Symbol:
         """
             Base64エンコードされたビットマップデータを返します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -545,7 +546,7 @@ class Symbol:
         """
             シンボル画像をPPMバイナリ形式で返します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -581,7 +582,7 @@ class Symbol:
         """
             シンボル画像をXBM形式で返します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         module_matrix = QuietZone.place(self._get_module_matrix())
@@ -631,7 +632,7 @@ class Symbol:
         """
             シンボル画像のRGB値を返します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -665,7 +666,7 @@ class Symbol:
         """
             tkinter BitmapImageオブジェクトを取得します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -684,7 +685,7 @@ class Symbol:
         """
             tkinter PhotoImageオブジェクトを取得します。
         """
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -708,7 +709,7 @@ class Symbol:
         if not file_name:
             raise ValueError("file_name")
 
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -736,7 +737,7 @@ class Symbol:
         if not file_name:
             raise ValueError("file_name")
 
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -758,7 +759,7 @@ class Symbol:
         if not file_name:
             raise ValueError("file_name")
 
-        if module_size < 1:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         xbm = self.get_xbm(module_size)
@@ -775,7 +776,7 @@ class Symbol:
         if not file_name:
             raise ValueError("file_name")
 
-        if module_size < 2:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):
@@ -795,7 +796,7 @@ class Symbol:
     def get_svg(self,
                 module_size: int = DEFAULT_MODULE_SIZE,
                 fore_rgb: str = Color.BLACK) -> str:
-        if module_size < 2:
+        if module_size < self.MIN_MODULE_SIZE:
             raise ValueError("module_size")
 
         if not Color.is_html_color(fore_rgb):

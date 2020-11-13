@@ -105,9 +105,9 @@ class FormMain(tk.Frame):
         lbl_module_size = tk.Label(fra_module_size, text="Module Size :")
         lbl_module_size.pack(anchor=tk.W, side=tk.LEFT, cnf=pad)
         # spn_module_size
-        self._spn_module_size_var = tk.IntVar(value=4)
+        self._spn_module_size_var = tk.IntVar(value=5)
         spn_module_size = tk.Spinbox(
-            fra_module_size, from_=1, to_=100, width=4, state="readonly", textvariable=self._spn_module_size_var)
+            fra_module_size, from_=2, to_=100, width=4, state="readonly", textvariable=self._spn_module_size_var)
         spn_module_size.pack(anchor=tk.W, side=tk.LEFT, cnf=pad)
         spn_module_size.bind("<KeyPress-Up>", self._update_image_handler)
         spn_module_size.bind("<KeyPress-Down>", self._update_image_handler)
