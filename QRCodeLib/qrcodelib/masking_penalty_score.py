@@ -5,14 +5,8 @@ from .misc.array_util import ArrayUtil
 
 
 class MaskingPenaltyScore:
-    """
-        マスクされたシンボルの失点評価
-    """    
     @classmethod
     def calc_total(cls, module_matrix: List[List[int]]) -> int:
-        """
-            マスクパターン失点の合計を返します。
-        """
         total = 0
         penalty = cls._calc_adjacent_modules_in_same_color(module_matrix)
         total += penalty
@@ -28,9 +22,6 @@ class MaskingPenaltyScore:
     @classmethod
     def _calc_adjacent_modules_in_same_color(
             cls, module_matrix: List[List[int]]) -> int:
-        """
-            行／列の同色隣接モジュールパターンの失点を計算します。
-        """
         penalty = 0
         penalty += cls._calc_adjacent_modules_in_row_in_same_color(
             module_matrix)
@@ -42,9 +33,6 @@ class MaskingPenaltyScore:
     @classmethod
     def _calc_adjacent_modules_in_row_in_same_color(
             cls, module_matrix: List[List[int]]) -> int:
-        """
-            行の同色隣接モジュールパターンの失点を計算します。
-        """
         penalty = 0
 
         for row in module_matrix:
@@ -66,9 +54,6 @@ class MaskingPenaltyScore:
     @classmethod
     def _calc_block_of_modules_in_same_color(
             cls, module_matrix: List[List[int]]) -> int:
-        """
-            2x2の同色モジュールパターンの失点を計算します。
-        """
         penalty = 0
 
         for r in range(len(module_matrix) - 1):
@@ -84,9 +69,6 @@ class MaskingPenaltyScore:
     @classmethod
     def _calc_module_ratio(
             cls, module_matrix: List[List[int]]) -> int:
-        """
-            行／列における1 : 1 : 3 : 1 : 1 比率パターンの失点を計算します。
-        """
         module_matrix_temp = QuietZone.place(module_matrix)
         penalty = 0
         penalty += cls._calc_module_ratio_in_row(module_matrix_temp)
@@ -97,9 +79,6 @@ class MaskingPenaltyScore:
     @classmethod
     def _calc_module_ratio_in_row(
             cls, module_matrix: List[List[int]]) -> int:
-        """
-            行の1 : 1 : 3 : 1 : 1 比率パターンの失点を計算します。
-        """
         penalty = 0
 
         for row in module_matrix:
@@ -205,9 +184,6 @@ class MaskingPenaltyScore:
     @classmethod
     def _calc_proportion_of_dark_modules(
             cls, module_matrix: List[List[int]]) -> int:
-        """
-            全体に対する暗モジュールの占める割合について失点を計算します。
-        """
         dark_count = 0
 
         for row in module_matrix:

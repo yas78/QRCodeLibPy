@@ -276,7 +276,7 @@ class Symbol:
         bs.append(self._position,
                   SymbolSequenceIndicator.POSITION_LENGTH)
         bs.append(self._parent.count - 1,
-                  SymbolSequenceIndicator.TOTAL_NUMBER_LENGTH)
+                  SymbolSequenceIndicator.NUM_SYMBOLS_LENGTH)
         bs.append(self._parent.structured_append_parity,
                   StructuredAppend.PARITY_DATA_LENGTH)
 

@@ -2,9 +2,6 @@ from ctypes import Structure, c_int32, c_uint16, c_uint32
 
 
 class BITMAPINFOHEADER(Structure):
-    """
-        BITMAPINFOHEADER構造体
-    """
     _fields_ = [
         ("biSize", c_uint32),
         ("biWidth", c_int32),

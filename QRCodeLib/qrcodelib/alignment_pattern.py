@@ -3,9 +3,6 @@ from .misc.array_util import ArrayUtil
 
 
 class AlignmentPattern:
-    """
-        位置合わせパターン
-    """
     _center_pos_arrays = [
         None,
         None,
@@ -52,9 +49,6 @@ class AlignmentPattern:
 
     @classmethod
     def place(cls, version: int, module_matrix: List[List[int]]) -> None:
-        """
-            位置合わせパターンを配置します。
-        """
         center_pos_array: List[int] = cls._center_pos_arrays[version]
 
         length = len(center_pos_array)

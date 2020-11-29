@@ -7,17 +7,11 @@ from .version_info import VersionInfo
 
 
 class Masking:
-    """
-        シンボルマスク
-    """    
     @classmethod
     def apply(cls, 
               version: int, 
               ec_level: int,
               module_matrix: List[List[int]]) -> int:
-        """
-            マスクを適用します。
-        """
         min_penalty = sys.maxsize
         mask_pattern_reference = 0
         masked_matrix = []
@@ -45,9 +39,6 @@ class Masking:
     def _mask(cls, 
               mask_pattern_reference: int,
               module_matrix: List[List[int]]) -> None:
-        """
-            マスクパターンを適用したシンボルデータを返します。
-        """
         condition = cls._get_condition(mask_pattern_reference)
 
         for r in range(len(module_matrix)):
@@ -59,9 +50,6 @@ class Masking:
     @classmethod
     def _get_condition(cls, 
                        mask_pattern_reference: int) -> Callable[[int, int], bool]:
-        """
-            マスク条件を返します。
-        """
         if mask_pattern_reference == 0:
             return lambda r, c: (r + c) % 2 == 0
 

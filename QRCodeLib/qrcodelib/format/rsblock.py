@@ -3,10 +3,7 @@ from .data_codeword import DataCodeword
 
 
 class RSBlock:
-    """
-        RSブロック
-    """
-    # RSブロック数    
+    # RSブロック数
     _ec_level_l = [
         -1,
          1,  1,  1,  1,  1,  2,  2,  2,  2,  4,
@@ -43,9 +40,6 @@ class RSBlock:
 
     @classmethod
     def get_total_number(cls, ec_level: int, version: int, preceding: bool) -> int:
-        """
-            RSブロック数を返します。
-        """
         num_data_codewords = DataCodeword.get_total_number(ec_level, version)
         num_rs_blocks = cls._total_numbers[ec_level][version]
 
@@ -58,9 +52,6 @@ class RSBlock:
 
     @classmethod
     def get_number_data_codewords(cls, ec_level: int, version: int, preceding: bool) -> int:
-        """
-            RSブロックのデータコード語数を返します。
-        """
         num_data_codewords = DataCodeword.get_total_number(ec_level, version)
         num_rs_blocks = cls._total_numbers[ec_level][version]
 
@@ -82,9 +73,6 @@ class RSBlock:
 
     @classmethod
     def get_number_ec_codewords(cls, ec_level: int, version: int) -> int:
-        """
-            RSブロックの誤り訂正コード語数を返します。
-        """
         num_data_codewords = DataCodeword.get_total_number(ec_level, version)
         num_rs_blocks = cls._total_numbers[ec_level][version]
 

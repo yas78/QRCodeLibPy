@@ -3,9 +3,6 @@ from .error_correction_level import ErrorCorrectionLevel
 
 
 class FormatInfo:
-    """
-        形式情報
-    """
     _format_info_values = [
         0x0000, 0x0537, 0x0A6E, 0x0F59, 0x11EB, 0x14DC, 0x1B85, 0x1EB2, 0x23D6, 0x26E1,
         0x29B8, 0x2C8F, 0x323D, 0x370A, 0x3853, 0x3D64, 0x429B, 0x47AC, 0x48F5, 0x4DC2,
@@ -13,7 +10,6 @@ class FormatInfo:
         0x7AC8, 0x7FFF
     ]
 
-    # 形式情報のマスクパターン
     _format_info_mask_array = [0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1]
 
     @classmethod
@@ -21,9 +17,6 @@ class FormatInfo:
               ec_level: int,
               mask_pattern_reference: int,
               module_matrix: List[List[int]]) -> None:
-        """
-            形式情報を配置します。
-        """
         format_info_value = cls.get_format_info_value(ec_level, mask_pattern_reference)
 
         r1 = 0
@@ -63,9 +56,6 @@ class FormatInfo:
 
     @classmethod
     def place_temp_blank(cls, module_matrix: List[List[int]]) -> None:
-        """
-            形式情報の予約領域を配置します。
-        """
         num_modules_one_side = len(module_matrix)
 
         for i in range(9):
@@ -85,9 +75,6 @@ class FormatInfo:
     def get_format_info_value(cls, 
                               ec_level: int, 
                               mask_pattern_reference: int) -> int:
-        """
-            形式情報の値を取得します。
-        """
         if ec_level == ErrorCorrectionLevel.L:
             indicator = 1
         elif ec_level == ErrorCorrectionLevel.M:

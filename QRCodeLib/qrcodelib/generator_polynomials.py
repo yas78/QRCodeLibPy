@@ -2,9 +2,6 @@ from typing import List, Optional
 
 
 class GeneratorPolynomials:
-    """
-        リードソロモン誤り訂正コード語の生成多項式
-    """    
     _gp: List[Optional[List[int]]] = []
 
     def __init__(self) -> None:

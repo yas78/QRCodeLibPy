@@ -1,7 +1,4 @@
 class ErrorCorrectionLevel:
-    """
-        誤り訂正レベル
-    """    
     _level = {"L": 0, "M": 1, "Q": 2, "H": 3}
 
     L = _level["L"]

@@ -1,8 +1,4 @@
 class DataCodeword:
-    """
-        データコード語
-    """
-    # データコード語数
     _ec_level_l = [
           -1,
           19,   34,   55,   80,  108,  136,  156,  194,  232,  274,
@@ -39,7 +35,4 @@ class DataCodeword:
 
     @classmethod
     def get_total_number(cls, ec_level: int, version: int) -> int:
-        """
-            データコード語数を返します。
-        """
         return cls._total_numbers[ec_level][version]

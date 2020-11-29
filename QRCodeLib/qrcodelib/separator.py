@@ -2,14 +2,8 @@ from typing import List
 
 
 class Separator:
-    """
-        分離パターン
-    """    
     @classmethod
     def place(cls, module_matrix: List[List[int]]) -> None:
-        """
-            分離パターンを配置します。
-        """
         offset = len(module_matrix) - 8
 
         for i in range(8):

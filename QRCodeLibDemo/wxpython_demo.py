@@ -2,11 +2,13 @@
 from typing import List, Optional
 import os.path
 import wx
-import qrcodelib as qr
-from qrcodelib import Symbols
+import QRCodeLib.qrcodelib as qr
+from QRCodeLib.qrcodelib import Symbols
 
 
 class FormMain(wx.Frame):
+
+    DEFAULT_MODULE_SIZE = 5
 
     def __init__(self, **kw) -> None:
         super().__init__(**kw)

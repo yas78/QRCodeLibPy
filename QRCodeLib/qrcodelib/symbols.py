@@ -7,18 +7,11 @@ from .encoder import NumericEncoder, AlphanumericEncoder, KanjiEncoder, ByteEnco
 
 
 class Symbols:
-    """
-        シンボルのコレクションを表します。
-    """
-
     def __init__(self,
                  ec_level: int = ErrorCorrectionLevel.M,
                  max_version: int = Constants.MAX_VERSION,
                  allow_structured_append: bool = False,
                  byte_mode_encoding: str = "shift_jis") -> None:
-        """
-            インスタンスを初期化します。
-        """
         if not (Constants.MIN_VERSION <= max_version <= Constants.MAX_VERSION):
             raise ValueError("max_version")
 
@@ -41,78 +34,45 @@ class Symbols:
 
     @property
     def count(self) -> int:
-        """
-            シンボル数を取得します。
-        """
         return len(self._items)
 
     @property
     def min_version(self) -> int:
-        """
-            型番の下限を取得します。
-        """
         return self._min_version
 
     @min_version.setter
     def min_version(self, value: int) -> None:
-        """
-            型番の下限を設定します。
-        """
         self._min_version = value
 
     @property
     def max_version(self) -> int:
-        """
-            型番の上限を取得します。
-        """
         return self._max_version
 
     @property
     def error_correction_level(self) -> int:
-        """
-            誤り訂正レベルを取得します。
-        """
         return self._error_correction_level
 
     @property
     def structured_append_allowed(self) -> bool:
-        """
-            構造的連接モードの使用可否を取得します。
-        """
         return self._structured_append_allowed
 
     @property
     def structured_append_parity(self) -> int:
-        """
-            構造的連接のパリティを取得します。
-        """
         return self._structured_append_parity
 
     @property
     def byte_mode_encoding(self) -> str:
-        """
-            バイトモードの文字エンコーディングを取得します。
-        """
         return self._byte_mode_encoding
 
     def item(self, index: int) -> Symbol:
-        """
-            インデックス番号を指定してSymbolオブジェクトを取得します。
-        """
         return self._items[index]
 
     def _add(self) -> Symbol:
-        """
-            シンボルを追加します。
-        """
         self._curr_symbol = Symbol(self)
         self._items.append(self._curr_symbol)
         return self._curr_symbol
 
     def append_text(self, data: str) -> None:
-        """
-            文字列を追加します。
-        """
         if not data:
             raise ValueError("data")
 
@@ -151,9 +111,6 @@ class Symbols:
                 self._curr_symbol.try_append(c)
 
     def _select_initial_mode(self, s: str, start_index: int) -> int:
-        """
-            初期モードを決定します。
-        """
         version = self._curr_symbol.version
 
         if KanjiEncoder.in_subset(s[start_index]):
@@ -238,9 +195,6 @@ class Symbols:
 
     @classmethod
     def _select_mode_while_in_numeric(cls, s: str, start_index: int) -> int:
-        """
-            数字モードから切り替えるモードを決定します。
-        """
         if KanjiEncoder.in_subset(s[start_index]):
             return EncodingMode.KANJI
 
@@ -253,9 +207,6 @@ class Symbols:
         return EncodingMode.NUMERIC
 
     def _select_mode_while_in_alphanumeric(self, s: str, start_index: int) -> int:
-        """
-            英数字モードから切り替えるモードを決定します。
-        """
         version = self._curr_symbol.version
 
         if KanjiEncoder.in_subset(s[start_index]):
@@ -293,9 +244,6 @@ class Symbols:
         return EncodingMode.ALPHA_NUMERIC
 
     def _select_mode_while_in_byte(self, s: str, start_index: int) -> int:
-        """
-            バイトモードから切り替えるモードを決定します。
-        """
         version = self._curr_symbol.version
 
         cnt = 0
@@ -360,9 +308,6 @@ class Symbols:
         return EncodingMode.EIGHT_BIT_BYTE
 
     def update_parity(self, c: str) -> None:
-        """
-            構造的連接のパリティを更新します。
-        """
         if KanjiEncoder.in_subset(c):
             char_bytes = c.encode(self._shift_jis_encoding, "ignore")
         else:

@@ -7,7 +7,7 @@ import tkinter.messagebox as tkmsg
 import tkinter.filedialog as tkfdlg
 from tkinter.scrolledtext import ScrolledText
 from tkinter import PhotoImage
-import qrcodelib as qr
+import QRCodeLib.qrcodelib as qr
 
 
 class FormMain(tk.Frame):

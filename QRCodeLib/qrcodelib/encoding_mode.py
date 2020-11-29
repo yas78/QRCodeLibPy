@@ -1,7 +1,4 @@
 class EncodingMode:
-    """
-        符号化モード
-    """
     UNKNOWN = 0
     NUMERIC = 1
     ALPHA_NUMERIC = 2

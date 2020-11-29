@@ -2,9 +2,6 @@ from typing import List
 
 
 class VersionInfo:
-    """
-        型番情報
-    """
     _version_info_values = [
         -1, -1, -1, -1, -1, -1, -1,
         0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6, 0x0C762, 0x0D847, 0x0E60D,
@@ -16,9 +13,6 @@ class VersionInfo:
     
     @classmethod
     def place(cls, version: int, module_matrix: List[List[int]]) -> None:
-        """
-            型番情報を配置します。
-        """
         num_modules_per_side = len(module_matrix)
 
         version_info_value = cls._version_info_values[version]
@@ -40,9 +34,6 @@ class VersionInfo:
         
     @classmethod
     def place_temp_blank(cls, module_matrix: List[List[int]]) -> None:
-        """
-            型番情報の予約領域を配置します。
-        """
         num_modules_per_side = len(module_matrix)
 
         for i in range(6):

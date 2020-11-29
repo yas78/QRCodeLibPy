@@ -2,14 +2,8 @@ from ..encoding_mode import EncodingMode
 
 
 class CharCountIndicator:
-    """
-        文字数指示子
-    """    
     @classmethod
     def get_length(cls, version: int, encoding: int) -> int:
-        """
-            文字数指示子のビット数を返します。
-        """
         if 1 <= version <= 9:
             if encoding == EncodingMode.NUMERIC:
                 return 10

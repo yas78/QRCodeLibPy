@@ -36,14 +36,13 @@ class NumericEncoder(QRCodeEncoder):
 
         if self._char_counter % 3 == 0:
             self._code_words.append(wd)
-            ret = 4
         else:
             self._code_words[-1] *= 10
             self._code_words[-1] += wd
-            ret = 3
-        
-        self._char_counter += 1
+
+        ret = self.get_codeword_bit_length(c)
         self._bit_counter += ret
+        self._char_counter += 1
 
         return ret
 

@@ -3,9 +3,6 @@ from .misc.array_util import ArrayUtil
 
 
 class QuietZone:
-    """
-        クワイエットゾーン
-    """
     _WIDTH_LOWER_LIMIT = 4
     _width = _WIDTH_LOWER_LIMIT
 
@@ -22,9 +19,6 @@ class QuietZone:
 
     @classmethod
     def place(cls, module_matrix: List[List[int]]) -> List[List[int]]:
-        """
-            クワイエットゾーンを追加します。
-        """
         size = len(module_matrix) + cls.get_width() * 2
         ret = [[0] * size for _ in range(size)]
 

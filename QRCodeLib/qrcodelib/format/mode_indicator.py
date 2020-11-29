@@ -1,7 +1,4 @@
 class ModeIndicator:
-    """
-        モード指示子
-    """    
     LENGTH = 4
 
     TERMINATOR_VALUE        = 0x0

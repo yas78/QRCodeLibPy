@@ -8,7 +8,6 @@ from .rgbquad import RGBQUAD
 
 
 class DIB:
-
     @classmethod
     def build_1bpp_dib(cls,
                        bitmap_data: bytes,
