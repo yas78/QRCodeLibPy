@@ -24,7 +24,7 @@ class Symbols:
         self._byte_mode_encoding = byte_mode_encoding
         self._shift_jis_encoding = "shift_jis"
 
-        self._structured_append_parity = 0
+        self._parity = 0
 
         self._curr_symbol = Symbol(self)
         self._items.append(self._curr_symbol)
@@ -57,8 +57,8 @@ class Symbols:
         return self._structured_append_allowed
 
     @property
-    def structured_append_parity(self) -> int:
-        return self._structured_append_parity
+    def parity(self) -> int:
+        return self._parity
 
     @property
     def byte_mode_encoding(self) -> str:
@@ -314,4 +314,4 @@ class Symbols:
             char_bytes = c.encode(self._byte_mode_encoding, "ignore")
 
         for value in char_bytes:
-            self._structured_append_parity ^= value
+            self._parity ^= value

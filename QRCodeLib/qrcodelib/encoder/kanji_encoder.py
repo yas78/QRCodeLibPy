@@ -70,5 +70,5 @@ class KanjiEncoder(QRCodeEncoder):
     def in_exclusive_subset(cls, c: str) -> bool:
         if AlphanumericEncoder.in_subset(c):
             return False
-        
+
         return cls.in_subset(c)

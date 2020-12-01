@@ -277,7 +277,7 @@ class Symbol:
                   SymbolSequenceIndicator.POSITION_LENGTH)
         bs.append(self._parent.count - 1,
                   SymbolSequenceIndicator.NUM_SYMBOLS_LENGTH)
-        bs.append(self._parent.structured_append_parity,
+        bs.append(self._parent.parity,
                   StructuredAppend.PARITY_DATA_LENGTH)
 
     def _write_segments(self, bs: BitSequence):
