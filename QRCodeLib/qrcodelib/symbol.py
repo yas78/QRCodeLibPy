@@ -1,6 +1,7 @@
 from typing import cast, List, Optional, Tuple
 import base64
 import tkinter as tk
+from .constants import Values
 from .encoder import *
 from .format import *
 from .image import Color, DIB, find_contours
@@ -372,14 +373,14 @@ class Symbol:
         to_left = True
         row_direction = -1
 
-        for value in data:
+        for v in data:
             bit_pos = 7
 
             while bit_pos >= 0:
                 row = module_matrix[r]
 
-                if row[c] == 0:
-                    row[c] = 1 if (value & (1 << bit_pos)) > 0 else -1
+                if row[c] == Values.BLANK:
+                    row[c] = Values.WORD if (v & (1 << bit_pos)) > 0 else -Values.WORD
 
                     bit_pos -= 1
 
@@ -455,8 +456,8 @@ class Symbol:
 
         for row in reversed(module_matrix):
             bs = BitSequence()
-            for value in row:
-                color = 0 if value > 0 else 1
+            for v in row:
+                color = 0 if v > 0 else 1
                 for i in range(module_size):
                     bs.append(color, 1)
 
@@ -499,8 +500,8 @@ class Symbol:
             bitmap_row = bytearray(row_size)
             index = 0
 
-            for value in row:
-                color = fore_color if value > 0 else back_color
+            for v in row:
+                color = fore_color if v > 0 else back_color
                 for i in range(module_size):
                     bitmap_row[index + 0] = color.b
                     bitmap_row[index + 1] = color.g
@@ -702,7 +703,7 @@ class Symbol:
                     module_size: int = DEFAULT_MODULE_SIZE,
                     monochrome: bool = False,
                     fore_rgb: str = Color.BLACK,
-                    back_rgb: str = Color.WHITE):
+                    back_rgb: str = Color.WHITE) -> None:
         """
             シンボル画像を1bpp DIB形式でファイルに保存します。
         """
@@ -730,7 +731,7 @@ class Symbol:
                  file_name: str,
                  module_size: int = DEFAULT_MODULE_SIZE,
                  fore_rgb: str = Color.BLACK,
-                 back_rgb: str = Color.WHITE):
+                 back_rgb: str = Color.WHITE) -> None:
         """
             シンボル画像をPPM形式でファイルに保存します。
         """
@@ -752,7 +753,7 @@ class Symbol:
             fout.write(ppm)
 
     def save_xbm(self, file_name: str,
-                 module_size: int = DEFAULT_MODULE_SIZE):
+                 module_size: int = DEFAULT_MODULE_SIZE) -> None:
         """
             シンボル画像をXBM形式でファイルに保存します。
         """
@@ -769,7 +770,7 @@ class Symbol:
 
     def save_svg(self, file_name: str,
                  module_size: int = DEFAULT_MODULE_SIZE,
-                 fore_rgb: str = Color.BLACK):
+                 fore_rgb: str = Color.BLACK) -> None:
         """
             シンボル画像をSVG形式でファイルに保存します。
         """
@@ -810,17 +811,17 @@ class Symbol:
             row_data = []
             for value in row:
                 for _ in range(module_size):
-                    row_data.append(value)
+                    row_data.append(1 if value > Values.BLANK else 0)
             for _ in range(module_size):
                 image.append(row_data)
 
-        gps = find_contours(image)
+        gp_paths = find_contours(image)
         buf = []
         indent = " " * 11
 
-        for gp in gps:
+        for gp_path in gp_paths:
             buf.append(f"{indent}M ")
-            for p in gp:
+            for p in gp_path:
                 buf.append(f"{p.X},{p.Y} ")
             buf.append("Z\n")
 

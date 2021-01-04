@@ -1,4 +1,5 @@
 from typing import List
+from .constants import Values
 from .error_correction_level import ErrorCorrectionLevel
 
 
@@ -26,7 +27,7 @@ class FormatInfo:
             temp = ((1 if (format_info_value & (1 << i)) > 0 else 0)
                     ^ cls._format_info_mask_array[i])
             
-            v = 3 if temp > 0 else -3
+            v = Values.FORMAT if temp > 0 else -Values.FORMAT
 
             module_matrix[r1][8] = v
             module_matrix[8][c1] = v
@@ -44,7 +45,7 @@ class FormatInfo:
             temp = ((1 if (format_info_value & (1 << i)) > 0 else 0)
                     ^ cls._format_info_mask_array[i])
 
-            v = 3 if temp > 0 else -3
+            v = Values.FORMAT if temp > 0 else -Values.FORMAT
             module_matrix[r2][8] = v
             module_matrix[8][c2] = v
 
@@ -54,22 +55,24 @@ class FormatInfo:
             if c2 == 6:
                 c2 -= 1
 
+        # 固定暗モジュール
+        module_matrix[len(module_matrix) - 8][8] = Values.FORMAT
+
     @classmethod
     def place_temp_blank(cls, module_matrix: List[List[int]]) -> None:
-        num_modules_one_side = len(module_matrix)
-
         for i in range(9):
-            # タイミグパターンの領域ではない場合
-            if i != 6:
-                module_matrix[8][i] = -3
-                module_matrix[i][8] = -3
+            # タイミグパターンの領域
+            if i == 6:
+                continue
+            module_matrix[8][i] = -Values.FORMAT
+            module_matrix[i][8] = -Values.FORMAT
 
-        for i in range(num_modules_one_side - 8, num_modules_one_side):
-            module_matrix[8][i] = -3
-            module_matrix[i][8] = -3
+        for i in range(len(module_matrix) - 8, len(module_matrix)):
+            module_matrix[8][i] = -Values.FORMAT
+            module_matrix[i][8] = -Values.FORMAT
 
-        # 固定暗モジュールを配置(マスクの適用前に配置する)
-        module_matrix[num_modules_one_side - 8][8] = 2
+        # 固定暗モジュール
+        module_matrix[len(module_matrix) - 8][8] = -Values.FORMAT
 
     @classmethod
     def get_format_info_value(cls, 

@@ -1,15 +1,18 @@
 from typing import List
+from .constants import Values
 
 
 class FinderPattern:
+    value = Values.FINDER
+    
     _finder_pattern = [
-        [2,  2,  2,  2,  2,  2, 2],
-        [2, -2, -2, -2, -2, -2, 2],
-        [2, -2,  2,  2,  2, -2, 2],
-        [2, -2,  2,  2,  2, -2, 2],
-        [2, -2,  2,  2,  2, -2, 2],
-        [2, -2, -2, -2, -2, -2, 2],
-        [2,  2,  2,  2,  2,  2, 2]
+        [value,  value,  value,  value,  value,  value, value],
+        [value, -value, -value, -value, -value, -value, value],
+        [value, -value,  value,  value,  value, -value, value],
+        [value, -value,  value,  value,  value, -value, value],
+        [value, -value,  value,  value,  value, -value, value],
+        [value, -value, -value, -value, -value, -value, value],
+        [value,  value,  value,  value,  value,  value, value]
     ]
 
     @classmethod

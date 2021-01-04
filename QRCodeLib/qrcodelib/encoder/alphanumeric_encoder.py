@@ -61,10 +61,6 @@ class AlphanumericEncoder(QRCodeEncoder):
         if len(char_bytes) != 1:
             raise ValueError("c")
 
-        if "A" <= c <= "Z":
-            return char_bytes[0] - 55
-        if "0" <= c <= "9":
-            return char_bytes[0] - 48
         if c == " ":
             return 36
         if c == "$" or c == "%":
@@ -75,26 +71,18 @@ class AlphanumericEncoder(QRCodeEncoder):
             return char_bytes[0] - 4
         if c == "/":
             return 43
+        if "0" <= c <= "9":
+            return char_bytes[0] - 48
         if c == ":":
             return 44
+        if "A" <= c <= "Z":
+            return char_bytes[0] - 55
 
-        raise ValueError("c")
+        return -1
     
     @classmethod
     def in_subset(cls, c: str) -> bool:
-        return (
-            "A" <= c <= "Z" or
-            "0" <= c <= "9" or
-            c == " " or
-            c == "." or
-            c == "-" or
-            c == "$" or
-            c == "%" or
-            c == "*" or
-            c == "+" or
-            c == "/" or
-            c == ":"
-        )
+        return cls._convert_char_code(c) > -1
 
     @classmethod
     def in_exclusive_subset(cls, c: str) -> bool:

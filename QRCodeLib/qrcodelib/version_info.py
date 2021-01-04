@@ -1,4 +1,5 @@
 from typing import List
+from .constants import Values
 
 
 class VersionInfo:
@@ -21,7 +22,7 @@ class VersionInfo:
         p2 = num_modules_per_side - 11
 
         for i in range(18):
-            v = 3 if (version_info_value & (1 << i)) > 0 else -3
+            v = Values.VERSION if (version_info_value & (1 << i)) > 0 else -Values.VERSION
 
             module_matrix[p1][p2] = v
             module_matrix[p2][p1] = v
@@ -38,5 +39,5 @@ class VersionInfo:
 
         for i in range(6):
             for j in range(num_modules_per_side - 11, num_modules_per_side - 8):
-                module_matrix[i][j] = -3
-                module_matrix[j][i] = -3
+                module_matrix[i][j] = -Values.VERSION
+                module_matrix[j][i] = -Values.VERSION

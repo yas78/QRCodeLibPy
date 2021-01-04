@@ -12,7 +12,7 @@ class Direction:
 
 
 def find_contours(image):
-    paths = []
+    gp_paths = []
 
     for y in range(len(image) - 1):
         for x in range(len(image[y]) - 1):
@@ -24,7 +24,7 @@ def find_contours(image):
 
             image[y][x] = sys.maxsize
             start = Point(x, y)
-            path = [start]
+            gp_path = [start]
 
             dr = Direction.UP
             p = Point(start.X, start.Y - 1)
@@ -37,12 +37,12 @@ def find_contours(image):
                         if image[p.Y][p.X + 1] <= 0:
                             p = Point(p.X, p.Y - 1)
                         else:
-                            path.append(p)
+                            gp_path.append(p)
                             dr = Direction.RIGHT
                             p = Point(p.X + 1, p.Y)
                     else:
                         p = Point(p.X, p.Y + 1)
-                        path.append(p)
+                        gp_path.append(p)
                         dr = Direction.LEFT
                         p = Point(p.X - 1, p.Y)
 
@@ -53,12 +53,12 @@ def find_contours(image):
                         if image[p.Y][p.X - 1] <= 0:
                             p = Point(p.X, p.Y + 1)
                         else:
-                            path.append(p)
+                            gp_path.append(p)
                             dr = Direction.LEFT
                             p = Point(p.X - 1, p.Y)
                     else:
                         p = Point(p.X, p.Y - 1)
-                        path.append(p)
+                        gp_path.append(p)
                         dr = Direction.RIGHT
                         p = Point(p.X + 1, p.Y)
 
@@ -69,12 +69,12 @@ def find_contours(image):
                         if image[p.Y - 1][p.X] <= 0:
                             p = Point(p.X - 1, p.Y)
                         else:
-                            path.append(p)
+                            gp_path.append(p)
                             dr = Direction.UP
                             p = Point(p.X, p.Y - 1)
                     else:
                         p = Point(p.X + 1, p.Y)
-                        path.append(p)
+                        gp_path.append(p)
                         dr = Direction.DOWN
                         p = Point(p.X, p.Y + 1)
 
@@ -85,12 +85,12 @@ def find_contours(image):
                         if image[p.Y + 1][p.X] <= 0:
                             p = Point(p.X + 1, p.Y)
                         else:
-                            path.append(p)
+                            gp_path.append(p)
                             dr = Direction.DOWN
                             p = Point(p.X, p.Y + 1)
                     else:
                         p = Point(p.X - 1, p.Y)
-                        path.append(p)
+                        gp_path.append(p)
                         dr = Direction.UP
                         p = Point(p.X, p.Y - 1)
                 else:
@@ -99,6 +99,6 @@ def find_contours(image):
                 if p == start:
                     break
 
-            paths.append(path)
+            gp_paths.append(gp_path)
 
-    return paths
+    return gp_paths

@@ -1,6 +1,7 @@
 from typing import Callable, List
 import copy
 import sys
+from .constants import Values
 from .format_info import FormatInfo
 from .masking_penalty_score import MaskingPenaltyScore
 from .version_info import VersionInfo
@@ -43,7 +44,7 @@ class Masking:
 
         for r in range(len(module_matrix)):
             for c in range(len(module_matrix[r])):
-                if abs(module_matrix[r][c]) == 1:
+                if abs(module_matrix[r][c]) == Values.WORD:
                     if condition(r, c):
                         module_matrix[r][c] *= -1
 

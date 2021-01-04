@@ -1,4 +1,5 @@
 from typing import List
+from .constants import Values
 from .misc.array_util import ArrayUtil
 
 
@@ -49,6 +50,7 @@ class AlignmentPattern:
 
     @classmethod
     def place(cls, version: int, module_matrix: List[List[int]]) -> None:
+        value = Values.ALIGNMENT
         center_pos_array: List[int] = cls._center_pos_arrays[version]
 
         length = len(center_pos_array)
@@ -68,8 +70,8 @@ class AlignmentPattern:
                 ):
                     continue
 
-                ArrayUtil.copy([2,  2,  2,  2,  2], 0, module_matrix[r - 2], c - 2, 5)
-                ArrayUtil.copy([2, -2, -2, -2,  2], 0, module_matrix[r - 1], c - 2, 5)
-                ArrayUtil.copy([2, -2,  2, -2,  2], 0, module_matrix[r + 0], c - 2, 5)
-                ArrayUtil.copy([2, -2, -2, -2,  2], 0, module_matrix[r + 1], c - 2, 5)
-                ArrayUtil.copy([2,  2,  2,  2,  2], 0, module_matrix[r + 2], c - 2, 5)
+                ArrayUtil.copy([value,  value,  value,  value, value], 0, module_matrix[r - 2], c - 2, 5)
+                ArrayUtil.copy([value, -value, -value, -value, value], 0, module_matrix[r - 1], c - 2, 5)
+                ArrayUtil.copy([value, -value,  value, -value, value], 0, module_matrix[r + 0], c - 2, 5)
+                ArrayUtil.copy([value, -value, -value, -value, value], 0, module_matrix[r + 1], c - 2, 5)
+                ArrayUtil.copy([value,  value,  value,  value, value], 0, module_matrix[r + 2], c - 2, 5)

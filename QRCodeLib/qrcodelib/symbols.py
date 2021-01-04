@@ -110,202 +110,210 @@ class Symbols:
                 self._curr_symbol.try_set_encoding_mode(new_mode, c)
                 self._curr_symbol.try_append(c)
 
-    def _select_initial_mode(self, s: str, start_index: int) -> int:
-        version = self._curr_symbol.version
-
-        if KanjiEncoder.in_subset(s[start_index]):
+    def _select_initial_mode(self, s: str, start: int) -> int:
+        if KanjiEncoder.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.in_exclusive_subset(s[start_index]):
+        if ByteEncoder.in_exclusive_subset(s[start]):
             return EncodingMode.EIGHT_BIT_BYTE
 
-        if AlphanumericEncoder.in_exclusive_subset(s[start_index]):
-            cnt = 0
-            flg = False
+        if AlphanumericEncoder.in_exclusive_subset(s[start]):
+            return self._select_mode_when_initial_data_alphanumeric(s, start)
 
-            for i in range(start_index, len(s) - 1):
-                if AlphanumericEncoder.in_exclusive_subset(s[i]):
-                    cnt += 1
-                else:
-                    break
-
-                if 1 <= version <= 9:
-                    flg = cnt < 6
-                elif 10 <= version <= 26:
-                    flg = cnt < 7
-                elif 27 <= version <= 40:
-                    flg = cnt < 8
-                else:
-                    raise RuntimeError()
-
-            if flg:
-                if (start_index + cnt) < len(s):
-                    if ByteEncoder.in_exclusive_subset(s[start_index + cnt]):
-                        return EncodingMode.EIGHT_BIT_BYTE
-                    else:
-                        return EncodingMode.ALPHA_NUMERIC
-                else:
-                    return EncodingMode.ALPHA_NUMERIC
-            else:
-                return EncodingMode.ALPHA_NUMERIC
-
-        if NumericEncoder.in_subset(s[start_index]):
-            cnt = 0
-            flg1 = False
-            flg2 = False
-
-            for i in range(start_index, len(s) - 1):
-                if NumericEncoder.in_subset(s[i]):
-                    cnt += 1
-                else:
-                    break
-
-                if 1 <= version <= 9:
-                    flg1 = cnt < 4
-                    flg2 = cnt < 7
-                elif 10 <= version <= 26:
-                    flg1 = cnt < 4
-                    flg2 = cnt < 8
-                elif 27 <= version <= 40:
-                    flg1 = cnt < 5
-                    flg2 = cnt < 9
-                else:
-                    raise RuntimeError()
-
-            if flg1:
-                if (start_index + cnt) < len(s):
-                    flg1 = ByteEncoder.in_exclusive_subset(s[start_index + cnt])
-                else:
-                    flg1 = False
-
-            if flg2:
-                if (start_index + cnt) < len(s):
-                    flg2 = AlphanumericEncoder.in_exclusive_subset(s[start_index + cnt])
-                else:
-                    flg2 = False
-
-            if flg1:
-                return EncodingMode.EIGHT_BIT_BYTE
-            elif flg2:
-                return EncodingMode.ALPHA_NUMERIC
-            else:
-                return EncodingMode.NUMERIC
+        if NumericEncoder.in_subset(s[start]):
+            return self._select_mode_when_initial_data_numeric(s, start)
 
         raise RuntimeError()
 
+    def _select_mode_when_initial_data_alphanumeric(self, s, start) -> int:
+        cnt = 0
+
+        for i in range(start, len(s) - 1):
+            if AlphanumericEncoder.in_exclusive_subset(s[i]):
+                cnt += 1
+            else:
+                break
+
+        version = self._curr_symbol.version
+
+        if 1 <= version <= 9:
+            flg = cnt < 6
+        elif 10 <= version <= 26:
+            flg = cnt < 7
+        elif 27 <= version <= 40:
+            flg = cnt < 8
+        else:
+            raise RuntimeError()
+
+        if flg:
+            if (start + cnt) < len(s):
+                if ByteEncoder.in_subset(s[start + cnt]):
+                    return EncodingMode.EIGHT_BIT_BYTE
+
+        return EncodingMode.ALPHA_NUMERIC
+
+    def _select_mode_when_initial_data_numeric(self, s, start) -> int:
+        cnt = 0
+
+        for i in range(start, len(s) - 1):
+            if NumericEncoder.in_subset(s[i]):
+                cnt += 1
+            else:
+                break
+
+        version = self._curr_symbol.version
+
+        if 1 <= version <= 9:
+            flg = cnt < 4
+        elif 10 <= version <= 26:
+            flg = cnt < 4
+        elif 27 <= version <= 40:
+            flg = cnt < 5
+        else:
+            raise RuntimeError()
+
+        if flg:
+            if (start + cnt) < len(s):
+                if ByteEncoder.in_exclusive_subset(s[start + cnt]):
+                    return EncodingMode.EIGHT_BIT_BYTE
+
+        if 1 <= version <= 9:
+            flg = cnt < 7
+        elif 10 <= version <= 26:
+            flg = cnt < 8
+        elif 27 <= version <= 40:
+            flg = cnt < 9
+        else:
+            raise RuntimeError()
+
+        if flg:
+            if (start + cnt) < len(s):
+                if AlphanumericEncoder.in_exclusive_subset(s[start + cnt]):
+                    return EncodingMode.ALPHA_NUMERIC
+
+        return EncodingMode.NUMERIC
+
     @classmethod
-    def _select_mode_while_in_numeric(cls, s: str, start_index: int) -> int:
-        if KanjiEncoder.in_subset(s[start_index]):
+    def _select_mode_while_in_numeric(cls, s: str, start: int) -> int:
+        if KanjiEncoder.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.in_exclusive_subset(s[start_index]):
+        if ByteEncoder.in_exclusive_subset(s[start]):
             return EncodingMode.EIGHT_BIT_BYTE
 
-        if AlphanumericEncoder.in_exclusive_subset(s[start_index]):
+        if AlphanumericEncoder.in_exclusive_subset(s[start]):
             return EncodingMode.ALPHA_NUMERIC
 
         return EncodingMode.NUMERIC
 
-    def _select_mode_while_in_alphanumeric(self, s: str, start_index: int) -> int:
-        version = self._curr_symbol.version
-
-        if KanjiEncoder.in_subset(s[start_index]):
+    def _select_mode_while_in_alphanumeric(self, s: str, start: int) -> int:
+        if KanjiEncoder.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.in_exclusive_subset(s[start_index]):
+        if ByteEncoder.in_exclusive_subset(s[start]):
             return EncodingMode.EIGHT_BIT_BYTE
 
-        cnt = 0
-        flg = False
+        if self._must_change_alphanumeric_to_numeric(s, start):
+            return EncodingMode.NUMERIC
 
-        for i in range(start_index, len(s) - 1):
+        return EncodingMode.ALPHA_NUMERIC
+
+    def _must_change_alphanumeric_to_numeric(self, s: str, start: int) -> bool:
+        ret = False
+        cnt = 0
+
+        for i in range(start, len(s) - 1):
             if not AlphanumericEncoder.in_subset(s[i]):
                 break
 
             if NumericEncoder.in_subset(s[i]):
                 cnt += 1
             else:
-                flg = True
+                ret = True
                 break
 
-        if flg:
+        if ret:
+            version = self._curr_symbol.version
             if 1 <= version <= 9:
-                flg = cnt >= 13
+                ret = cnt >= 13
             elif 10 <= version <= 26:
-                flg = cnt >= 15
+                ret = cnt >= 15
             elif 27 <= version <= 40:
-                flg = cnt >= 17
+                ret = cnt >= 17
             else:
                 raise RuntimeError()
 
-            if flg:
-                return EncodingMode.NUMERIC
+        return ret
 
-        return EncodingMode.ALPHA_NUMERIC
-
-    def _select_mode_while_in_byte(self, s: str, start_index: int) -> int:
-        version = self._curr_symbol.version
-
-        cnt = 0
-        flg = False
-
-        if KanjiEncoder.in_subset(s[start_index]):
+    def _select_mode_while_in_byte(self, s: str, start: int) -> int:
+        if KanjiEncoder.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        for i in range(start_index, len(s) - 1):
+        if self._must_change_byte_to_numeric(s, start):
+            return EncodingMode.NUMERIC
+
+        if self._must_change_byte_to_alphanumeric(s, start):
+            return EncodingMode.ALPHA_NUMERIC
+
+        return EncodingMode.EIGHT_BIT_BYTE
+
+    def _must_change_byte_to_numeric(self, s, start) -> bool:
+        ret = False
+        cnt = 0
+
+        for i in range(start, len(s) - 1):
             if not ByteEncoder.in_subset(s[i]):
                 break
 
             if NumericEncoder.in_subset(s[i]):
                 cnt += 1
             elif ByteEncoder.in_exclusive_subset(s[i]):
-                flg = True
+                ret = True
                 break
             else:
                 break
 
-        if flg:
+        if ret:
+            version = self._curr_symbol.version
             if 1 <= version <= 9:
-                flg = cnt >= 6
+                ret = cnt >= 6
             elif 10 <= version <= 26:
-                flg = cnt >= 8
+                ret = cnt >= 8
             elif 27 <= version <= 40:
-                flg = cnt >= 9
+                ret = cnt >= 9
             else:
                 raise RuntimeError()
 
-            if flg:
-                return EncodingMode.NUMERIC
+        return ret
 
+    def _must_change_byte_to_alphanumeric(self, s, start) -> bool:
+        ret = False
         cnt = 0
-        flg = False
 
-        for i in range(start_index, len(s) - 1):
+        for i in range(start, len(s) - 1):
             if not ByteEncoder.in_subset(s[i]):
                 break
 
             if AlphanumericEncoder.in_exclusive_subset(s[i]):
                 cnt += 1
             elif ByteEncoder.in_exclusive_subset(s[i]):
-                flg = True
+                ret = True
                 break
             else:
                 break
 
-        if flg:
+        if ret:
+            version = self._curr_symbol.version
             if 1 <= version <= 9:
-                flg = cnt >= 11
+                ret = cnt >= 11
             elif 10 <= version <= 26:
-                flg = cnt >= 15
+                ret = cnt >= 15
             elif 27 <= version <= 40:
-                flg = cnt >= 16
+                ret = cnt >= 16
             else:
                 raise RuntimeError()
 
-            if flg:
-                return EncodingMode.ALPHA_NUMERIC
-
-        return EncodingMode.EIGHT_BIT_BYTE
+        return ret
 
     def update_parity(self, c: str) -> None:
         if KanjiEncoder.in_subset(c):
