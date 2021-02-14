@@ -5,33 +5,18 @@ from ..misc.bit_sequence import BitSequence
 
 
 class NumericEncoder(QRCodeEncoder):
-    """
-        数字モードエンコーダー
-    """
-    def __init__(self) -> None:
-        """
-            インスタンスを初期化します。
-        """
-        super().__init__()
+    def __init__(self, charset_name: str) -> None:
+        super().__init__(charset_name)
 
     @property
     def encoding_mode(self) -> int:
-        """
-            符号化モードを取得します。
-        """
         return EncodingMode.NUMERIC
 
     @property
     def mode_indicator(self) -> int:
-        """
-            モード指示子を取得します。
-        """
         return ModeIndicator.NUMERIC_VALUE
 
     def append(self, c: str) -> int:
-        """
-            文字を追加します。
-        """
         wd = int(c)
 
         if self._char_counter % 3 == 0:
@@ -47,18 +32,12 @@ class NumericEncoder(QRCodeEncoder):
         return ret
 
     def get_codeword_bit_length(self, c: str) -> int:
-        """
-            指定の文字をエンコードしたコード語のビット数を返します。
-        """
         if self._char_counter % 3 == 0:
             return 4
         else:
             return 3
 
     def get_bytes(self) -> bytes:
-        """
-            エンコードされたデータのバイト配列を返します。
-        """
         bs = BitSequence()
         bit_length = 10
 
@@ -76,16 +55,8 @@ class NumericEncoder(QRCodeEncoder):
 
         return bs.get_bytes()
 
-    @classmethod
-    def in_subset(cls, c: str) -> bool:
-        """
-            指定した文字が、このモードの文字集合に含まれる場合は true を返します。
-        """
+    def in_subset(self, c: str) -> bool:
         return "0" <= c <= "9"
 
-    @classmethod
-    def in_exclusive_subset(cls, c: str) -> bool:
-        """
-            指定した文字が、このモードの排他的部分文字集合に含まれる場合は true を返します。
-        """
-        return NumericEncoder.in_subset(c)
+    def in_exclusive_subset(self, c: str) -> bool:
+        return self.in_subset(c)

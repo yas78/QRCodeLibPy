@@ -4,12 +4,14 @@ from abc import ABCMeta, abstractmethod
 
 class QRCodeEncoder:
     __metaclass__ = ABCMeta
-    
-    def __init__(self) -> None:
+
+    def __init__(self, charset_name: str) -> None:
         self._code_words = []  # type: List[int]
         self._char_counter = 0
         self._bit_counter = 0
-    
+
+        self._charset_name = charset_name
+
     @property
     def char_count(self) -> int:
         return self._char_counter
@@ -17,6 +19,10 @@ class QRCodeEncoder:
     @property
     def bit_count(self) -> int:
         return self._bit_counter
+
+    @property
+    def charset_name(self):
+        return self._charset_name
 
     @property
     @abstractmethod
@@ -38,4 +44,12 @@ class QRCodeEncoder:
 
     @abstractmethod
     def get_bytes(self) -> bytes:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def in_subset(self, c: str) -> bool:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def in_exclusive_subset(self, c: str) -> bool:
         raise NotImplementedError()

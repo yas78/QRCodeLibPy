@@ -6,10 +6,9 @@ from ..misc.bit_sequence import BitSequence
 
 
 class KanjiEncoder(QRCodeEncoder):
-    _textEncoding = "shift_jis"
-
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, charset_name: str) -> None:
+        super().__init__(charset_name)
+        self._encAlpha = AlphanumericEncoder(charset_name)
 
     @property
     def encoding_mode(self) -> int:
@@ -20,7 +19,7 @@ class KanjiEncoder(QRCodeEncoder):
         return ModeIndicator.KANJI_VALUE
 
     def append(self, c: str) -> int:
-        char_bytes = c.encode(self._textEncoding, "ignore")
+        char_bytes = c.encode(self._charset_name, "ignore")
         wd = (char_bytes[0] << 8) | char_bytes[1]
 
         if 0x8140 <= wd <= 0x9FFC:
@@ -50,9 +49,8 @@ class KanjiEncoder(QRCodeEncoder):
 
         return bs.get_bytes()
 
-    @classmethod
-    def in_subset(cls, c: str) -> bool:
-        char_bytes = c.encode(cls._textEncoding, "ignore")
+    def in_subset(self, c: str) -> bool:
+        char_bytes = c.encode(self._charset_name, "ignore")
 
         if len(char_bytes) != 2:
             return False
@@ -60,15 +58,14 @@ class KanjiEncoder(QRCodeEncoder):
         code = (char_bytes[0] << 8) | char_bytes[1]
 
         if (0x8140 <= code <= 0x9FFC or
-            0xE040 <= code <= 0xEBBF):
+                0xE040 <= code <= 0xEBBF):
             return (0x40 <= char_bytes[1] <= 0xFC and
                     0x7F != char_bytes[1])
 
         return False
 
-    @classmethod
-    def in_exclusive_subset(cls, c: str) -> bool:
-        if AlphanumericEncoder.in_subset(c):
+    def in_exclusive_subset(self, c: str) -> bool:
+        if self._encAlpha.in_subset(c):
             return False
 
-        return cls.in_subset(c)
+        return self.in_subset(c)

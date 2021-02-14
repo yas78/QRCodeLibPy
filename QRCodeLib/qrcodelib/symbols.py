@@ -4,6 +4,7 @@ from .encoding_mode import EncodingMode
 from .error_correction_level import ErrorCorrectionLevel
 from .symbol import Symbol
 from .encoder import NumericEncoder, AlphanumericEncoder, KanjiEncoder, ByteEncoder
+from .misc import Charset
 
 
 class Symbols:
@@ -11,7 +12,7 @@ class Symbols:
                  ec_level: int = ErrorCorrectionLevel.M,
                  max_version: int = Constants.MAX_VERSION,
                  allow_structured_append: bool = False,
-                 byte_mode_encoding: str = "shift_jis") -> None:
+                 charset_name: str = Charset.SHIFT_JIS) -> None:
         if not (Constants.MIN_VERSION <= max_version <= Constants.MAX_VERSION):
             raise ValueError("max_version")
 
@@ -21,13 +22,20 @@ class Symbols:
         self._max_version = max_version
         self._error_correction_level = ec_level
         self._structured_append_allowed = allow_structured_append
-        self._byte_mode_encoding = byte_mode_encoding
-        self._shift_jis_encoding = "shift_jis"
-
+        self._charset_name = charset_name
         self._parity = 0
-
         self._curr_symbol = Symbol(self)
         self._items.append(self._curr_symbol)
+
+        self._enc_numeric = NumericEncoder(charset_name)
+        self._enc_alpha = AlphanumericEncoder(charset_name)
+
+        if Charset.is_jp(charset_name):
+            self._enc_kanji = KanjiEncoder(charset_name)
+        else:
+            self._enc_kanji = None
+
+        self._enc_byte = ByteEncoder(charset_name)
 
     def __iter__(self):
         return iter(self._items)
@@ -61,8 +69,8 @@ class Symbols:
         return self._parity
 
     @property
-    def byte_mode_encoding(self) -> str:
-        return self._byte_mode_encoding
+    def charset_name(self) -> str:
+        return self._charset_name
 
     def item(self, index: int) -> Symbol:
         return self._items[index]
@@ -111,16 +119,16 @@ class Symbols:
                 self._curr_symbol.try_append(c)
 
     def _select_initial_mode(self, s: str, start: int) -> int:
-        if KanjiEncoder.in_subset(s[start]):
+        if self._enc_kanji and self._enc_kanji.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.in_exclusive_subset(s[start]):
+        if self._enc_byte.in_exclusive_subset(s[start]):
             return EncodingMode.EIGHT_BIT_BYTE
 
-        if AlphanumericEncoder.in_exclusive_subset(s[start]):
+        if self._enc_alpha.in_exclusive_subset(s[start]):
             return self._select_mode_when_initial_data_alphanumeric(s, start)
 
-        if NumericEncoder.in_subset(s[start]):
+        if self._enc_numeric.in_subset(s[start]):
             return self._select_mode_when_initial_data_numeric(s, start)
 
         raise RuntimeError()
@@ -129,7 +137,7 @@ class Symbols:
         cnt = 0
 
         for i in range(start, len(s) - 1):
-            if AlphanumericEncoder.in_exclusive_subset(s[i]):
+            if self._enc_alpha.in_exclusive_subset(s[i]):
                 cnt += 1
             else:
                 break
@@ -147,7 +155,7 @@ class Symbols:
 
         if flg:
             if (start + cnt) < len(s):
-                if ByteEncoder.in_subset(s[start + cnt]):
+                if self._enc_byte.in_subset(s[start + cnt]):
                     return EncodingMode.EIGHT_BIT_BYTE
 
         return EncodingMode.ALPHA_NUMERIC
@@ -156,7 +164,7 @@ class Symbols:
         cnt = 0
 
         for i in range(start, len(s) - 1):
-            if NumericEncoder.in_subset(s[i]):
+            if self._enc_numeric.in_subset(s[i]):
                 cnt += 1
             else:
                 break
@@ -174,7 +182,7 @@ class Symbols:
 
         if flg:
             if (start + cnt) < len(s):
-                if ByteEncoder.in_exclusive_subset(s[start + cnt]):
+                if self._enc_byte.in_exclusive_subset(s[start + cnt]):
                     return EncodingMode.EIGHT_BIT_BYTE
 
         if 1 <= version <= 9:
@@ -188,29 +196,28 @@ class Symbols:
 
         if flg:
             if (start + cnt) < len(s):
-                if AlphanumericEncoder.in_exclusive_subset(s[start + cnt]):
+                if self._enc_alpha.in_exclusive_subset(s[start + cnt]):
                     return EncodingMode.ALPHA_NUMERIC
 
         return EncodingMode.NUMERIC
 
-    @classmethod
-    def _select_mode_while_in_numeric(cls, s: str, start: int) -> int:
-        if KanjiEncoder.in_subset(s[start]):
+    def _select_mode_while_in_numeric(self, s: str, start: int) -> int:
+        if self._enc_kanji and self._enc_kanji.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.in_exclusive_subset(s[start]):
+        if self._enc_byte.in_exclusive_subset(s[start]):
             return EncodingMode.EIGHT_BIT_BYTE
 
-        if AlphanumericEncoder.in_exclusive_subset(s[start]):
+        if self._enc_alpha.in_exclusive_subset(s[start]):
             return EncodingMode.ALPHA_NUMERIC
 
         return EncodingMode.NUMERIC
 
     def _select_mode_while_in_alphanumeric(self, s: str, start: int) -> int:
-        if KanjiEncoder.in_subset(s[start]):
+        if self._enc_kanji and self._enc_kanji.in_subset(s[start]):
             return EncodingMode.KANJI
 
-        if ByteEncoder.in_exclusive_subset(s[start]):
+        if self._enc_byte.in_exclusive_subset(s[start]):
             return EncodingMode.EIGHT_BIT_BYTE
 
         if self._must_change_alphanumeric_to_numeric(s, start):
@@ -223,10 +230,10 @@ class Symbols:
         cnt = 0
 
         for i in range(start, len(s) - 1):
-            if not AlphanumericEncoder.in_subset(s[i]):
+            if not self._enc_alpha.in_subset(s[i]):
                 break
 
-            if NumericEncoder.in_subset(s[i]):
+            if self._enc_numeric.in_subset(s[i]):
                 cnt += 1
             else:
                 ret = True
@@ -246,7 +253,7 @@ class Symbols:
         return ret
 
     def _select_mode_while_in_byte(self, s: str, start: int) -> int:
-        if KanjiEncoder.in_subset(s[start]):
+        if self._enc_kanji and self._enc_kanji.in_subset(s[start]):
             return EncodingMode.KANJI
 
         if self._must_change_byte_to_numeric(s, start):
@@ -262,12 +269,12 @@ class Symbols:
         cnt = 0
 
         for i in range(start, len(s) - 1):
-            if not ByteEncoder.in_subset(s[i]):
+            if not self._enc_byte.in_subset(s[i]):
                 break
 
-            if NumericEncoder.in_subset(s[i]):
+            if self._enc_numeric.in_subset(s[i]):
                 cnt += 1
-            elif ByteEncoder.in_exclusive_subset(s[i]):
+            elif self._enc_byte.in_exclusive_subset(s[i]):
                 ret = True
                 break
             else:
@@ -291,12 +298,12 @@ class Symbols:
         cnt = 0
 
         for i in range(start, len(s) - 1):
-            if not ByteEncoder.in_subset(s[i]):
+            if not self._enc_byte.in_subset(s[i]):
                 break
 
-            if AlphanumericEncoder.in_exclusive_subset(s[i]):
+            if self._enc_alpha.in_exclusive_subset(s[i]):
                 cnt += 1
-            elif ByteEncoder.in_exclusive_subset(s[i]):
+            elif self._enc_byte.in_exclusive_subset(s[i]):
                 ret = True
                 break
             else:
@@ -316,10 +323,7 @@ class Symbols:
         return ret
 
     def update_parity(self, c: str) -> None:
-        if KanjiEncoder.in_subset(c):
-            char_bytes = c.encode(self._shift_jis_encoding, "ignore")
-        else:
-            char_bytes = c.encode(self._byte_mode_encoding, "ignore")
+        char_bytes = c.encode(self._charset_name, "ignore")
 
         for value in char_bytes:
             self._parity ^= value

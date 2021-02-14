@@ -3,12 +3,18 @@ from .alphanumeric_encoder import AlphanumericEncoder
 from .kanji_encoder import KanjiEncoder
 from .qrcode_encoder import QRCodeEncoder
 from ..format.mode_indicator import ModeIndicator
+from ..misc.charset import Charset
 
 
 class ByteEncoder(QRCodeEncoder):
-    def __init__(self, encoding: str = "shift_jis") -> None:
-        super().__init__()
-        self._text_encoding = encoding
+    def __init__(self, charset_name: str) -> None:
+        super().__init__(charset_name)
+        self._enc_alpha = AlphanumericEncoder(charset_name)
+
+        if Charset.is_jp(charset_name):
+            self._enc_kanji = KanjiEncoder(charset_name)
+        else:
+            self._enc_kanji = None
 
     @property
     def encoding_mode(self) -> int:
@@ -19,7 +25,7 @@ class ByteEncoder(QRCodeEncoder):
         return ModeIndicator.BYTE_VALUE
 
     def append(self, c: str) -> int:
-        char_bytes = c.encode(self._text_encoding, "ignore")
+        char_bytes = c.encode(self._charset_name, "ignore")
         self._code_words.extend(char_bytes)
         ret = 8 * len(char_bytes)
         self._bit_counter += ret
@@ -27,7 +33,7 @@ class ByteEncoder(QRCodeEncoder):
         return ret
 
     def get_codeword_bit_length(self, c: str) -> int:
-        char_bytes = c.encode(self._text_encoding, "ignore")
+        char_bytes = c.encode(self._charset_name, "ignore")
         return 8 * len(char_bytes)
 
     def get_bytes(self) -> bytes:
@@ -38,16 +44,14 @@ class ByteEncoder(QRCodeEncoder):
 
         return bytes(ret)
 
-    @classmethod
-    def in_subset(cls, c: str) -> bool:
+    def in_subset(self, c: str) -> bool:
         return bool(c)
 
-    @classmethod
-    def in_exclusive_subset(cls, c: str) -> bool:
-        if AlphanumericEncoder.in_subset(c):
+    def in_exclusive_subset(self, c: str) -> bool:
+        if self._enc_alpha.in_subset(c):
+            return False
+
+        if self._enc_kanji and self._enc_kanji.in_subset(c):
             return False
         
-        if KanjiEncoder.in_subset(c):
-            return False
-        
-        return ByteEncoder.in_subset(c)
+        return self.in_subset(c)

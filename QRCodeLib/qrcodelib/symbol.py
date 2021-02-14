@@ -98,8 +98,23 @@ class Symbol:
             引数cはシンボルに追加されません。
             シンボル容量が不足している場合は false を返します。
         """
-        encoder = QRCodeEncoderFactory.create_encoder(
-            enc_mode, self._parent.byte_mode_encoding)
+        charset_name = self._parent.charset_name
+        encoder = None
+
+        if enc_mode == EncodingMode.NUMERIC:
+            encoder = NumericEncoder(charset_name)
+        elif enc_mode == EncodingMode.ALPHA_NUMERIC:
+            encoder = AlphanumericEncoder(charset_name)
+        elif enc_mode == EncodingMode.EIGHT_BIT_BYTE:
+            encoder = ByteEncoder(charset_name)
+        elif enc_mode == EncodingMode.KANJI:
+            if Charset.is_jp(charset_name):
+                encoder = KanjiEncoder(charset_name)
+            else:
+                raise Exception()
+        else:
+            raise ValueError("enc_mode")
+
         bit_length = encoder.get_codeword_bit_length(c)
 
         while self._data_bit_capacity < (

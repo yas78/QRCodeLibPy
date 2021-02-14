@@ -6,8 +6,9 @@ from ..misc.bit_sequence import BitSequence
 
 
 class AlphanumericEncoder(QRCodeEncoder):
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, charset_name: str) -> None:
+        super().__init__(charset_name)
+        self._encNumeric = NumericEncoder(charset_name)
 
     @property
     def encoding_mode(self) -> int:
@@ -15,7 +16,7 @@ class AlphanumericEncoder(QRCodeEncoder):
 
     @property
     def mode_indicator(self) -> int:
-        return ModeIndicator.ALPAHNUMERIC_VALUE
+        return ModeIndicator.ALPHANUMERIC_VALUE
 
     def append(self, c: str) -> int:
         wd = self._convert_char_code(c)
@@ -58,9 +59,6 @@ class AlphanumericEncoder(QRCodeEncoder):
     def _convert_char_code(cls, c: str) -> int:
         char_bytes = c.encode("ascii", "ignore")
 
-        if len(char_bytes) != 1:
-            raise ValueError("c")
-
         if c == " ":
             return 36
         if c == "$" or c == "%":
@@ -80,13 +78,11 @@ class AlphanumericEncoder(QRCodeEncoder):
 
         return -1
     
-    @classmethod
-    def in_subset(cls, c: str) -> bool:
-        return cls._convert_char_code(c) > -1
+    def in_subset(self, c: str) -> bool:
+        return self._convert_char_code(c) > -1
 
-    @classmethod
-    def in_exclusive_subset(cls, c: str) -> bool:
-        if NumericEncoder.in_subset(c):
+    def in_exclusive_subset(self, c: str) -> bool:
+        if self._encNumeric.in_subset(c):
             return False
         
-        return AlphanumericEncoder.in_subset(c)
+        return self.in_subset(c)
