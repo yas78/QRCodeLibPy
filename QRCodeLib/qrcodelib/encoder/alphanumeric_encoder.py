@@ -18,7 +18,7 @@ class AlphanumericEncoder(QRCodeEncoder):
     def mode_indicator(self) -> int:
         return ModeIndicator.ALPHANUMERIC_VALUE
 
-    def append(self, c: str) -> int:
+    def append(self, c: str) -> None:
         wd = self._convert_char_code(c)
 
         if self._char_counter % 2 == 0:
@@ -27,11 +27,8 @@ class AlphanumericEncoder(QRCodeEncoder):
             self._code_words[-1] *= 45
             self._code_words[-1] += wd
 
-        ret = self.get_codeword_bit_length(c)
-        self._bit_counter += ret
+        self._bit_counter += self.get_codeword_bit_length(c)
         self._char_counter += 1
-
-        return ret
 
     def get_codeword_bit_length(self, c: str) -> int:
         if self._char_counter % 2 == 0:

@@ -24,13 +24,12 @@ class ByteEncoder(QRCodeEncoder):
     def mode_indicator(self) -> int:
         return ModeIndicator.BYTE_VALUE
 
-    def append(self, c: str) -> int:
+    def append(self, c: str) -> None:
         char_bytes = c.encode(self._charset_name, "ignore")
         self._code_words.extend(char_bytes)
-        ret = 8 * len(char_bytes)
-        self._bit_counter += ret
+
+        self._bit_counter += self.get_codeword_bit_length(c)
         self._char_counter += len(char_bytes)
-        return ret
 
     def get_codeword_bit_length(self, c: str) -> int:
         char_bytes = c.encode(self._charset_name, "ignore")

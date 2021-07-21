@@ -35,7 +35,7 @@ class QRCodeEncoder:
         raise NotImplementedError()
 
     @abstractmethod
-    def append(self, c: str) -> int:
+    def append(self, c: str) -> None:
         raise NotImplementedError()
 
     @abstractmethod

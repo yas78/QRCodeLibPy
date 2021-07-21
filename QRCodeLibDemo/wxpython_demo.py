@@ -8,8 +8,6 @@ from QRCodeLib.qrcodelib import Symbols
 
 class FormMain(wx.Frame):
 
-    DEFAULT_MODULE_SIZE = 5
-
     def __init__(self, **kw) -> None:
         super().__init__(**kw)
         self._init_widgets()
@@ -133,7 +131,7 @@ class FormMain(wx.Frame):
             size=(48, 21),
             min=1,
             max=100,
-            initial=4
+            initial=5
         )
         self._spn_module_size.Bind(wx.EVT_SPINCTRLDOUBLE, self.update_image)
         # btn_save

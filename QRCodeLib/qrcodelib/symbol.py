@@ -798,16 +798,10 @@ class Symbol:
         if not Color.is_html_color(fore_rgb):
             raise ValueError("fore_rgb")
 
-        svg = self.get_svg(module_size, fore_rgb)
-        svg_file = (
-            "<?xml version='1.0' encoding='UTF-8' standalone='no'?>\n"
-            "<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 20010904//EN'\n"
-            "    'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>\n"
-            + svg + "\n"
-        )
+        svg = self.get_svg(module_size, fore_rgb) + "\n"
 
         with open(file_name, "wt") as fout:
-            fout.write(svg_file)
+            fout.write(svg)
 
     def get_svg(self,
                 module_size: int = DEFAULT_MODULE_SIZE,
@@ -832,7 +826,7 @@ class Symbol:
 
         gp_paths = find_contours(image)
         buf = []
-        indent = " " * 11
+        indent = " " * 5
 
         for gp_path in gp_paths:
             buf.append(f"{indent}M ")
@@ -842,11 +836,10 @@ class Symbol:
 
         data = "".join(buf).strip()
         svg = (
-            f"<svg xmlns='http://www.w3.org/2000/svg'\n"
-            f"    width='{width}' height='{height}' viewBox='0 0 {width} {height}'>\n"
-            f"    <path fill='{fore_rgb}' stroke='{fore_rgb}' stroke-width='1'\n"
-            f"        d='{data}'\n"
-            f"    />\n"
+            f"<svg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"" + "\n"
+            f"  width=\"{width}px\" height=\"{height}px\" viewBox=\"0 0 {width} {height}\">" + "\n"
+            f"<path fill=\"{fore_rgb}\" stroke=\"{fore_rgb}\" stroke-width=\"1\"" + "\n"
+            f"  d=\"{data}\" />" + "\n"
             f"</svg>"
         )
         return svg

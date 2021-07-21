@@ -18,7 +18,7 @@ class KanjiEncoder(QRCodeEncoder):
     def mode_indicator(self) -> int:
         return ModeIndicator.KANJI_VALUE
 
-    def append(self, c: str) -> int:
+    def append(self, c: str) -> None:
         char_bytes = c.encode(self._charset_name, "ignore")
         wd = (char_bytes[0] << 8) | char_bytes[1]
 
@@ -32,11 +32,8 @@ class KanjiEncoder(QRCodeEncoder):
         wd = ((wd >> 8) * 0xC0) + (wd & 0xFF)
         self._code_words.append(wd)
 
-        ret = self.get_codeword_bit_length(c)
-        self._bit_counter += ret
+        self._bit_counter += self.get_codeword_bit_length(c)
         self._char_counter += 1
-
-        return ret
 
     def get_codeword_bit_length(self, c: str) -> int:
         return 13
